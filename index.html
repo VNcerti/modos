@@ -13,7 +13,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
     
     <style>
-        
+        /* Ripple effect cho theme toggle */
         .ripple {
             position: absolute;
             border-radius: 50%;
@@ -381,14 +381,15 @@
         // Khởi tạo khi trang được tải
         document.addEventListener('DOMContentLoaded', () => {
             const themeManager = new ThemeManager();
-     
+            
+            // Kiểm tra và áp dụng theme ngay lập tức để tránh flash
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
             }
         });
         
-       
+        // Xử lý nút Telegram
         document.getElementById('telegramBtn').addEventListener('click', function(e) {
             // Mở trong tab mới
             window.open(this.href, '_blank');
