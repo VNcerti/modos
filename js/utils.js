@@ -47,10 +47,7 @@ class AppUtils {
                                     <div class="skeleton skeleton-tag"></div>
                                 </div>
                                 <div class="app-meta">
-                                    <div class="app-meta-item">
-                                        <i class="fas fa-clock"></i>
-                                        <div class="skeleton skeleton-meta"></div>
-                                    </div>
+                                    <div class="skeleton skeleton-meta"></div>
                                 </div>
                             </div>
                             <div class="app-actions">
@@ -98,7 +95,7 @@ class AppUtils {
         }
     }
 
-    // Tạo HTML cho tags - ĐÃ CẬP NHẬT VỚI CATEGORY MỚI
+    // Tạo HTML cho tags
     static createTagsHTML(categories) {
         let categoriesArray = [];
         if (typeof categories === 'string') {
@@ -107,11 +104,9 @@ class AppUtils {
             categoriesArray = categories;
         }
         
-        // Sử dụng CONFIG.CATEGORY_LABELS đã được cập nhật
-        return categoriesArray.map(cat => {
-            const label = CONFIG.CATEGORY_LABELS[cat] || cat;
-            return `<span class="app-tag">${label}</span>`;
-        }).join('');
+        return categoriesArray.map(cat => 
+            `<span class="app-tag">${CONFIG.CATEGORY_LABELS[cat] || cat}</span>`
+        ).join('');
     }
 
     // HÀM MỚI: Tạo mô tả ngắn chỉ hiển thị 2 dòng đầu (đã xoá phần "Xem thêm")
