@@ -8,11 +8,11 @@ const CONFIG = {
         'game': 'Trò chơi',
         'social': 'Mạng xã hội',
         'entertainment': 'Giải trí',
-        'photo': 'Ảnh & Video',
+        'photo': 'Ảnh & Video', // ĐÃ ĐỔI TÊN
         'clone': 'Nhân bản',
         'premium': 'Mở khoá Premium',
-        'education': 'Giáo dục',
-        'health': 'Sức khỏe',
-        'utility': 'Tiện ích'
+        'education': 'Giáo dục', // MỤC MỚI
+        'health': 'Sức khỏe', // MỤC MỚI
+        'utility': 'Tiện ích' // MỤC MỚI
     }
 };
