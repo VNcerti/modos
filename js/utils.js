@@ -95,7 +95,7 @@ class AppUtils {
         }
     }
 
-    // Tạo HTML cho tags
+    // Tạo HTML cho tags - ĐÃ CẬP NHẬT VỚI CATEGORY MỚI
     static createTagsHTML(categories) {
         let categoriesArray = [];
         if (typeof categories === 'string') {
@@ -104,9 +104,11 @@ class AppUtils {
             categoriesArray = categories;
         }
         
-        return categoriesArray.map(cat => 
-            `<span class="app-tag">${CONFIG.CATEGORY_LABELS[cat] || cat}</span>`
-        ).join('');
+        // Sử dụng CONFIG.CATEGORY_LABELS đã được cập nhật
+        return categoriesArray.map(cat => {
+            const label = CONFIG.CATEGORY_LABELS[cat] || cat;
+            return `<span class="app-tag">${label}</span>`;
+        }).join('');
     }
 
     // HÀM MỚI: Tạo mô tả ngắn chỉ hiển thị 2 dòng đầu (đã xoá phần "Xem thêm")
