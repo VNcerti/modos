@@ -47,7 +47,10 @@ class AppUtils {
                                     <div class="skeleton skeleton-tag"></div>
                                 </div>
                                 <div class="app-meta">
-                                    <div class="skeleton skeleton-meta"></div>
+                                    <div class="app-meta-item">
+                                        <i class="fas fa-clock"></i>
+                                        <div class="skeleton skeleton-meta"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="app-actions">
