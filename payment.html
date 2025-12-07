@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nâng cấp Premium - XSpace Store</title>
+    <link rel="icon" href="https://i.imgur.com/k0zikhA.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        :root {
+            --primary: #2076f3;
+            --primary-dark: #0cabeb;
+            --primary-light: #e1f0ff;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --trial: linear-gradient(135deg, #10b981, #059669); /* Xanh lá cây */
+            --basic: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            --plus: linear-gradient(135deg, #f59e0b, #eab308, #f97316);
+            --premium: linear-gradient(135deg, #ef4444, #dc2626);
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --card-shadow-hover: 0 15px 35px -10px rgba(0,0,0,0.15), 0 10px 15px -5px rgba(0,0,0,0.08);
+            --nav-height: 50px;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            color: var(--text-primary);
+            line-height: 1.4;
+            padding-bottom: var(--nav-height);
+            font-size: 13px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: translateY(-1px);
+        }
+
+        .logo-icon {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            box-shadow: 0 3px 8px rgba(12, 171, 235, 0.25);
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--surface);
+            color: var(--text-secondary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 0 12px;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Payment Container */
+        .payment-container {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 0 12px;
+        }
+
+        .payment-card {
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            padding: 24px;
+            transition: all .3s;
+            margin-bottom: 24px;
+        }
+
+        .payment-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        /* Payment Info Header */
+        .payment-info-header {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .payment-info-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Plan Packages */
+        .packages-container {
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 0 12px;
+        }
+
+        .package-section-title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 800;
+            margin: 30px 0 40px;
+            color: var(--text-primary);
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .package-section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            border-radius: 2px;
+        }
+
+        /* Package Card */
+        .package-card {
+            background: var(--background);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border);
+            margin-bottom: 30px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: var(--trial);
+            z-index: 1;
+        }
+
+        .package-card.basic::before {
+            background: var(--basic);
+        }
+
+        .package-card.plus::before {
+            background: var(--plus);
+        }
+
+        .package-card.premium::before {
+            background: var(--premium);
+        }
+
+        .package-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: var(--card-shadow-hover);
+        }
+
+        .package-header {
+            padding: 30px 25px 25px;
+            text-align: center;
+            position: relative;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), rgba(5, 150, 105, 0.02));
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .package-card.basic .package-header {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(29, 78, 216, 0.02));
+        }
+
+        .package-card.plus .package-header {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(234, 179, 8, 0.02));
+        }
+
+        .package-card.premium .package-header {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(220, 38, 38, 0.02));
+        }
+
+        .package-name {
+            font-size: 26px;
+            font-weight: 900;
+            margin-bottom: 12px;
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .package-card.trial .package-name {
+            background-image: var(--trial);
+        }
+
+        .package-card.basic .package-name {
+            background-image: var(--basic);
+        }
+
+        .package-card.plus .package-name {
+            background-image: var(--plus);
+        }
+
+        .package-card.premium .package-name {
+            background-image: var(--premium);
+        }
+
+        .package-price {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .package-amount {
+            font-size: 36px;
+            font-weight: 900;
+            line-height: 1;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .package-card.trial .package-amount {
+            color: #10b981;
+        }
+
+        .package-card.basic .package-amount {
+            color: #3b82f6;
+        }
+
+        .package-card.plus .package-amount {
+            color: #f59e0b;
+        }
+
+        .package-card.premium .package-amount {
+            color: #ef4444;
+        }
+
+        .package-period {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-top: 0;
+            font-weight: 500;
+        }
+
+        .package-features {
+            padding: 25px;
+            list-style: none;
+        }
+
+        .package-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        }
+
+        .package-feature:last-child {
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 0;
+            transition: all 0.3s;
+        }
+
+        .package-card.trial .feature-icon {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+
+        .package-card.basic .feature-icon {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .package-card.plus .feature-icon {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .package-card.premium .feature-icon {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+        }
+
+        .package-feature:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-text {
+            flex: 1;
+            font-size: 15px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .extra-feature {
+            margin-top: -15px;
+            padding-top: 15px;
+        }
+
+        .extra-feature .feature-icon {
+            background: rgba(100, 116, 139, 0.15);
+            color: #64748b;
+        }
+
+        .extra-feature .feature-text {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .package-action {
+            padding: 0 25px 25px;
+            text-align: center;
+        }
+
+        .upgrade-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: white;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .upgrade-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+
+        .upgrade-btn:hover::before {
+            left: 100%;
+        }
+
+        .package-card.trial .upgrade-btn {
+            background: var(--trial);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .package-card.basic .upgrade-btn {
+            background: var(--basic);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        .package-card.plus .upgrade-btn {
+            background: var(--plus);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .package-card.premium .upgrade-btn {
+            background: var(--premium);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        /* Payment Information */
+        .payment-info {
+            display: none;
+        }
+
+        .payment-info.active {
+            display: block;
+        }
+
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(12, 171, 235, 0.3);
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: var(--text-primary);
+        }
+
+        .user-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--text-muted);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 16px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .user-status.free { background: var(--text-muted); }
+        .user-status.trial { background: var(--trial); }
+        .user-status.basic { background: var(--basic); }
+        .user-status.plus { background: var(--plus); }
+        .user-status.premium { background: var(--premium); }
+
+        /* Order Summary */
+        .order-summary {
+            background: var(--background);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .order-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .order-label {
+            color: var(--text-secondary);
+        }
+
+        .order-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* QR Section - ĐÃ TĂNG KÍCH THƯỚC */
+        .qr-section {
+            text-align: center;
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--background);
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+
+        .qr-code {
+            max-width: 280px; /* TĂNG TỪ 200px LÊN 280px */
+            margin: 0 auto 12px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            padding: 12px;
+        }
+
+        .qr-code img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 4px;
+        }
+
+        .qr-loading {
+            width: 100%;
+            height: 280px; /* TĂNG CHIỀU CAO */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* XOÁ PHẦN QR DETAILS KHÔNG CẦN THIẾT */
+        .qr-details {
+            display: none; /* ẨN HOÀN TOÀN PHẦN NÀY */
+        }
+
+        /* Discount Section */
+        .discount-section {
+            background: var(--background);
+            border-radius: 10px;
+            padding: 16px;
+            margin: 16px 0;
+            border: 1px solid var(--border);
+        }
+
+        .discount-input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .discount-input-group .form-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .apply-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .apply-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .apply-btn:disabled {
+            background: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .discount-info {
+            border-top: 1px dashed var(--border);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+
+        .discount-amount {
+            color: var(--success) !important;
+        }
+
+        .final-amount {
+            color: var(--primary) !important;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* Bank Info */
+        .bank-info {
+            background: var(--background);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .bank-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .bank-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .bank-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .bank-value {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all .3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: var(--surface);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .action-btn.primary:hover {
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .action-btn.success:hover {
+            background: #0da271;
+        }
+
+        /* Thank You Page */
+        .thank-you {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .thank-you-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .thank-you-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .thank-you-message {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Messages */
+        .message {
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-bottom: 14px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid transparent;
+            font-size: 12px;
+        }
+
+        .message-success {
+            background: rgba(16,185,129,0.1);
+            color: var(--success);
+            border-color: rgba(16,185,129,0.2);
+        }
+
+        .message-error {
+            background: rgba(239,68,68,0.1);
+            color: var(--danger);
+            border-color: rgba(239,68,68,0.2);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            border-top: 1px solid var(--border);
+            padding: 8px 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            flex: 1;
+            padding: 4px 0;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .payment-container {
+                padding: 16px 0;
+                margin: 10px auto;
+            }
+            
+            .payment-card {
+                padding: 16px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .welcome-title {
+                font-size: 22px;
+            }
+            
+            .welcome-subtitle {
+                font-size: 14px;
+            }
+            
+            .package-amount {
+                font-size: 32px;
+            }
+            
+            .package-name {
+                font-size: 22px;
+            }
+            
+            .feature-text {
+                font-size: 14px;
+            }
+            
+            .payment-info-title {
+                font-size: 22px;
+            }
+            
+            .qr-code {
+                max-width: 240px; /* KÍCH THƯỚC TRÊN MOBILE */
+            }
+            
+            .qr-loading {
+                height: 240px; /* CHIỀU CAO TRÊN MOBILE */
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .qr-code {
+                max-width: 320px; /* KÍCH THƯỚC LỚN HƠN TRÊN TABLET/DESKTOP */
+            }
+            
+            .qr-loading {
+                height: 320px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon"><i class="fas fa-rocket"></i></div>
+                    XSpace Store
+                </a>
+                <div class="user-actions">
+                    <button class="icon-btn"><i class="fas fa-bell"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section" id="welcomeSection">
+            <h2 class="welcome-title">Nâng cấp Premium</h2>
+            <p class="welcome-subtitle">Trải nghiệm trọn vẹn kho ứng dụng với gói Premium - Chọn gói phù hợp với nhu cầu của bạn</p>
+        </div>
+
+        <!-- User Info -->
+        <div class="payment-card" id="userInfoCard">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name" id="userName">Người dùng</div>
+                    <div class="user-status free" id="userStatus">
+                        <i class="fas fa-user"></i>
+                        <span>Tài khoản Miễn phí</span>
+                    </div>
+                </div>
+            </div>
+            <p id="userMessage">Xin chào <strong id="userDisplayName">Người dùng</strong>, hãy chọn gói Premium muốn nâng cấp.</p>
+        </div>
+
+        <!-- Package Selection - UI mới -->
+        <div class="packages-container" id="packagesContainer">
+            <h2 class="package-section-title">Chọn Gói Premium</h2>
+            
+            <!-- Gói Trial -->
+            <div class="package-card trial" id="trialPackage">
+                <div class="package-header">
+                    <div class="package-name">Trial Package</div>
+                    <div class="package-price">
+                        <div class="package-amount">59.000đ</div>
+                        <div class="package-period">1 tháng sử dụng không giới hạn</div>
+                    </div>
+                </div>
+                <ul class="package-features">
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">Mở khoá tính năng VIP #1</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-box"></i></div>
+                        <div class="feature-text">Truy cập kho 10000+ ứng dụng</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-infinity"></i></div>
+                        <div class="feature-text">Cài đặt và nhân bản không giới hạn</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="feature-text">Đổi thiết bị sử dụng không giới hạn</div>
+                    </li>
+                </ul>
+                <div class="package-action">
+                    <button class="upgrade-btn" data-plan="trial" data-price="59000" data-duration="1" data-package-type="trial" data-duration-days="30">
+                        <i class="fas fa-rocket"></i>
+                        Nâng cấp ngay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gói Basic -->
+            <div class="package-card basic" id="basicPackage">
+                <div class="package-header">
+                    <div class="package-name">Basic Package</div>
+                    <div class="package-price">
+                        <div class="package-amount">129.000đ</div>
+                        <div class="package-period">3 tháng sử dụng không giới hạn</div>
+                    </div>
+                </div>
+                <ul class="package-features">
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">Tất cả tính năng Trial Package</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-crown"></i></div>
+                        <div class="feature-text">Tải bản VIP & Mod đặc biệt</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-headset"></i></div>
+                        <div class="feature-text">Hỗ trợ ưu tiên 24/7</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                        <div class="feature-text">Tốc độ tải xuống cao nhất</div>
+                    </li>
+                    <li class="package-feature extra-feature">
+                        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="feature-text">Đổi thiết bị sử dụng không giới hạn</div>
+                    </li>
+                </ul>
+                <div class="package-action">
+                    <button class="upgrade-btn" data-plan="basic" data-price="129000" data-duration="3" data-package-type="basic" data-duration-days="90">
+                        <i class="fas fa-rocket"></i>
+                        Nâng cấp ngay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gói Plus -->
+            <div class="package-card plus" id="plusPackage">
+                <div class="package-header">
+                    <div class="package-name">Plus Package</div>
+                    <div class="package-price">
+                        <div class="package-amount">219.000đ</div>
+                        <div class="package-period">6 tháng sử dụng không giới hạn</div>
+                    </div>
+                </div>
+                <ul class="package-features">
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">Tất cả tính năng Basic Package</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-earlybirds"></i></div>
+                        <div class="feature-text">Truy cập sớm ứng dụng mới</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-gem"></i></div>
+                        <div class="feature-text">Yêu cầu ứng dụng riêng</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="feature-text">Bảo mật nâng cao & ẩn danh</div>
+                    </li>
+                    <li class="package-feature extra-feature">
+                        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="feature-text">Đổi thiết bị sử dụng không giới hạn</div>
+                    </li>
+                </ul>
+                <div class="package-action">
+                    <button class="upgrade-btn" data-plan="plus" data-price="219000" data-duration="6" data-package-type="plus" data-duration-days="180">
+                        <i class="fas fa-rocket"></i>
+                        Nâng cấp ngay
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gói Premium -->
+            <div class="package-card premium" id="premiumPackage">
+                <div class="package-header">
+                    <div class="package-name">Premium Package</div>
+                    <div class="package-price">
+                        <div class="package-amount">249.000đ</div>
+                        <div class="package-period">1 năm sử dụng không giới hạn</div>
+                    </div>
+                </div>
+                <ul class="package-features">
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-check"></i></div>
+                        <div class="feature-text">Tất cả tính năng Plus Package</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-percentage"></i></div>
+                        <div class="feature-text">Giảm giá 50% cho lần gia hạn</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-user-tie"></i></div>
+                        <div class="feature-text">Hỗ trợ VIP 1-1 với admin</div>
+                    </li>
+                    <li class="package-feature">
+                        <div class="feature-icon"><i class="fas fa-award"></i></div>
+                        <div class="feature-text">Quyền lợi đặc biệt & ưu đãi độc quyền</div>
+                    </li>
+                    <li class="package-feature extra-feature">
+                        <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <div class="feature-text">Đổi thiết bị sử dụng không giới hạn</div>
+                    </li>
+                </ul>
+                <div class="package-action">
+                    <button class="upgrade-btn" data-plan="premium" data-price="249000" data-duration="12" data-package-type="premium" data-duration-days="365">
+                        <i class="fas fa-rocket"></i>
+                        Nâng cấp ngay
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        <div class="payment-container">
+            <div class="payment-card payment-info" id="paymentInfo">
+                <!-- Tiêu đề "THANH TOÁN ĐƠN HÀNG" ở chính giữa -->
+                <div class="payment-info-header">
+                    <h3 class="payment-info-title">THANH TOÁN ĐƠN HÀNG</h3>
+                </div>
+                
+                <div class="order-summary">
+                    <h4 class="order-title">Thông tin đơn hàng</h4>
+                    <div class="order-detail">
+                        <span class="order-label">Gói sản phẩm:</span>
+                        <span class="order-value" id="selectedPlanName">Gói Trial</span>
+                    </div>
+                    <div class="order-detail">
+                        <span class="order-label">Giá dịch vụ:</span>
+                        <span class="order-value" id="selectedPlanPrice">59.000đ</span>
+                    </div>
+                </div>
+
+                <div class="qr-section">
+                    <h4 class="order-title">Quét mã QR để thanh toán</h4>
+                    <div class="qr-code" id="qrCodeContainer">
+                        <div class="qr-loading" id="qrLoading">
+                            <i class="fas fa-spinner fa-spin"></i> Đang tạo mã QR...
+                        </div>
+                        <img id="qrCodeImage" style="display: none;" alt="QR Code">
+                    </div>
+                    <!-- ĐÃ XOÁ PHẦN QR DETAILS -->
+                </div>
+
+                <!-- Discount Section -->
+                <div class="discount-section">
+                    <h4 class="order-title">Mã giảm giá / Kích hoạt</h4>
+                    <div class="discount-input-group">
+                        <input type="text" id="discountCode" class="form-input" placeholder="Nhập mã giảm giá hoặc mã kích hoạt">
+                        <button class="apply-btn" id="applyDiscountBtn">
+                            <i class="fas fa-tag"></i>
+                            Áp dụng
+                        </button>
+                    </div>
+                    <div id="discountMessage" class="message" style="display: none; margin-top: 10px;"></div>
+                    
+                    <!-- Hiển thị thông tin giảm giá -->
+                    <div id="discountInfo" class="discount-info" style="display: none;">
+                        <div class="order-detail">
+                            <span class="order-label">Giảm giá:</span>
+                            <span class="order-value discount-amount" id="discountAmount">0đ</span>
+                        </div>
+                        <div class="order-detail">
+                            <span class="order-label">Thành tiền:</span>
+                            <span class="order-value final-amount" id="finalAmount">59.000đ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bank-info">
+                    <h4 class="order-title">Thông tin chuyển khoản</h4>
+                    <div class="bank-item">
+                        <span class="bank-label">Ngân hàng:</span>
+                        <span class="bank-value">MB Bank</span>
+                    </div>
+                    <div class="bank-item">
+                        <span class="bank-label">STK:</span>
+                        <div>
+                            <span class="bank-value" id="bankAccount">311435</span>
+                            <button class="copy-btn" data-copy="311435">
+                                <i class="fas fa-copy"></i> Sao chép
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bank-item">
+                        <span class="bank-label">NGDG:</span>
+                        <div>
+                            <span class="bank-value" id="paymentNote">PAY ADMIN</span>
+                            <button class="copy-btn" data-copy="PAY ADMIN">
+                                <i class="fas fa-copy"></i> Sao chép
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bank-item">
+                        <span class="bank-label">Số tiền cần thanh toán:</span>
+                        <span class="bank-value" id="paymentAmount">59.000đ</span>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn" id="backToPlanBtn">
+                        <i class="fas fa-arrow-left"></i>
+                        Quay lại chọn gói
+                    </button>
+                    <button class="action-btn success" id="confirmPaymentBtn">
+                        <i class="fas fa-check-circle"></i>
+                        Xác nhận đã thanh toán
+                    </button>
+                </div>
+            </div>
+
+            <!-- Thank You Page -->
+            <div class="payment-card thank-you" id="thankYouPage" style="display: none;">
+                <div class="thank-you-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2 class="thank-you-title">Cảm ơn quý khách!</h2>
+                <p class="thank-you-message">
+                    Cảm ơn quý khách đã tin tưởng và ủng hộ dịch vụ của chúng mình!<br>
+                    Mọi vấn đề lỗi thanh toán hay kích hoạt VIP tài khoản vui lòng nhắn cho nhân viên hỗ trợ.
+                </p>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="window.location.href='index.html'">
+                        <i class="fas fa-home"></i>
+                        Về trang chủ
+                    </button>
+                    <button class="action-btn primary" id="contactSupportBtn">
+                        <i class="fas fa-headset"></i>
+                        Liên hệ hỗ trợ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="container">
+            <div class="nav-items">
+                <a href="index.html" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-home"></i></div>
+                    <div class="nav-label">Trang chủ</div>
+                </a>
+                <a href="#" class="nav-item" data-view="today">
+                    <div class="nav-icon"><i class="fas fa-calendar-day"></i></div>
+                    <div class="nav-label">Hôm nay</div>
+                </a>
+                <a href="#" class="nav-item" data-view="search" id="searchNavItem">
+                    <div class="nav-icon"><i class="fas fa-search"></i></div>
+                    <div class="nav-label">Tìm kiếm</div>
+                </a>
+                <a href="#" class="nav-item" data-view="games">
+                    <div class="nav-icon"><i class="fas fa-gamepad"></i></div>
+                    <div class="nav-label">Trò chơi</div>
+                </a>
+                <a href="account.html" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-user"></i></div>
+                    <div class="nav-label">Tài khoản</div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_-MluMh6fh7jl0Ai2iy6ojqX4UhjhjxRWj8RV8wRgNPUJHd6TphKwm6yPtYPm8hsCwg/exec';
+        const VIETQR_BASE_URL = 'https://img.vietqr.io/image/mbbank-311435-compact2.png';
+
+        // DOM Elements
+        const userInfoCard = document.getElementById('userInfoCard');
+        const packagesContainer = document.getElementById('packagesContainer');
+        const paymentInfo = document.getElementById('paymentInfo');
+        const thankYouPage = document.getElementById('thankYouPage');
+        const userAvatar = document.getElementById('userAvatar');
+        const userName = document.getElementById('userName');
+        const userDisplayName = document.getElementById('userDisplayName');
+        const userStatus = document.getElementById('userStatus');
+        const userMessage = document.getElementById('userMessage');
+        const backToPlanBtn = document.getElementById('backToPlanBtn');
+        const confirmPaymentBtn = document.getElementById('confirmPaymentBtn');
+        const contactSupportBtn = document.getElementById('contactSupportBtn');
+        const selectedPlanName = document.getElementById('selectedPlanName');
+        const selectedPlanPrice = document.getElementById('selectedPlanPrice');
+        const bankAccount = document.getElementById('bankAccount');
+        const paymentNote = document.getElementById('paymentNote');
+        const paymentAmount = document.getElementById('paymentAmount');
+
+        // QR Code Elements
+        const qrCodeContainer = document.getElementById('qrCodeContainer');
+        const qrLoading = document.getElementById('qrLoading');
+        const qrCodeImage = document.getElementById('qrCodeImage');
+
+        // Discount Elements
+        const discountCodeInput = document.getElementById('discountCode');
+        const applyDiscountBtn = document.getElementById('applyDiscountBtn');
+        const discountMessage = document.getElementById('discountMessage');
+        const discountInfo = document.getElementById('discountInfo');
+        const discountAmount = document.getElementById('discountAmount');
+        const finalAmount = document.getElementById('finalAmount');
+
+        // Variables to remember scroll position
+        let scrollPosition = 0;
+        let selectedPackageId = '';
+
+        // Plan data với packageType
+        const planData = {
+            trial: { 
+                name: 'Trial Package', 
+                price: 59000, 
+                displayPrice: '59.000đ',
+                duration: '1 tháng sử dụng không giới hạn',
+                packageType: 'trial',
+                durationDays: 30
+            },
+            basic: { 
+                name: 'Basic Package', 
+                price: 129000,
+                displayPrice: '129.000đ',
+                duration: '3 tháng sử dụng không giới hạn',
+                packageType: 'basic', 
+                durationDays: 90
+            },
+            plus: { 
+                name: 'Plus Package', 
+                price: 219000,
+                displayPrice: '219.000đ',
+                duration: '6 tháng sử dụng không giới hạn',
+                packageType: 'plus',
+                durationDays: 180
+            },
+            premium: { 
+                name: 'Premium Package', 
+                price: 249000,
+                displayPrice: '249.000đ',
+                duration: '1 năm sử dụng không giới hạn',
+                packageType: 'premium',
+                durationDays: 365
+            }
+        };
+
+        // Selected plan
+        let selectedPlan = null;
+        let currentDiscount = null;
+        let originalPrice = 0;
+        let finalPrice = 0;
+        let isActivationCode = false;
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = getCurrentUser();
+            
+            if (currentUser) {
+                // Load user info
+                loadUserInfo(currentUser);
+                
+                // Check if user already has premium
+                if (isUserPremium(currentUser)) {
+                    userMessage.innerHTML = `Xin chào <strong>${currentUser.username}</strong>, tài khoản của bạn đã là Premium.`;
+                    userStatus.innerHTML = '<i class="fas fa-crown"></i><span>Tài khoản Premium</span>';
+                    userStatus.className = 'user-status premium';
+                } else {
+                    userMessage.innerHTML = `Xin chào <strong>${currentUser.username}</strong>, hãy chọn gói Premium muốn nâng cấp.`;
+                    
+                    // Update payment note with username
+                    const paymentNoteText = `PAY ${currentUser.username.toUpperCase()}`;
+                    paymentNote.textContent = paymentNoteText;
+                    document.querySelectorAll('[data-copy="PAY ADMIN"]').forEach(btn => {
+                        btn.setAttribute('data-copy', paymentNoteText);
+                    });
+                }
+            } else {
+                // Redirect to login if not logged in
+                window.location.href = 'account.html';
+            }
+
+            // Upgrade button click - Từ UI mới
+            document.querySelectorAll('.upgrade-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const plan = this.getAttribute('data-plan');
+                    // Lưu id của package được chọn
+                    selectedPackageId = this.closest('.package-card').id;
+                    selectPlan(plan);
+                });
+            });
+
+            // Back to plan selection
+            backToPlanBtn.addEventListener('click', function() {
+                // Hide payment info, show packages
+                paymentInfo.classList.remove('active');
+                packagesContainer.style.display = 'block';
+                userInfoCard.style.display = 'block';
+                document.getElementById('welcomeSection').style.display = 'block';
+                
+                // Cuộn đến package đã chọn trước đó
+                if (selectedPackageId) {
+                    const packageElement = document.getElementById(selectedPackageId);
+                    if (packageElement) {
+                        // Không có hiệu ứng cuộn, chỉ đặt vị trí
+                        const headerHeight = document.querySelector('.header').offsetHeight;
+                        const packagePosition = packageElement.getBoundingClientRect().top + window.pageYOffset - headerHeight;
+                        window.scrollTo(0, packagePosition);
+                    }
+                }
+            });
+
+            // Apply discount code
+            applyDiscountBtn.addEventListener('click', async function() {
+                const code = discountCodeInput.value.trim();
+                
+                if (!code) {
+                    showDiscountMessage('Vui lòng nhập mã', 'error');
+                    return;
+                }
+                
+                applyDiscountBtn.innerHTML = '<div class="loading"></div>';
+                applyDiscountBtn.disabled = true;
+                
+                try {
+                    const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=validateCode&code=${encodeURIComponent(code)}`);
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        if (result.type === 'discount') {
+                            await applyDiscount(result.data);
+                        } else if (result.type === 'activation') {
+                            await applyActivationCode(result.data);
+                        }
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } catch (error) {
+                    showDiscountMessage(error.message, 'error');
+                } finally {
+                    applyDiscountBtn.innerHTML = '<i class="fas fa-tag"></i> Áp dụng';
+                    applyDiscountBtn.disabled = false;
+                }
+            });
+
+            // Confirm payment
+            confirmPaymentBtn.addEventListener('click', function() {
+                if (isActivationCode) {
+                    // Nếu là mã kích hoạt, hiển thị cảm ơn luôn
+                    paymentInfo.classList.remove('active');
+                    thankYouPage.style.display = 'block';
+                } else {
+                    // Nếu là thanh toán thông thường
+                    paymentInfo.classList.remove('active');
+                    thankYouPage.style.display = 'block';
+                }
+                
+                // Đưa trang lên đầu phần cảm ơn
+                thankYouPage.scrollIntoView(true);
+            });
+
+            // Contact support
+            contactSupportBtn.addEventListener('click', function() {
+                window.open('https://t.me/m/Qnw6Bzy6MzM1', '_blank');
+            });
+
+            // Copy to clipboard functionality
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const textToCopy = this.getAttribute('data-copy');
+                    
+                    // Create a temporary textarea element
+                    const textarea = document.createElement('textarea');
+                    textarea.value = textToCopy;
+                    document.body.appendChild(textarea);
+                    
+                    // Select and copy the text
+                    textarea.select();
+                    document.execCommand('copy');
+                    
+                    // Remove the textarea
+                    document.body.removeChild(textarea);
+                    
+                    // Show feedback
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i> Đã sao chép';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                    }, 2000);
+                });
+            });
+        });
+
+        // Select plan function - KHÔNG CÓ HIỆU ỨNG CUỘN
+        function selectPlan(plan) {
+            if (plan) {
+                selectedPlan = plan;
+                
+                // Update payment info
+                selectedPlanName.textContent = planData[plan].name;
+                selectedPlanPrice.textContent = planData[plan].displayPrice;
+                paymentAmount.textContent = planData[plan].displayPrice;
+                
+                // Reset discount state
+                resetDiscountState();
+                
+                // Hide welcome section, user info, and packages when showing payment info
+                document.getElementById('welcomeSection').style.display = 'none';
+                userInfoCard.style.display = 'none';
+                packagesContainer.style.display = 'none';
+                
+                // Show payment info
+                paymentInfo.classList.add('active');
+                
+                // Generate QR code với thông tin mới
+                generateQRCode(planData[plan].price);
+                
+                // ĐƯA TRANG LÊN ĐẦU KHI VÀO PHẦN THANH TOÁN
+                window.scrollTo(0, 0);
+            }
+        }
+
+        // Generate QR Code với API VietQR
+        function generateQRCode(amount) {
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+            
+            // Hiển thị loading
+            qrLoading.style.display = 'flex';
+            qrCodeImage.style.display = 'none';
+            
+            // Tạo nội dung chuyển khoản: PAY + USERNAME (không dấu, không ký tự đặc biệt)
+            const username = currentUser.username.toUpperCase();
+            const paymentDescription = `PAY ${username}`;
+            
+            // Mã hóa URL an toàn
+            const encodedDescription = encodeURIComponent(paymentDescription);
+            
+            // Tạo URL VietQR với các tham số
+            const qrUrl = `${VIETQR_BASE_URL}?amount=${amount}&addInfo=${encodedDescription}&accountName=VU%20TUNG%20LAM`;
+            
+            // Tải và hiển thị QR code
+            qrCodeImage.onload = function() {
+                qrLoading.style.display = 'none';
+                qrCodeImage.style.display = 'block';
+            };
+            
+            qrCodeImage.onerror = function() {
+                qrLoading.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Không thể tải mã QR';
+                qrCodeImage.style.display = 'none';
+            };
+            
+            // Set image source
+            qrCodeImage.src = qrUrl;
+            
+            // Cập nhật thông tin thanh toán
+            paymentNote.textContent = paymentDescription;
+            
+            // Cập nhật nút copy
+            document.querySelectorAll('[data-copy="PAY ADMIN"]').forEach(btn => {
+                btn.setAttribute('data-copy', paymentDescription);
+            });
+        }
+
+        // Update QR code khi có giảm giá
+        function updateQRCodeWithDiscount() {
+            if (!selectedPlan || !currentDiscount || isActivationCode) return;
+            
+            const currentUser = getCurrentUser();
+            if (!currentUser) return;
+            
+            // Hiển thị loading
+            qrLoading.style.display = 'flex';
+            qrCodeImage.style.display = 'none';
+            
+            // Tạo nội dung chuyển khoản
+            const username = currentUser.username.toUpperCase();
+            const paymentDescription = `PAY ${username}`;
+            const encodedDescription = encodeURIComponent(paymentDescription);
+            
+            // Tạo URL VietQR với số tiền sau giảm giá
+            const qrUrl = `${VIETQR_BASE_URL}?amount=${finalPrice}&addInfo=${encodedDescription}&accountName=VU%20TUNG%20LAM`;
+            
+            // Tải và hiển thị QR code
+            qrCodeImage.onload = function() {
+                qrLoading.style.display = 'none';
+                qrCodeImage.style.display = 'block';
+            };
+            
+            qrCodeImage.onerror = function() {
+                qrLoading.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Không thể tải mã QR';
+                qrCodeImage.style.display = 'none';
+            };
+            
+            // Set image source
+            qrCodeImage.src = qrUrl;
+        }
+
+        // Apply discount
+        async function applyDiscount(discountData) {
+            currentDiscount = discountData;
+            isActivationCode = false;
+            
+            // Tính toán giảm giá
+            originalPrice = planData[selectedPlan].price;
+            const discountValue = Math.round((originalPrice * discountData.discount_percent) / 100);
+            finalPrice = originalPrice - discountValue;
+            
+            // Cập nhật giao diện
+            discountAmount.textContent = `-${formatCurrency(discountValue)}`;
+            finalAmount.textContent = formatCurrency(finalPrice);
+            paymentAmount.textContent = formatCurrency(finalPrice);
+            
+            discountInfo.style.display = 'block';
+            
+            // Cập nhật QR code với số tiền mới
+            updateQRCodeWithDiscount();
+            
+            // Hiển thị thông báo thành công
+            showDiscountMessage(`✅ Áp dụng mã giảm giá ${discountData.discount_percent}% thành công!`, 'success');
+            
+            // Đánh dấu đã sử dụng mã
+            await useDiscountCode(discountData.code);
+        }
+
+        // Apply activation code
+        async function applyActivationCode(activationData) {
+            isActivationCode = true;
+            
+            // Ẩn QR code section vì không cần thanh toán
+            document.querySelector('.qr-section').style.display = 'none';
+            document.querySelector('.bank-info').style.display = 'none';
+            
+            // Hiển thị thông báo thành công
+            showDiscountMessage(`✅ Kích hoạt thành công! Gói ${activationData.package_type.toUpperCase()} đã được kích hoạt.`, 'success');
+            
+            // Thay đổi nút xác nhận
+            confirmPaymentBtn.innerHTML = '<i class="fas fa-check-circle"></i> Hoàn tất kích hoạt';
+            
+            // Cập nhật thông tin đơn hàng
+            selectedPlanName.textContent = `Gói ${activationData.package_type.toUpperCase()} (Kích hoạt)`;
+            selectedPlanPrice.textContent = '0đ';
+            paymentAmount.textContent = '0đ';
+            
+            // Cập nhật discount info
+            discountAmount.textContent = '-100%';
+            finalAmount.textContent = '0đ';
+            discountInfo.style.display = 'block';
+            
+            // Đánh dấu đã sử dụng mã kích hoạt
+            const currentUser = getCurrentUser();
+            if (currentUser) {
+                await useActivationCode(activationData.code, currentUser.email);
+                
+                // Cập nhật thông tin user ngay lập tức
+                await upgradeUserWithActivation(currentUser.email, activationData.duration_days);
+            }
+        }
+
+        // Use discount code
+        async function useDiscountCode(code) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'useDiscountCode',
+                        code: code
+                    })
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Lỗi khi sử dụng mã giảm giá:', result.message);
+                }
+            } catch (error) {
+                console.error('Lỗi khi sử dụng mã giảm giá:', error);
+            }
+        }
+
+        // Use activation code
+        async function useActivationCode(code, userEmail) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'useActivationCode',
+                        code: code,
+                        userEmail: userEmail
+                    })
+                });
+                
+                const result = await response.json();
+                if (!result.success) {
+                    console.error('Lỗi khi sử dụng mã kích hoạt:', result.message);
+                }
+            } catch (error) {
+                console.error('Lỗi khi sử dụng mã kích hoạt:', error);
+            }
+        }
+
+        // Upgrade user with activation code
+        async function upgradeUserWithActivation(email, durationDays) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'upgradeUser',
+                        data: { email: email, durationDays: durationDays }
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    console.log('✅ Nâng cấp tài khoản thành công:', result.message);
+                } else {
+                    console.error('❌ Lỗi nâng cấp tài khoản:', result.message);
+                }
+            } catch (error) {
+                console.error('❌ Lỗi nâng cấp tài khoản:', error);
+            }
+        }
+
+        // Reset discount state
+        function resetDiscountState() {
+            currentDiscount = null;
+            isActivationCode = false;
+            discountCodeInput.value = '';
+            discountInfo.style.display = 'none';
+            discountMessage.style.display = 'none';
+            document.querySelector('.qr-section').style.display = 'block';
+            document.querySelector('.bank-info').style.display = 'block';
+            confirmPaymentBtn.innerHTML = '<i class="fas fa-check-circle"></i> Xác nhận đã thanh toán';
+        }
+
+        // Show discount message
+        function showDiscountMessage(message, type) {
+            discountMessage.textContent = message;
+            discountMessage.className = `message message-${type}`;
+            discountMessage.style.display = 'flex';
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + 'đ';
+        }
+
+        // Utility functions
+        function getCurrentUser() {
+            const userStr = localStorage.getItem('currentUser');
+            return userStr ? JSON.parse(userStr) : null;
+        }
+
+        function isUserPremium(user) {
+            if (!user) return false;
+            
+            // Kiểm tra xem tài khoản có phải là premium và còn hạn không
+            if (user.accountType === 'premium' && isVIPActive(user.vipExpiry)) {
+                return true;
+            }
+            return false;
+        }
+
+        function isVIPActive(vipExpiry) {
+            if (!vipExpiry) return false;
+            const expiryDate = new Date(vipExpiry);
+            const today = new Date();
+            return expiryDate >= today;
+        }
+
+        function loadUserInfo(userData) {
+            userName.textContent = userData.username;
+            userDisplayName.textContent = userData.username;
+            
+            // Set avatar with first letter of username
+            const firstLetter = userData.username.charAt(0).toUpperCase();
+            userAvatar.innerHTML = firstLetter;
+            
+            // Update user status based on package type
+            const packageInfo = {
+                'free': { name: 'Miễn phí', class: 'free', icon: 'fas fa-user' },
+                'trial': { name: 'Trial', class: 'trial', icon: 'fas fa-star' },
+                'basic': { name: 'Basic', class: 'basic', icon: 'fas fa-crown' },
+                'plus': { name: 'Plus', class: 'plus', icon: 'fas fa-crown' },
+                'premium': { name: 'Premium', class: 'premium', icon: 'fas fa-crown' }
+            };
+            
+            const currentPackage = packageInfo[userData.packageType] || packageInfo.free;
+            userStatus.innerHTML = `<i class="${currentPackage.icon}"></i><span>Tài khoản ${currentPackage.name}</span>`;
+            userStatus.className = `user-status ${currentPackage.class}`;
+        }
+    </script>
+</body>
+</html>
