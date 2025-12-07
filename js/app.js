@@ -305,11 +305,7 @@ class AppManager {
                         <div class="app-tags">${tagsHTML}</div>
                         <div class="app-meta">
                             <div class="app-meta-item">
-                                <i class="fas fa-user"></i>
-                                <span>${app.developer || 'Nhà phát triển'}</span>
-                            </div>
-                            <div class="app-meta-item">
-                                <i class="fas fa-calendar-alt"></i>
+                                <i class="fas fa-clock"></i>
                                 <span>${formattedDate}</span>
                             </div>
                         </div>
