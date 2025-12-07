@@ -125,10 +125,16 @@ class AppManager {
             if (result.success) {
                 // Xử lý dữ liệu để đảm bảo cấu trúc đúng
                 this.allApps = result.data.map(app => {
-                    // Đảm bảo app có categories
+                    // Đảm bảo app có categories và đồng bộ với tên mới
                     if (!app.categories) {
                         app.categories = 'other'; // Mặc định nếu không có categories
                     }
+                    
+                    // Đồng bộ tên category nếu cần
+                    if (app.categories.includes('photo')) {
+                        app.categories = app.categories.replace('photo', 'photo');
+                    }
+                    
                     return app;
                 });
                 
@@ -250,7 +256,6 @@ class AppManager {
         } else if (this.currentView === 'games') {
             title = 'Trò chơi';
         } else if (this.currentCategory !== 'all') {
-            // Sử dụng CONFIG.CATEGORY_LABELS đã được cập nhật
             title = CONFIG.CATEGORY_LABELS[this.currentCategory] || this.currentCategory;
         }
         
@@ -284,20 +289,16 @@ class AppManager {
         const appCard = document.createElement('div');
         appCard.className = 'app-card';
         
-        // THÊM DATA-ATTRIBUTES CHO APP
-        appCard.dataset.appId = app.id;
-        appCard.dataset.categories = app.categories || '';
-        
         const tagsHTML = AppUtils.createTagsHTML(app.categories);
         const formattedDate = AppUtils.formatDate(app.updatedate);
         
-        // Sử dụng createShortDescriptionHTML
+        // THAY ĐỔI QUAN TRỌNG: Sử dụng createShortDescriptionHTML thay vì createDescriptionHTML
         const descriptionHTML = AppUtils.createShortDescriptionHTML(app.description);
         
         appCard.innerHTML = `
             <img src="${app.image}" alt="${app.name}" class="app-logo" 
                  loading="lazy"
-                 onerror="this.src='https://via.placeholder.com/90/2563eb/FFFFFF?text=App'">
+                 onerror="this.src='https://via.placeholder.com/70/2563eb/FFFFFF?text=App'">
             <div class="app-content">
                 <div class="app-header">
                     <div class="app-info">
@@ -311,23 +312,15 @@ class AppManager {
                         </div>
                     </div>
                     <div class="app-actions">
-                        <button class="download-btn" onclick="event.stopPropagation(); window.location.href='app-detail.html?id=${app.id}'">
+                        <button class="download-btn" onclick="window.location.href='app-detail.html?id=${app.id}'">
                             <i class="fas fa-download"></i>
-                            Chi tiết
+                            Tải về
                         </button>
                     </div>
                 </div>
                 ${descriptionHTML}
             </div>
         `;
-        
-        // Thêm click event cho toàn bộ card
-        appCard.addEventListener('click', function(e) {
-            // Chỉ chuyển trang nếu không click vào nút download
-            if (!e.target.closest('.download-btn')) {
-                window.location.href = `app-detail.html?id=${app.id}`;
-            }
-        });
         
         return appCard;
     }
@@ -336,15 +329,4 @@ class AppManager {
 // Khởi tạo ứng dụng khi trang được tải
 document.addEventListener('DOMContentLoaded', function() {
     window.appManager = new AppManager();
-    
-    // Thêm xử lý cho việc chuyển trang chi tiết
-    document.addEventListener('click', function(e) {
-        const appCard = e.target.closest('.app-card');
-        if (appCard && !e.target.closest('.download-btn')) {
-            const appId = appCard.dataset.appId;
-            if (appId) {
-                window.location.href = `app-detail.html?id=${appId}`;
-            }
-        }
-    });
 });
