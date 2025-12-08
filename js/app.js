@@ -96,13 +96,13 @@ class AppManager {
 
         if (prevArrow) {
             prevArrow.addEventListener('click', () => {
-                this.scrollFeaturedCarousel(-280);
+                this.scrollFeaturedCarousel(-220);
             });
         }
 
         if (nextArrow) {
             nextArrow.addEventListener('click', () => {
-                this.scrollFeaturedCarousel(280);
+                this.scrollFeaturedCarousel(220);
             });
         }
 
@@ -403,10 +403,10 @@ class AppManager {
                 <i class="fas fa-star"></i>
                 NỔI BẬT
             </div>
-            <img src="${app.image || 'https://via.placeholder.com/280x160/2563eb/FFFFFF?text=App'}" 
+            <img src="${app.image || 'https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'}" 
                  alt="${app.name}" 
                  class="featured-image"
-                 onerror="this.src='https://via.placeholder.com/280x160/2563eb/FFFFFF?text=App'">
+                 onerror="this.src='https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'">
             <div class="featured-content">
                 <div class="featured-header">
                     <img src="${app.image || 'https://via.placeholder.com/50/2563eb/FFFFFF?text=App'}" 
@@ -479,7 +479,7 @@ class AppManager {
         // Update dots based on scroll position
         const updateDots = () => {
             const scrollLeft = container.scrollLeft;
-            const cardWidth = 280 + 16; // card width + gap
+            const cardWidth = 220 + 12; // card width + gap
             const currentIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
             
             dots.forEach((dot, index) => {
@@ -489,7 +489,7 @@ class AppManager {
         
         // Scroll to specific index
         const scrollToIndex = (index) => {
-            const cardWidth = 280 + 16;
+            const cardWidth = 220 + 12;
             container.scrollTo({
                 left: index * cardWidth,
                 behavior: 'smooth'
@@ -512,6 +512,9 @@ class AppManager {
         
         // Initial update
         updateArrows();
+        
+        // Auto rotate every 5 seconds
+        this.startAutoRotate();
     }
 
     scrollFeaturedCarousel(amount) {
@@ -527,12 +530,25 @@ class AppManager {
     scrollFeaturedCarouselToIndex(index) {
         const container = this.featuredCarousel;
         if (container) {
-            const cardWidth = 280 + 16;
+            const cardWidth = 220 + 12;
             container.scrollTo({
                 left: index * cardWidth,
                 behavior: 'smooth'
             });
         }
+    }
+
+    startAutoRotate() {
+        // Auto rotate every 5 seconds
+        setInterval(() => {
+            const dots = document.querySelectorAll('.carousel-dot');
+            const activeIndex = Array.from(dots).findIndex(dot => dot.classList.contains('active'));
+            const nextIndex = (activeIndex + 1) % dots.length;
+            
+            if (dots[nextIndex]) {
+                dots[nextIndex].click();
+            }
+        }, 5000);
     }
 }
 
