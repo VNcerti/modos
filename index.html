@@ -93,18 +93,47 @@
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Featured App -->
+        <!-- Featured Apps Carousel -->
         <section class="featured-section">
-            <div class="featured-card">
-                <div class="featured-badge">Ứng dụng nổi bật</div>
-                <h3 class="featured-title">XSPace Store</h3>
-                <p class="featured-description">Kho ứng dụng cao cấp với hàng ngàn app độc quyền</p>
-                <button class="download-btn">
-                    <i class="fas fa-download"></i>
-                    Khám phá ngay
-                </button>
-                <img src="https://i.imgur.com/1qBtbYR.png" 
-                     alt="XSPace Store" class="featured-image">
+            <div class="section-title">
+                <span>Ứng dụng nổi bật</span>
+                <a href="#" class="view-all">Xem tất cả</a>
+            </div>
+            <div class="featured-carousel">
+                <!-- Navigation Arrows -->
+                <div class="nav-arrow prev">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <div class="nav-arrow next">
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+
+                <!-- Carousel Container -->
+                <div class="carousel-container" id="featuredCarousel">
+                    <!-- Featured Cards will be loaded by JavaScript -->
+                    <div class="featured-loading" id="featuredLoading">
+                        <div class="featured-skeleton"></div>
+                        <div class="featured-skeleton"></div>
+                        <div class="featured-skeleton"></div>
+                        <div class="featured-skeleton"></div>
+                        <div class="featured-skeleton"></div>
+                    </div>
+                </div>
+
+                <!-- Scroll Indicator -->
+                <div class="scroll-indicator">
+                    <i class="fas fa-arrows-alt-h"></i>
+                    Kéo để xem thêm
+                </div>
+
+                <!-- Dots Navigation -->
+                <div class="carousel-nav">
+                    <div class="carousel-dot active" data-index="0"></div>
+                    <div class="carousel-dot" data-index="1"></div>
+                    <div class="carousel-dot" data-index="2"></div>
+                    <div class="carousel-dot" data-index="3"></div>
+                    <div class="carousel-dot" data-index="4"></div>
+                </div>
             </div>
         </section>
 
@@ -396,4 +425,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
