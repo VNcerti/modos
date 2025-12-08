@@ -231,6 +231,273 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
+/* ===== FEATURED APPS CAROUSEL ===== */
+
+.featured-section {
+    margin: 20px 0;
+}
+
+.featured-carousel {
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-container {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 5px 20px 5px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.carousel-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Featured Card */
+.featured-card {
+    flex: 0 0 auto;
+    width: 280px;
+    background: linear-gradient(145deg, var(--surface), var(--background));
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.featured-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+    border-color: var(--primary);
+}
+
+.featured-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #f59e0b, #eab308);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.featured-badge i {
+    font-size: 8px;
+}
+
+.featured-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-bottom: 1px solid var(--border);
+}
+
+.featured-content {
+    padding: 16px;
+}
+
+.featured-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.featured-app-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid var(--primary-light);
+}
+
+.featured-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.featured-name {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.featured-category {
+    font-size: 11px;
+    color: var(--primary);
+    font-weight: 600;
+    background: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.featured-description {
+    color: var(--text-secondary);
+    font-size: 12px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.featured-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.featured-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.featured-date i {
+    font-size: 10px;
+}
+
+.featured-action {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.featured-action:hover {
+    background: linear-gradient(135deg, var(--primary-dark), #1e40af);
+    transform: translateY(-1px);
+}
+
+/* Carousel Navigation */
+.carousel-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+    background: var(--primary);
+    transform: scale(1.2);
+}
+
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--background);
+    border: 1px solid var(--border);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    color: var(--primary);
+    font-size: 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0.8;
+}
+
+.nav-arrow:hover {
+    background: var(--primary);
+    color: white;
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2);
+}
+
+.nav-arrow.prev {
+    left: 10px;
+    display: none;
+}
+
+.nav-arrow.next {
+    right: 10px;
+}
+
+/* Loading Animation for Featured */
+.featured-loading {
+    display: flex;
+    gap: 16px;
+    overflow: hidden;
+    width: 100%;
+}
+
+.featured-skeleton {
+    flex: 0 0 auto;
+    width: 280px;
+    background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 18px;
+    height: 300px;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.carousel-container:hover + .scroll-indicator,
+.scroll-indicator:hover {
+    opacity: 1;
+}
+
 /* Categories */
 .categories-section {
     margin-bottom: 16px;
@@ -816,8 +1083,24 @@ body {
     color: #1e293b;
 }
 
-/* Responsive */
+/* Responsive for Featured Carousel */
 @media (max-width: 768px) {
+    .featured-card {
+        width: 260px;
+    }
+    
+    .nav-arrow {
+        display: none;
+    }
+    
+    .scroll-indicator {
+        opacity: 1;
+    }
+    
+    .featured-image {
+        height: 140px;
+    }
+    
     .apps-grid {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
@@ -854,6 +1137,14 @@ body {
 }
 
 @media (max-width: 480px) {
+    .featured-card {
+        width: 240px;
+    }
+    
+    .featured-image {
+        height: 120px;
+    }
+    
     .container {
         padding: 0 10px;
     }
@@ -910,4 +1201,4 @@ body {
     .nav-label {
         font-size: 8px;
     }
-} 
+}
