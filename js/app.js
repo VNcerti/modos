@@ -5,6 +5,7 @@ class AppManager {
         this.currentView = 'home';
         this.allApps = [];
         this.searchTerm = '';
+        this.featuredApps = [];
         
         this.initializeElements();
         this.bindEvents();
@@ -24,6 +25,8 @@ class AppManager {
         this.closeSearch = document.getElementById('closeSearch');
         this.searchResults = document.getElementById('searchResults');
         this.searchNavItem = document.getElementById('searchNavItem');
+        this.featuredCarousel = document.getElementById('featuredCarousel');
+        this.featuredLoading = document.getElementById('featuredLoading');
     }
 
     bindEvents() {
@@ -81,6 +84,34 @@ class AppManager {
         this.closeSearch.addEventListener('click', () => {
             this.closeSearchModal();
         });
+
+        // Featured carousel events
+        this.bindFeaturedCarouselEvents();
+    }
+
+    bindFeaturedCarouselEvents() {
+        const prevArrow = document.querySelector('.nav-arrow.prev');
+        const nextArrow = document.querySelector('.nav-arrow.next');
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        if (prevArrow) {
+            prevArrow.addEventListener('click', () => {
+                this.scrollFeaturedCarousel(-280);
+            });
+        }
+
+        if (nextArrow) {
+            nextArrow.addEventListener('click', () => {
+                this.scrollFeaturedCarousel(280);
+            });
+        }
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.index);
+                this.scrollFeaturedCarouselToIndex(index);
+            });
+        });
     }
 
     init() {
@@ -97,6 +128,7 @@ class AppManager {
                     console.log('✅ Đang tải từ cache...');
                     this.allApps = cachedApps;
                     this.renderApps();
+                    this.loadFeaturedApps();
                     this.fetchFreshData();
                     return;
                 }
@@ -110,6 +142,7 @@ class AppManager {
             if (cachedApps && cachedApps.length > 0) {
                 this.allApps = cachedApps;
                 this.renderApps();
+                this.loadFeaturedApps();
             } else {
                 this.appsGrid.innerHTML = '<div class="loading"><p>Lỗi khi tải ứng dụng. Vui lòng thử lại sau.</p></div>';
             }
@@ -123,14 +156,11 @@ class AppManager {
             const result = await response.json();
             
             if (result.success) {
-                // Xử lý dữ liệu để đảm bảo cấu trúc đúng
                 this.allApps = result.data.map(app => {
-                    // Đảm bảo app có categories và đồng bộ với tên mới
                     if (!app.categories) {
-                        app.categories = 'other'; // Mặc định nếu không có categories
+                        app.categories = 'other';
                     }
                     
-                    // Đồng bộ tên category nếu cần
                     if (app.categories.includes('photo')) {
                         app.categories = app.categories.replace('photo', 'photo');
                     }
@@ -140,7 +170,9 @@ class AppManager {
                 
                 AppUtils.saveToCache(this.allApps);
                 this.renderApps();
+                this.loadFeaturedApps();
                 console.log('✅ Dữ liệu mới đã được tải và cache');
+                console.log('📊 Cấu trúc dữ liệu app đầu tiên:', this.allApps[0]);
             } else {
                 throw new Error('Không thể tải dữ liệu');
             }
@@ -290,8 +322,6 @@ class AppManager {
         
         const tagsHTML = AppUtils.createTagsHTML(app.categories);
         const formattedDate = AppUtils.formatDate(app.updatedate);
-        
-        // THAY ĐỔI QUAN TRỌNG: Sử dụng createShortDescriptionHTML thay vì createDescriptionHTML
         const descriptionHTML = AppUtils.createShortDescriptionHTML(app.description);
         
         appCard.innerHTML = `
@@ -322,6 +352,187 @@ class AppManager {
         `;
         
         return appCard;
+    }
+
+    // ===== FEATURED APPS LOGIC =====
+
+    loadFeaturedApps() {
+        if (this.allApps.length === 0) return;
+        
+        // Get 20 newest apps (sort by id descending)
+        const newestApps = [...this.allApps]
+            .sort((a, b) => {
+                const idA = parseInt(a.id) || 0;
+                const idB = parseInt(b.id) || 0;
+                return idB - idA;
+            })
+            .slice(0, 20);
+        
+        // Get 5 random apps from the 20 newest
+        this.featuredApps = this.getRandomApps(newestApps, 5);
+        
+        this.displayFeaturedApps();
+        this.initFeaturedCarousel();
+    }
+
+    getRandomApps(apps, count) {
+        const shuffled = [...apps].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    }
+
+    createFeaturedCard(app) {
+        const card = document.createElement('div');
+        card.className = 'featured-card';
+        
+        // Get first line of description
+        const firstLineDescription = app.description ? 
+            app.description.split('\n')[0] || app.description : 
+            'Mô tả ứng dụng...';
+        
+        // Format date
+        const formattedDate = AppUtils.formatDate(app.updatedate);
+        
+        // Get category label
+        const categories = typeof app.categories === 'string' ? 
+            app.categories.split(',') : 
+            (app.categories || []);
+        const mainCategory = categories[0] || 'other';
+        
+        card.innerHTML = `
+            <div class="featured-badge">
+                <i class="fas fa-star"></i>
+                NỔI BẬT
+            </div>
+            <img src="${app.image || 'https://via.placeholder.com/280x160/2563eb/FFFFFF?text=App'}" 
+                 alt="${app.name}" 
+                 class="featured-image"
+                 onerror="this.src='https://via.placeholder.com/280x160/2563eb/FFFFFF?text=App'">
+            <div class="featured-content">
+                <div class="featured-header">
+                    <img src="${app.image || 'https://via.placeholder.com/50/2563eb/FFFFFF?text=App'}" 
+                         alt="${app.name}" 
+                         class="featured-app-icon"
+                         onerror="this.src='https://via.placeholder.com/50/2563eb/FFFFFF?text=App'">
+                    <div class="featured-info">
+                        <div class="featured-name">${app.name}</div>
+                        <div class="featured-category">${CONFIG.CATEGORY_LABELS[mainCategory] || mainCategory}</div>
+                    </div>
+                </div>
+                <div class="featured-description">
+                    ${firstLineDescription}
+                </div>
+                <div class="featured-meta">
+                    <div class="featured-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        ${formattedDate}
+                    </div>
+                    <button class="featured-action" onclick="window.open('app-detail.html?id=${app.id}', '_self')">
+                        <i class="fas fa-eye"></i>
+                        Xem chi tiết
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Add click event for the whole card
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('.featured-action')) {
+                window.open(`app-detail.html?id=${app.id}`, '_self');
+            }
+        });
+        
+        return card;
+    }
+
+    displayFeaturedApps() {
+        if (this.featuredApps.length === 0) return;
+        
+        this.featuredLoading.style.display = 'none';
+        
+        this.featuredApps.forEach(app => {
+            const card = this.createFeaturedCard(app);
+            this.featuredCarousel.appendChild(card);
+        });
+    }
+
+    initFeaturedCarousel() {
+        const container = this.featuredCarousel;
+        const dots = document.querySelectorAll('.carousel-dot');
+        const prevArrow = document.querySelector('.nav-arrow.prev');
+        const nextArrow = document.querySelector('.nav-arrow.next');
+        
+        if (!container || this.featuredApps.length === 0) return;
+        
+        // Update arrows visibility
+        const updateArrows = () => {
+            const scrollLeft = container.scrollLeft;
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            
+            if (prevArrow) {
+                prevArrow.style.display = scrollLeft > 0 ? 'flex' : 'none';
+            }
+            if (nextArrow) {
+                nextArrow.style.display = scrollLeft < maxScroll - 10 ? 'flex' : 'none';
+            }
+        };
+        
+        // Update dots based on scroll position
+        const updateDots = () => {
+            const scrollLeft = container.scrollLeft;
+            const cardWidth = 280 + 16; // card width + gap
+            const currentIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
+            
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        };
+        
+        // Scroll to specific index
+        const scrollToIndex = (index) => {
+            const cardWidth = 280 + 16;
+            container.scrollTo({
+                left: index * cardWidth,
+                behavior: 'smooth'
+            });
+        };
+        
+        // Add event listeners
+        container.addEventListener('scroll', () => {
+            updateArrows();
+            updateDots();
+        });
+        
+        // Dot click events
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.index);
+                scrollToIndex(index);
+            });
+        });
+        
+        // Initial update
+        updateArrows();
+    }
+
+    scrollFeaturedCarousel(amount) {
+        const container = this.featuredCarousel;
+        if (container) {
+            container.scrollBy({
+                left: amount,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    scrollFeaturedCarouselToIndex(index) {
+        const container = this.featuredCarousel;
+        if (container) {
+            const cardWidth = 280 + 16;
+            container.scrollTo({
+                left: index * cardWidth,
+                behavior: 'smooth'
+            });
+        }
     }
 }
 
