@@ -96,13 +96,13 @@ class AppManager {
 
         if (prevArrow) {
             prevArrow.addEventListener('click', () => {
-                this.scrollFeaturedCarousel(-220);
+                this.scrollFeaturedCarousel(-332); // 320px + gap 12px
             });
         }
 
         if (nextArrow) {
             nextArrow.addEventListener('click', () => {
-                this.scrollFeaturedCarousel(220);
+                this.scrollFeaturedCarousel(332);
             });
         }
 
@@ -380,65 +380,73 @@ class AppManager {
         return shuffled.slice(0, count);
     }
 
-    createFeaturedCard(app) {
+    getBadgeType(index) {
+        const badgeTypes = ['premium', 'hot', 'new', 'trending', 'vip'];
+        const badgeLabels = ['PREMIUM', 'HOT', 'NEW', 'TRENDING', 'VIP'];
+        return {
+            type: badgeTypes[index % badgeTypes.length],
+            label: badgeLabels[index % badgeLabels.length]
+        };
+    }
+
+    getRandomRating() {
+        // Random rating từ 4.0 đến 5.0
+        const ratings = [4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8, 4.9, 5.0];
+        return ratings[Math.floor(Math.random() * ratings.length)];
+    }
+
+    createFeaturedCard(app, index) {
         const card = document.createElement('div');
         card.className = 'featured-card';
+        
+        // Get badge type based on index
+        const badge = this.getBadgeType(index);
         
         // Get first line of description
         const firstLineDescription = app.description ? 
             app.description.split('\n')[0] || app.description : 
             'Mô tả ứng dụng...';
         
-        // Format date
-        const formattedDate = AppUtils.formatDate(app.updatedate);
-        
-        // Get category label
-        const categories = typeof app.categories === 'string' ? 
-            app.categories.split(',') : 
-            (app.categories || []);
-        const mainCategory = categories[0] || 'other';
+        // Get random rating
+        const rating = this.getRandomRating();
         
         card.innerHTML = `
-            <div class="featured-badge">
-                <i class="fas fa-star"></i>
-                NỔI BẬT
+            <!-- Background Image -->
+            <img src="https://i.imgur.com/PwYQMpr.gif" alt="Background" class="featured-background">
+            
+            <!-- Gradient Overlay -->
+            <div class="featured-overlay"></div>
+            
+            <!-- Badge -->
+            <div class="featured-badge badge-${badge.type}">
+                ${badge.label}
             </div>
-            <img src="${app.image || 'https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'}" 
-                 alt="${app.name}" 
-                 class="featured-image"
-                 onerror="this.src='https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'">
+            
+            <!-- Content -->
             <div class="featured-content">
-                <div class="featured-header">
-                    <img src="${app.image || 'https://via.placeholder.com/50/2563eb/FFFFFF?text=App'}" 
+                <!-- Logo -->
+                <div class="featured-logo-container">
+                    <img src="${app.image || 'https://via.placeholder.com/46/2563eb/FFFFFF?text=App'}" 
                          alt="${app.name}" 
-                         class="featured-app-icon"
-                         onerror="this.src='https://via.placeholder.com/50/2563eb/FFFFFF?text=App'">
-                    <div class="featured-info">
-                        <div class="featured-name">${app.name}</div>
-                        <div class="featured-category">${CONFIG.CATEGORY_LABELS[mainCategory] || mainCategory}</div>
-                    </div>
+                         class="featured-logo"
+                         onerror="this.src='https://via.placeholder.com/46/2563eb/FFFFFF?text=App'">
                 </div>
-                <div class="featured-description">
-                    ${firstLineDescription}
-                </div>
-                <div class="featured-meta">
-                    <div class="featured-date">
-                        <i class="fas fa-calendar-alt"></i>
-                        ${formattedDate}
+                
+                <!-- Text Content -->
+                <div class="featured-text-content">
+                    <div class="featured-name">${app.name}</div>
+                    <div class="featured-description">${firstLineDescription}</div>
+                    <div class="featured-rating">
+                        <i class="fas fa-star"></i>
+                        <span>${rating}</span>
                     </div>
-                    <button class="featured-action" onclick="window.open('app-detail.html?id=${app.id}', '_self')">
-                        <i class="fas fa-eye"></i>
-                        Chi tiết
-                    </button>
                 </div>
             </div>
         `;
         
         // Add click event for the whole card
         card.addEventListener('click', (e) => {
-            if (!e.target.closest('.featured-action')) {
-                window.open(`app-detail.html?id=${app.id}`, '_self');
-            }
+            window.open(`app-detail.html?id=${app.id}`, '_self');
         });
         
         return card;
@@ -449,8 +457,8 @@ class AppManager {
         
         this.featuredLoading.style.display = 'none';
         
-        this.featuredApps.forEach(app => {
-            const card = this.createFeaturedCard(app);
+        this.featuredApps.forEach((app, index) => {
+            const card = this.createFeaturedCard(app, index);
             this.featuredCarousel.appendChild(card);
         });
     }
@@ -479,7 +487,7 @@ class AppManager {
         // Update dots based on scroll position
         const updateDots = () => {
             const scrollLeft = container.scrollLeft;
-            const cardWidth = 220 + 12; // card width + gap
+            const cardWidth = 320 + 12; // card width + gap
             const currentIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
             
             dots.forEach((dot, index) => {
@@ -489,7 +497,7 @@ class AppManager {
         
         // Scroll to specific index
         const scrollToIndex = (index) => {
-            const cardWidth = 220 + 12;
+            const cardWidth = 320 + 12;
             container.scrollTo({
                 left: index * cardWidth,
                 behavior: 'smooth'
@@ -530,7 +538,7 @@ class AppManager {
     scrollFeaturedCarouselToIndex(index) {
         const container = this.featuredCarousel;
         if (container) {
-            const cardWidth = 220 + 12;
+            const cardWidth = 320 + 12;
             container.scrollTo({
                 left: index * cardWidth,
                 behavior: 'smooth'
