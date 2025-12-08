@@ -141,7 +141,6 @@ class AppManager {
                 AppUtils.saveToCache(this.allApps);
                 this.renderApps();
                 console.log('✅ Dữ liệu mới đã được tải và cache');
-                console.log('📊 Cấu trúc dữ liệu app đầu tiên:', this.allApps[0]);
             } else {
                 throw new Error('Không thể tải dữ liệu');
             }
