@@ -231,7 +231,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== FEATURED APPS CAROUSEL ===== */
+/* ===== FEATURED APPS CAROUSEL MỚI ===== */
 
 .featured-section {
     margin: 16px 0;
@@ -240,6 +240,7 @@ body {
 .featured-carousel {
     position: relative;
     overflow: hidden;
+    border-radius: 16px;
 }
 
 .carousel-container {
@@ -257,152 +258,166 @@ body {
     display: none;
 }
 
-/* Featured Card */
+/* NEW FEATURED CARD DESIGN - AppStore Style */
 .featured-card {
     flex: 0 0 auto;
-    width: 220px;
-    background: var(--surface);
+    width: 320px;
+    height: 180px;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: var(--card-shadow);
-    border: 1px solid var(--border);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
     position: relative;
+    cursor: pointer;
+    box-shadow: var(--card-shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
 }
 
 .featured-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-4px) scale(1.02);
     box-shadow: var(--card-shadow-hover);
     border-color: var(--primary);
 }
 
-.featured-badge {
+/* Background Layer */
+.featured-background {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background: linear-gradient(135deg, #f59e0b, #eab308);
-    color: white;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.featured-badge i {
-    font-size: 8px;
-}
-
-.featured-image {
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 140px;
+    height: 100%;
     object-fit: cover;
-    border-bottom: 1px solid var(--border);
-    background: var(--primary-light);
+    z-index: 1;
+    transition: transform 0.5s ease;
 }
 
+.featured-card:hover .featured-background {
+    transform: scale(1.05);
+}
+
+/* Gradient Overlay */
+.featured-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 2;
+}
+
+/* Content Layer */
 .featured-content {
-    padding: 14px;
-}
-
-.featured-header {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 20px;
+    z-index: 3;
     display: flex;
     align-items: flex-start;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 14px;
 }
 
-.featured-app-icon {
-    width: 50px;
-    height: 50px;
+/* App Logo Square */
+.featured-logo-container {
+    width: 54px;
+    height: 54px;
+    background: rgba(0, 0, 0, 0.8);
     border-radius: 12px;
-    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    border: 1px solid var(--border);
-    background: var(--background);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+    margin-bottom: 4px;
 }
 
-.featured-info {
+.featured-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* Text Content */
+.featured-text-content {
     flex: 1;
+    color: white;
     min-width: 0;
+    margin-top: -8px; /* Đưa nội dung xuống thấp hơn */
 }
 
 .featured-name {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    line-height: 1.2;
     margin-bottom: 4px;
-    color: var(--text-primary);
+    line-height: 1.2;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.featured-category {
-    font-size: 11px;
-    color: var(--primary);
-    font-weight: 600;
-    background: var(--primary-light);
-    padding: 2px 8px;
-    border-radius: 6px;
-    display: inline-block;
-}
-
 .featured-description {
-    color: var(--text-secondary);
     font-size: 12px;
-    line-height: 1.4;
-    margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    opacity: 0.85;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    white-space: nowrap;
     overflow: hidden;
-    min-height: 34px;
+    text-overflow: ellipsis;
 }
 
-.featured-meta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-}
-
-.featured-date {
-    font-size: 11px;
-    color: var(--text-muted);
+/* Rating Only */
+.featured-rating {
     display: flex;
     align-items: center;
     gap: 4px;
-}
-
-.featured-date i {
-    font-size: 10px;
-}
-
-.featured-action {
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-weight: 600;
     font-size: 11px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    opacity: 0.9;
+    margin-top: 4px;
 }
 
-.featured-action:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
+.featured-rating i {
+    font-size: 10px;
+    color: #FFD700;
+}
+
+/* Badge */
+.featured-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    z-index: 4;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+}
+
+.badge-premium {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.badge-hot {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.badge-new {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.badge-trending {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.badge-vip {
+    background: linear-gradient(135deg, #ec4899, #db2777);
 }
 
 /* Carousel Navigation */
@@ -475,12 +490,12 @@ body {
 
 .featured-skeleton {
     flex: 0 0 auto;
-    width: 220px;
+    width: 320px;
+    height: 180px;
     background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%);
     background-size: 200% 100%;
     animation: loading 1.5s infinite;
     border-radius: 16px;
-    height: 270px;
 }
 
 /* Scroll Indicator */
@@ -1044,11 +1059,26 @@ body {
 /* Responsive for Featured Carousel */
 @media (max-width: 768px) {
     .featured-card {
-        width: 200px;
+        width: 280px;
+        height: 160px;
     }
     
-    .featured-image {
-        height: 120px;
+    .featured-content {
+        padding: 14px 18px;
+    }
+    
+    .featured-logo-container {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .featured-logo {
+        width: 42px;
+        height: 42px;
+    }
+    
+    .featured-name {
+        font-size: 15px;
     }
     
     .nav-arrow {
@@ -1091,15 +1121,22 @@ body {
 
 @media (max-width: 480px) {
     .featured-card {
-        width: 180px;
-    }
-    
-    .featured-image {
-        height: 100px;
+        width: 260px;
+        height: 150px;
     }
     
     .featured-content {
-        padding: 12px;
+        padding: 12px 16px;
+    }
+    
+    .featured-logo-container {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .featured-logo {
+        width: 38px;
+        height: 38px;
     }
     
     .featured-name {
@@ -1108,6 +1145,10 @@ body {
     
     .featured-description {
         font-size: 11px;
+    }
+    
+    .featured-rating {
+        font-size: 10px;
     }
     
     .container {
@@ -1165,5 +1206,5 @@ body {
 
     .nav-label {
         font-size: 8px;
-     }
-} 
+    }
+}
