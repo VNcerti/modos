@@ -428,7 +428,7 @@ class AppManager {
                     </div>
                     <button class="featured-action" onclick="window.open('app-detail.html?id=${app.id}', '_self')">
                         <i class="fas fa-eye"></i>
-                        Xem chi tiết
+                        Chi tiết
                     </button>
                 </div>
             </div>
