@@ -1,4 +1,4 @@
-/ Main application logic
+// Main application logic
 class AppManager {
     constructor() {
         this.currentCategory = 'all';
@@ -428,7 +428,7 @@ class AppManager {
                     </div>
                     <button class="featured-action" onclick="window.open('app-detail.html?id=${app.id}', '_self')">
                         <i class="fas fa-eye"></i>
-                        Chi tiết
+                        Xem chi tiết
                     </button>
                 </div>
             </div>
