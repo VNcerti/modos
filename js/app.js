@@ -8,7 +8,9 @@ class AppManager {
         this.featuredApps = [];
         this.currentSlideIndex = 0;
         this.autoSlideInterval = null;
-        this.slideDirection = 'right';
+        this.isScrolling = false;
+        this.scrollTimeout = null;
+        this.touchStartX = 0;
         
         this.initializeElements();
         this.bindEvents();
@@ -31,6 +33,9 @@ class AppManager {
         this.featuredCarousel = document.getElementById('featuredCarousel');
         this.featuredLoading = document.getElementById('featuredLoading');
         this.carouselContainer = document.querySelector('.carousel-container');
+        this.carouselDots = document.querySelectorAll('.carousel-dot');
+        this.prevArrow = document.querySelector('.nav-arrow.prev');
+        this.nextArrow = document.querySelector('.nav-arrow.next');
     }
 
     bindEvents() {
@@ -94,88 +99,95 @@ class AppManager {
     }
 
     bindFeaturedCarouselEvents() {
-        const prevArrow = document.querySelector('.nav-arrow.prev');
-        const nextArrow = document.querySelector('.nav-arrow.next');
-        const dots = document.querySelectorAll('.carousel-dot');
-
-        if (prevArrow) {
-            prevArrow.addEventListener('click', () => {
-                this.slideDirection = 'left';
-                this.scrollFeaturedCarousel(-172); // 160px + gap 12px
-                this.updateSlideAnimation('left');
+        if (this.prevArrow) {
+            this.prevArrow.addEventListener('click', () => {
+                this.slideToPrevious();
             });
         }
 
-        if (nextArrow) {
-            nextArrow.addEventListener('click', () => {
-                this.slideDirection = 'right';
-                this.scrollFeaturedCarousel(172);
-                this.updateSlideAnimation('right');
+        if (this.nextArrow) {
+            this.nextArrow.addEventListener('click', () => {
+                this.slideToNext();
             });
         }
 
-        dots.forEach(dot => {
+        this.carouselDots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const index = parseInt(dot.dataset.index);
-                this.slideDirection = index > this.currentSlideIndex ? 'right' : 'left';
-                this.scrollFeaturedCarouselToIndex(index);
-                this.updateSlideAnimation(this.slideDirection);
+                this.slideToIndex(index);
             });
         });
 
         // Touch/swipe events for mobile
         this.setupTouchEvents();
+        
+        // Mouse drag events
+        this.setupDragEvents();
     }
 
     setupTouchEvents() {
         if (!this.carouselContainer) return;
         
-        let startX = 0;
-        let startY = 0;
-        let isScrolling = false;
-
         this.carouselContainer.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isScrolling = true;
-        });
-
-        this.carouselContainer.addEventListener('touchmove', (e) => {
-            if (!isScrolling) return;
+            if (this.isScrolling) return;
             
-            const currentX = e.touches[0].clientX;
-            const currentY = e.touches[0].clientY;
-            
-            const diffX = startX - currentX;
-            const diffY = startY - currentY;
-            
-            // Only trigger horizontal swipe
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                e.preventDefault();
-            }
-        });
+            this.touchStartX = e.touches[0].clientX;
+            this.stopAutoSlide();
+        }, { passive: true });
 
         this.carouselContainer.addEventListener('touchend', (e) => {
-            if (!isScrolling) return;
+            if (!this.touchStartX) return;
             
-            const endX = e.changedTouches[0].clientX;
-            const diffX = startX - endX;
+            const touchEndX = e.changedTouches[0].clientX;
+            const diffX = this.touchStartX - touchEndX;
             
-            // Minimum swipe distance
-            if (Math.abs(diffX) > 50) {
+            // Swipe threshold
+            if (Math.abs(diffX) > 40) {
                 if (diffX > 0) {
-                    // Swipe left
-                    this.slideDirection = 'right';
-                    this.scrollFeaturedCarousel(172);
+                    this.slideToNext();
                 } else {
-                    // Swipe right
-                    this.slideDirection = 'left';
-                    this.scrollFeaturedCarousel(-172);
+                    this.slideToPrevious();
                 }
-                this.updateSlideAnimation(this.slideDirection);
             }
             
-            isScrolling = false;
+            this.touchStartX = 0;
+            this.startAutoSlide();
+        }, { passive: true });
+    }
+
+    setupDragEvents() {
+        if (!this.carouselContainer) return;
+        
+        let isDragging = false;
+        let startX = 0;
+        let scrollLeft = 0;
+
+        this.carouselContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            this.carouselContainer.style.cursor = 'grabbing';
+            startX = e.pageX - this.carouselContainer.offsetLeft;
+            scrollLeft = this.carouselContainer.scrollLeft;
+            this.stopAutoSlide();
+        });
+
+        this.carouselContainer.addEventListener('mouseleave', () => {
+            isDragging = false;
+            this.carouselContainer.style.cursor = 'grab';
+        });
+
+        this.carouselContainer.addEventListener('mouseup', () => {
+            isDragging = false;
+            this.carouselContainer.style.cursor = 'grab';
+            this.startAutoSlide();
+        });
+
+        this.carouselContainer.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            
+            const x = e.pageX - this.carouselContainer.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            this.carouselContainer.scrollLeft = scrollLeft - walk;
         });
     }
 
@@ -237,7 +249,6 @@ class AppManager {
                 this.renderApps();
                 this.loadFeaturedApps();
                 console.log('✅ Dữ liệu mới đã được tải và cache');
-                console.log('📊 Cấu trúc dữ liệu app đầu tiên:', this.allApps[0]);
             } else {
                 throw new Error('Không thể tải dữ liệu');
             }
@@ -533,132 +544,121 @@ class AppManager {
     }
 
     initFeaturedCarousel() {
-        const container = this.featuredCarousel;
-        const dots = document.querySelectorAll('.carousel-dot');
-        const prevArrow = document.querySelector('.nav-arrow.prev');
-        const nextArrow = document.querySelector('.nav-arrow.next');
-        
-        if (!container || this.featuredApps.length === 0) return;
+        if (!this.carouselContainer || this.featuredApps.length === 0) return;
         
         // Update arrows visibility
         const updateArrows = () => {
-            const scrollLeft = container.scrollLeft;
-            const maxScroll = container.scrollWidth - container.clientWidth;
+            if (!this.prevArrow || !this.nextArrow) return;
             
-            if (prevArrow) {
-                prevArrow.style.display = scrollLeft > 0 ? 'flex' : 'none';
-            }
-            if (nextArrow) {
-                nextArrow.style.display = scrollLeft < maxScroll - 10 ? 'flex' : 'none';
-            }
+            const scrollLeft = this.carouselContainer.scrollLeft;
+            const maxScroll = this.carouselContainer.scrollWidth - this.carouselContainer.clientWidth;
+            
+            this.prevArrow.style.display = scrollLeft > 0 ? 'flex' : 'none';
+            this.nextArrow.style.display = scrollLeft < maxScroll - 10 ? 'flex' : 'none';
         };
         
         // Update dots based on scroll position
         const updateDots = () => {
-            const scrollLeft = container.scrollLeft;
-            const cardWidth = 160 + 12; // card width + gap
-            this.currentSlideIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
+            if (this.isScrolling) return;
             
-            dots.forEach((dot, index) => {
+            const scrollLeft = this.carouselContainer.scrollLeft;
+            const cardWidth = 160 + 12; // card width + gap
+            this.currentSlideIndex = Math.min(Math.round(scrollLeft / cardWidth), 4);
+            
+            this.carouselDots.forEach((dot, index) => {
                 dot.classList.toggle('active', index === this.currentSlideIndex);
             });
         };
         
-        // Scroll to specific index
-        const scrollToIndex = (index) => {
-            const cardWidth = 160 + 12;
-            container.scrollTo({
-                left: index * cardWidth,
-                behavior: 'smooth'
-            });
-            this.currentSlideIndex = index;
-        };
-        
-        // Add event listeners
-        container.addEventListener('scroll', () => {
+        // Debounced scroll event for smooth updates
+        this.carouselContainer.addEventListener('scroll', () => {
             updateArrows();
-            updateDots();
-        });
-        
-        // Dot click events
-        dots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const index = parseInt(dot.dataset.index);
-                this.slideDirection = index > this.currentSlideIndex ? 'right' : 'left';
-                scrollToIndex(index);
-                this.updateSlideAnimation(this.slideDirection);
-            });
+            
+            // Debounce dot updates during smooth scroll
+            clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = setTimeout(() => {
+                updateDots();
+                this.isScrolling = false;
+            }, 100);
         });
         
         // Initial update
         updateArrows();
         updateDots();
+        
+        // Set initial cursor
+        this.carouselContainer.style.cursor = 'grab';
     }
 
-    updateSlideAnimation(direction) {
-        const cards = document.querySelectorAll('.featured-card');
-        cards.forEach(card => {
-            card.classList.remove('slide-right', 'slide-left');
-            void card.offsetWidth; // Trigger reflow
+    // ===== SMOOTH SLIDE METHODS =====
+
+    slideToIndex(index) {
+        if (this.isScrolling || index < 0 || index > 4) return;
+        
+        this.isScrolling = true;
+        this.stopAutoSlide();
+        
+        const cardWidth = 160 + 12;
+        const targetScroll = index * cardWidth;
+        
+        // Smooth scroll với requestAnimationFrame cho mượt nhất
+        const startScroll = this.carouselContainer.scrollLeft;
+        const distance = targetScroll - startScroll;
+        const duration = 400; // ms
+        let startTime = null;
+        
+        const animateScroll = (currentTime) => {
+            if (!startTime) startTime = currentTime;
+            const timeElapsed = currentTime - startTime;
+            const progress = Math.min(timeElapsed / duration, 1);
             
-            if (direction === 'right') {
-                card.classList.add('slide-right');
+            // Easing function for smooth acceleration/deceleration
+            const ease = progress < 0.5 
+                ? 2 * progress * progress 
+                : -1 + (4 - 2 * progress) * progress;
+            
+            this.carouselContainer.scrollLeft = startScroll + (distance * ease);
+            
+            if (timeElapsed < duration) {
+                requestAnimationFrame(animateScroll);
             } else {
-                card.classList.add('slide-left');
+                this.isScrolling = false;
+                this.currentSlideIndex = index;
+                
+                // Update dots
+                this.carouselDots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                
+                this.startAutoSlide();
             }
-        });
+        };
+        
+        requestAnimationFrame(animateScroll);
     }
 
-    scrollFeaturedCarousel(amount) {
-        const container = this.featuredCarousel;
-        if (container) {
-            container.scrollBy({
-                left: amount,
-                behavior: 'smooth'
-            });
-            
-            // Update slide index after animation
-            setTimeout(() => {
-                const cardWidth = 160 + 12;
-                const scrollLeft = container.scrollLeft;
-                this.currentSlideIndex = Math.min(Math.round(scrollLeft / cardWidth), 4);
-                this.updateSlideAnimation(this.slideDirection);
-            }, 300);
-        }
+    slideToNext() {
+        const nextIndex = (this.currentSlideIndex + 1) % 5;
+        this.slideToIndex(nextIndex);
     }
 
-    scrollFeaturedCarouselToIndex(index) {
-        const container = this.featuredCarousel;
-        if (container) {
-            const cardWidth = 160 + 12;
-            container.scrollTo({
-                left: index * cardWidth,
-                behavior: 'smooth'
-            });
-            this.currentSlideIndex = index;
-        }
+    slideToPrevious() {
+        const prevIndex = this.currentSlideIndex === 0 ? 4 : this.currentSlideIndex - 1;
+        this.slideToIndex(prevIndex);
     }
 
     startAutoSlide() {
         // Clear any existing interval
-        if (this.autoSlideInterval) {
-            clearInterval(this.autoSlideInterval);
-        }
+        this.stopAutoSlide();
+        
+        // Don't auto slide if user is interacting
+        if (this.isScrolling) return;
         
         // Auto slide every 5 seconds
         this.autoSlideInterval = setInterval(() => {
-            this.slideDirection = 'right';
-            
-            if (this.currentSlideIndex >= 4) {
-                // Go back to first slide
-                this.slideDirection = 'left';
-                this.scrollFeaturedCarouselToIndex(0);
-            } else {
-                // Go to next slide
-                this.scrollFeaturedCarousel(172);
+            if (!this.isScrolling && document.visibilityState === 'visible') {
+                this.slideToNext();
             }
-            
-            this.updateSlideAnimation(this.slideDirection);
         }, 5000);
     }
 
