@@ -6,6 +6,9 @@ class AppManager {
         this.allApps = [];
         this.searchTerm = '';
         this.featuredApps = [];
+        this.currentSlideIndex = 0;
+        this.autoSlideInterval = null;
+        this.slideDirection = 'right';
         
         this.initializeElements();
         this.bindEvents();
@@ -27,6 +30,7 @@ class AppManager {
         this.searchNavItem = document.getElementById('searchNavItem');
         this.featuredCarousel = document.getElementById('featuredCarousel');
         this.featuredLoading = document.getElementById('featuredLoading');
+        this.carouselContainer = document.querySelector('.carousel-container');
     }
 
     bindEvents() {
@@ -96,21 +100,82 @@ class AppManager {
 
         if (prevArrow) {
             prevArrow.addEventListener('click', () => {
-                this.scrollFeaturedCarousel(-220);
+                this.slideDirection = 'left';
+                this.scrollFeaturedCarousel(-172); // 160px + gap 12px
+                this.updateSlideAnimation('left');
             });
         }
 
         if (nextArrow) {
             nextArrow.addEventListener('click', () => {
-                this.scrollFeaturedCarousel(220);
+                this.slideDirection = 'right';
+                this.scrollFeaturedCarousel(172);
+                this.updateSlideAnimation('right');
             });
         }
 
         dots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const index = parseInt(dot.dataset.index);
+                this.slideDirection = index > this.currentSlideIndex ? 'right' : 'left';
                 this.scrollFeaturedCarouselToIndex(index);
+                this.updateSlideAnimation(this.slideDirection);
             });
+        });
+
+        // Touch/swipe events for mobile
+        this.setupTouchEvents();
+    }
+
+    setupTouchEvents() {
+        if (!this.carouselContainer) return;
+        
+        let startX = 0;
+        let startY = 0;
+        let isScrolling = false;
+
+        this.carouselContainer.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isScrolling = true;
+        });
+
+        this.carouselContainer.addEventListener('touchmove', (e) => {
+            if (!isScrolling) return;
+            
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            
+            const diffX = startX - currentX;
+            const diffY = startY - currentY;
+            
+            // Only trigger horizontal swipe
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                e.preventDefault();
+            }
+        });
+
+        this.carouselContainer.addEventListener('touchend', (e) => {
+            if (!isScrolling) return;
+            
+            const endX = e.changedTouches[0].clientX;
+            const diffX = startX - endX;
+            
+            // Minimum swipe distance
+            if (Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // Swipe left
+                    this.slideDirection = 'right';
+                    this.scrollFeaturedCarousel(172);
+                } else {
+                    // Swipe right
+                    this.slideDirection = 'left';
+                    this.scrollFeaturedCarousel(-172);
+                }
+                this.updateSlideAnimation(this.slideDirection);
+            }
+            
+            isScrolling = false;
         });
     }
 
@@ -373,6 +438,7 @@ class AppManager {
         
         this.displayFeaturedApps();
         this.initFeaturedCarousel();
+        this.startAutoSlide();
     }
 
     getRandomApps(apps, count) {
@@ -380,9 +446,21 @@ class AppManager {
         return shuffled.slice(0, count);
     }
 
-    createFeaturedCard(app) {
+    getBadgeType(index) {
+        const badgeTypes = ['premium', 'hot', 'new', 'trending', 'vip'];
+        const badgeLabels = ['PREMIUM', 'HOT', 'NEW', 'TRENDING', 'VIP'];
+        return {
+            type: badgeTypes[index % badgeTypes.length],
+            label: badgeLabels[index % badgeLabels.length]
+        };
+    }
+
+    createFeaturedCard(app, index) {
         const card = document.createElement('div');
         card.className = 'featured-card';
+        
+        // Get badge type based on index
+        const badge = this.getBadgeType(index);
         
         // Get first line of description
         const firstLineDescription = app.description ? 
@@ -399,20 +477,19 @@ class AppManager {
         const mainCategory = categories[0] || 'other';
         
         card.innerHTML = `
-            <div class="featured-badge">
-                <i class="fas fa-star"></i>
-                NỔI BẬT
+            <div class="featured-badge badge-${badge.type}">
+                ${badge.label}
             </div>
-            <img src="${app.image || 'https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'}" 
+            <img src="${app.image || 'https://via.placeholder.com/160x90/2563eb/FFFFFF?text=App'}" 
                  alt="${app.name}" 
                  class="featured-image"
-                 onerror="this.src='https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'">
+                 onerror="this.src='https://via.placeholder.com/160x90/2563eb/FFFFFF?text=App'">
             <div class="featured-content">
                 <div class="featured-header">
-                    <img src="${app.image || 'https://via.placeholder.com/50/2563eb/FFFFFF?text=App'}" 
+                    <img src="${app.image || 'https://via.placeholder.com/44/2563eb/FFFFFF?text=App'}" 
                          alt="${app.name}" 
                          class="featured-app-icon"
-                         onerror="this.src='https://via.placeholder.com/50/2563eb/FFFFFF?text=App'">
+                         onerror="this.src='https://via.placeholder.com/44/2563eb/FFFFFF?text=App'">
                     <div class="featured-info">
                         <div class="featured-name">${app.name}</div>
                         <div class="featured-category">${CONFIG.CATEGORY_LABELS[mainCategory] || mainCategory}</div>
@@ -449,8 +526,8 @@ class AppManager {
         
         this.featuredLoading.style.display = 'none';
         
-        this.featuredApps.forEach(app => {
-            const card = this.createFeaturedCard(app);
+        this.featuredApps.forEach((app, index) => {
+            const card = this.createFeaturedCard(app, index);
             this.featuredCarousel.appendChild(card);
         });
     }
@@ -479,21 +556,22 @@ class AppManager {
         // Update dots based on scroll position
         const updateDots = () => {
             const scrollLeft = container.scrollLeft;
-            const cardWidth = 220 + 12; // card width + gap
-            const currentIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
+            const cardWidth = 160 + 12; // card width + gap
+            this.currentSlideIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
             
             dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentIndex);
+                dot.classList.toggle('active', index === this.currentSlideIndex);
             });
         };
         
         // Scroll to specific index
         const scrollToIndex = (index) => {
-            const cardWidth = 220 + 12;
+            const cardWidth = 160 + 12;
             container.scrollTo({
                 left: index * cardWidth,
                 behavior: 'smooth'
             });
+            this.currentSlideIndex = index;
         };
         
         // Add event listeners
@@ -506,15 +584,29 @@ class AppManager {
         dots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const index = parseInt(dot.dataset.index);
+                this.slideDirection = index > this.currentSlideIndex ? 'right' : 'left';
                 scrollToIndex(index);
+                this.updateSlideAnimation(this.slideDirection);
             });
         });
         
         // Initial update
         updateArrows();
-        
-        // Auto rotate every 5 seconds
-        this.startAutoRotate();
+        updateDots();
+    }
+
+    updateSlideAnimation(direction) {
+        const cards = document.querySelectorAll('.featured-card');
+        cards.forEach(card => {
+            card.classList.remove('slide-right', 'slide-left');
+            void card.offsetWidth; // Trigger reflow
+            
+            if (direction === 'right') {
+                card.classList.add('slide-right');
+            } else {
+                card.classList.add('slide-left');
+            }
+        });
     }
 
     scrollFeaturedCarousel(amount) {
@@ -524,31 +616,57 @@ class AppManager {
                 left: amount,
                 behavior: 'smooth'
             });
+            
+            // Update slide index after animation
+            setTimeout(() => {
+                const cardWidth = 160 + 12;
+                const scrollLeft = container.scrollLeft;
+                this.currentSlideIndex = Math.min(Math.round(scrollLeft / cardWidth), 4);
+                this.updateSlideAnimation(this.slideDirection);
+            }, 300);
         }
     }
 
     scrollFeaturedCarouselToIndex(index) {
         const container = this.featuredCarousel;
         if (container) {
-            const cardWidth = 220 + 12;
+            const cardWidth = 160 + 12;
             container.scrollTo({
                 left: index * cardWidth,
                 behavior: 'smooth'
             });
+            this.currentSlideIndex = index;
         }
     }
 
-    startAutoRotate() {
-        // Auto rotate every 5 seconds
-        setInterval(() => {
-            const dots = document.querySelectorAll('.carousel-dot');
-            const activeIndex = Array.from(dots).findIndex(dot => dot.classList.contains('active'));
-            const nextIndex = (activeIndex + 1) % dots.length;
+    startAutoSlide() {
+        // Clear any existing interval
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+        }
+        
+        // Auto slide every 5 seconds
+        this.autoSlideInterval = setInterval(() => {
+            this.slideDirection = 'right';
             
-            if (dots[nextIndex]) {
-                dots[nextIndex].click();
+            if (this.currentSlideIndex >= 4) {
+                // Go back to first slide
+                this.slideDirection = 'left';
+                this.scrollFeaturedCarouselToIndex(0);
+            } else {
+                // Go to next slide
+                this.scrollFeaturedCarousel(172);
             }
+            
+            this.updateSlideAnimation(this.slideDirection);
         }, 5000);
+    }
+
+    stopAutoSlide() {
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+            this.autoSlideInterval = null;
+        }
     }
 }
 
