@@ -1,4 +1,4 @@
-// Main application logic
+/ Main application logic
 class AppManager {
     constructor() {
         this.currentCategory = 'all';
@@ -6,11 +6,6 @@ class AppManager {
         this.allApps = [];
         this.searchTerm = '';
         this.featuredApps = [];
-        this.currentSlideIndex = 0;
-        this.autoSlideInterval = null;
-        this.isScrolling = false;
-        this.scrollTimeout = null;
-        this.touchStartX = 0;
         
         this.initializeElements();
         this.bindEvents();
@@ -32,10 +27,6 @@ class AppManager {
         this.searchNavItem = document.getElementById('searchNavItem');
         this.featuredCarousel = document.getElementById('featuredCarousel');
         this.featuredLoading = document.getElementById('featuredLoading');
-        this.carouselContainer = document.querySelector('.carousel-container');
-        this.carouselDots = document.querySelectorAll('.carousel-dot');
-        this.prevArrow = document.querySelector('.nav-arrow.prev');
-        this.nextArrow = document.querySelector('.nav-arrow.next');
     }
 
     bindEvents() {
@@ -99,95 +90,27 @@ class AppManager {
     }
 
     bindFeaturedCarouselEvents() {
-        if (this.prevArrow) {
-            this.prevArrow.addEventListener('click', () => {
-                this.slideToPrevious();
+        const prevArrow = document.querySelector('.nav-arrow.prev');
+        const nextArrow = document.querySelector('.nav-arrow.next');
+        const dots = document.querySelectorAll('.carousel-dot');
+
+        if (prevArrow) {
+            prevArrow.addEventListener('click', () => {
+                this.scrollFeaturedCarousel(-220);
             });
         }
 
-        if (this.nextArrow) {
-            this.nextArrow.addEventListener('click', () => {
-                this.slideToNext();
+        if (nextArrow) {
+            nextArrow.addEventListener('click', () => {
+                this.scrollFeaturedCarousel(220);
             });
         }
 
-        this.carouselDots.forEach(dot => {
+        dots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const index = parseInt(dot.dataset.index);
-                this.slideToIndex(index);
+                this.scrollFeaturedCarouselToIndex(index);
             });
-        });
-
-        // Touch/swipe events for mobile
-        this.setupTouchEvents();
-        
-        // Mouse drag events
-        this.setupDragEvents();
-    }
-
-    setupTouchEvents() {
-        if (!this.carouselContainer) return;
-        
-        this.carouselContainer.addEventListener('touchstart', (e) => {
-            if (this.isScrolling) return;
-            
-            this.touchStartX = e.touches[0].clientX;
-            this.stopAutoSlide();
-        }, { passive: true });
-
-        this.carouselContainer.addEventListener('touchend', (e) => {
-            if (!this.touchStartX) return;
-            
-            const touchEndX = e.changedTouches[0].clientX;
-            const diffX = this.touchStartX - touchEndX;
-            
-            // Swipe threshold
-            if (Math.abs(diffX) > 40) {
-                if (diffX > 0) {
-                    this.slideToNext();
-                } else {
-                    this.slideToPrevious();
-                }
-            }
-            
-            this.touchStartX = 0;
-            this.startAutoSlide();
-        }, { passive: true });
-    }
-
-    setupDragEvents() {
-        if (!this.carouselContainer) return;
-        
-        let isDragging = false;
-        let startX = 0;
-        let scrollLeft = 0;
-
-        this.carouselContainer.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            this.carouselContainer.style.cursor = 'grabbing';
-            startX = e.pageX - this.carouselContainer.offsetLeft;
-            scrollLeft = this.carouselContainer.scrollLeft;
-            this.stopAutoSlide();
-        });
-
-        this.carouselContainer.addEventListener('mouseleave', () => {
-            isDragging = false;
-            this.carouselContainer.style.cursor = 'grab';
-        });
-
-        this.carouselContainer.addEventListener('mouseup', () => {
-            isDragging = false;
-            this.carouselContainer.style.cursor = 'grab';
-            this.startAutoSlide();
-        });
-
-        this.carouselContainer.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            
-            const x = e.pageX - this.carouselContainer.offsetLeft;
-            const walk = (x - startX) * 1.5;
-            this.carouselContainer.scrollLeft = scrollLeft - walk;
         });
     }
 
@@ -249,6 +172,7 @@ class AppManager {
                 this.renderApps();
                 this.loadFeaturedApps();
                 console.log('✅ Dữ liệu mới đã được tải và cache');
+                console.log('📊 Cấu trúc dữ liệu app đầu tiên:', this.allApps[0]);
             } else {
                 throw new Error('Không thể tải dữ liệu');
             }
@@ -449,7 +373,6 @@ class AppManager {
         
         this.displayFeaturedApps();
         this.initFeaturedCarousel();
-        this.startAutoSlide();
     }
 
     getRandomApps(apps, count) {
@@ -457,21 +380,9 @@ class AppManager {
         return shuffled.slice(0, count);
     }
 
-    getBadgeType(index) {
-        const badgeTypes = ['premium', 'hot', 'new', 'trending', 'vip'];
-        const badgeLabels = ['PREMIUM', 'HOT', 'NEW', 'TRENDING', 'VIP'];
-        return {
-            type: badgeTypes[index % badgeTypes.length],
-            label: badgeLabels[index % badgeLabels.length]
-        };
-    }
-
-    createFeaturedCard(app, index) {
+    createFeaturedCard(app) {
         const card = document.createElement('div');
         card.className = 'featured-card';
-        
-        // Get badge type based on index
-        const badge = this.getBadgeType(index);
         
         // Get first line of description
         const firstLineDescription = app.description ? 
@@ -488,19 +399,20 @@ class AppManager {
         const mainCategory = categories[0] || 'other';
         
         card.innerHTML = `
-            <div class="featured-badge badge-${badge.type}">
-                ${badge.label}
+            <div class="featured-badge">
+                <i class="fas fa-star"></i>
+                NỔI BẬT
             </div>
-            <img src="${app.image || 'https://via.placeholder.com/160x90/2563eb/FFFFFF?text=App'}" 
+            <img src="${app.image || 'https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'}" 
                  alt="${app.name}" 
                  class="featured-image"
-                 onerror="this.src='https://via.placeholder.com/160x90/2563eb/FFFFFF?text=App'">
+                 onerror="this.src='https://via.placeholder.com/220x140/2563eb/FFFFFF?text=App'">
             <div class="featured-content">
                 <div class="featured-header">
-                    <img src="${app.image || 'https://via.placeholder.com/44/2563eb/FFFFFF?text=App'}" 
+                    <img src="${app.image || 'https://via.placeholder.com/50/2563eb/FFFFFF?text=App'}" 
                          alt="${app.name}" 
                          class="featured-app-icon"
-                         onerror="this.src='https://via.placeholder.com/44/2563eb/FFFFFF?text=App'">
+                         onerror="this.src='https://via.placeholder.com/50/2563eb/FFFFFF?text=App'">
                     <div class="featured-info">
                         <div class="featured-name">${app.name}</div>
                         <div class="featured-category">${CONFIG.CATEGORY_LABELS[mainCategory] || mainCategory}</div>
@@ -537,136 +449,106 @@ class AppManager {
         
         this.featuredLoading.style.display = 'none';
         
-        this.featuredApps.forEach((app, index) => {
-            const card = this.createFeaturedCard(app, index);
+        this.featuredApps.forEach(app => {
+            const card = this.createFeaturedCard(app);
             this.featuredCarousel.appendChild(card);
         });
     }
 
     initFeaturedCarousel() {
-        if (!this.carouselContainer || this.featuredApps.length === 0) return;
+        const container = this.featuredCarousel;
+        const dots = document.querySelectorAll('.carousel-dot');
+        const prevArrow = document.querySelector('.nav-arrow.prev');
+        const nextArrow = document.querySelector('.nav-arrow.next');
+        
+        if (!container || this.featuredApps.length === 0) return;
         
         // Update arrows visibility
         const updateArrows = () => {
-            if (!this.prevArrow || !this.nextArrow) return;
+            const scrollLeft = container.scrollLeft;
+            const maxScroll = container.scrollWidth - container.clientWidth;
             
-            const scrollLeft = this.carouselContainer.scrollLeft;
-            const maxScroll = this.carouselContainer.scrollWidth - this.carouselContainer.clientWidth;
-            
-            this.prevArrow.style.display = scrollLeft > 0 ? 'flex' : 'none';
-            this.nextArrow.style.display = scrollLeft < maxScroll - 10 ? 'flex' : 'none';
+            if (prevArrow) {
+                prevArrow.style.display = scrollLeft > 0 ? 'flex' : 'none';
+            }
+            if (nextArrow) {
+                nextArrow.style.display = scrollLeft < maxScroll - 10 ? 'flex' : 'none';
+            }
         };
         
         // Update dots based on scroll position
         const updateDots = () => {
-            if (this.isScrolling) return;
+            const scrollLeft = container.scrollLeft;
+            const cardWidth = 220 + 12; // card width + gap
+            const currentIndex = Math.min(Math.round(scrollLeft / cardWidth), dots.length - 1);
             
-            const scrollLeft = this.carouselContainer.scrollLeft;
-            const cardWidth = 160 + 12; // card width + gap
-            this.currentSlideIndex = Math.min(Math.round(scrollLeft / cardWidth), 4);
-            
-            this.carouselDots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === this.currentSlideIndex);
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
             });
         };
         
-        // Debounced scroll event for smooth updates
-        this.carouselContainer.addEventListener('scroll', () => {
+        // Scroll to specific index
+        const scrollToIndex = (index) => {
+            const cardWidth = 220 + 12;
+            container.scrollTo({
+                left: index * cardWidth,
+                behavior: 'smooth'
+            });
+        };
+        
+        // Add event listeners
+        container.addEventListener('scroll', () => {
             updateArrows();
-            
-            // Debounce dot updates during smooth scroll
-            clearTimeout(this.scrollTimeout);
-            this.scrollTimeout = setTimeout(() => {
-                updateDots();
-                this.isScrolling = false;
-            }, 100);
+            updateDots();
+        });
+        
+        // Dot click events
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const index = parseInt(dot.dataset.index);
+                scrollToIndex(index);
+            });
         });
         
         // Initial update
         updateArrows();
-        updateDots();
         
-        // Set initial cursor
-        this.carouselContainer.style.cursor = 'grab';
+        // Auto rotate every 5 seconds
+        this.startAutoRotate();
     }
 
-    // ===== SMOOTH SLIDE METHODS =====
+    scrollFeaturedCarousel(amount) {
+        const container = this.featuredCarousel;
+        if (container) {
+            container.scrollBy({
+                left: amount,
+                behavior: 'smooth'
+            });
+        }
+    }
 
-    slideToIndex(index) {
-        if (this.isScrolling || index < 0 || index > 4) return;
-        
-        this.isScrolling = true;
-        this.stopAutoSlide();
-        
-        const cardWidth = 160 + 12;
-        const targetScroll = index * cardWidth;
-        
-        // Smooth scroll với requestAnimationFrame cho mượt nhất
-        const startScroll = this.carouselContainer.scrollLeft;
-        const distance = targetScroll - startScroll;
-        const duration = 400; // ms
-        let startTime = null;
-        
-        const animateScroll = (currentTime) => {
-            if (!startTime) startTime = currentTime;
-            const timeElapsed = currentTime - startTime;
-            const progress = Math.min(timeElapsed / duration, 1);
+    scrollFeaturedCarouselToIndex(index) {
+        const container = this.featuredCarousel;
+        if (container) {
+            const cardWidth = 220 + 12;
+            container.scrollTo({
+                left: index * cardWidth,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    startAutoRotate() {
+        // Auto rotate every 5 seconds
+        setInterval(() => {
+            const dots = document.querySelectorAll('.carousel-dot');
+            const activeIndex = Array.from(dots).findIndex(dot => dot.classList.contains('active'));
+            const nextIndex = (activeIndex + 1) % dots.length;
             
-            // Easing function for smooth acceleration/deceleration
-            const ease = progress < 0.5 
-                ? 2 * progress * progress 
-                : -1 + (4 - 2 * progress) * progress;
-            
-            this.carouselContainer.scrollLeft = startScroll + (distance * ease);
-            
-            if (timeElapsed < duration) {
-                requestAnimationFrame(animateScroll);
-            } else {
-                this.isScrolling = false;
-                this.currentSlideIndex = index;
-                
-                // Update dots
-                this.carouselDots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === index);
-                });
-                
-                this.startAutoSlide();
-            }
-        };
-        
-        requestAnimationFrame(animateScroll);
-    }
-
-    slideToNext() {
-        const nextIndex = (this.currentSlideIndex + 1) % 5;
-        this.slideToIndex(nextIndex);
-    }
-
-    slideToPrevious() {
-        const prevIndex = this.currentSlideIndex === 0 ? 4 : this.currentSlideIndex - 1;
-        this.slideToIndex(prevIndex);
-    }
-
-    startAutoSlide() {
-        // Clear any existing interval
-        this.stopAutoSlide();
-        
-        // Don't auto slide if user is interacting
-        if (this.isScrolling) return;
-        
-        // Auto slide every 5 seconds
-        this.autoSlideInterval = setInterval(() => {
-            if (!this.isScrolling && document.visibilityState === 'visible') {
-                this.slideToNext();
+            if (dots[nextIndex]) {
+                dots[nextIndex].click();
             }
         }, 5000);
-    }
-
-    stopAutoSlide() {
-        if (this.autoSlideInterval) {
-            clearInterval(this.autoSlideInterval);
-            this.autoSlideInterval = null;
-        }
     }
 }
 
