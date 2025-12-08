@@ -93,18 +93,72 @@
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Featured App -->
-        <section class="featured-section">
-            <div class="featured-card">
-                <div class="featured-badge">Ứng dụng nổi bật</div>
-                <h3 class="featured-title">XSPace Store</h3>
-                <p class="featured-description">Kho ứng dụng cao cấp với hàng ngàn app độc quyền</p>
-                <button class="download-btn">
-                    <i class="fas fa-download"></i>
-                    Khám phá ngay
+        <!-- ========== PHẦN MỚI: ỨNG DỤNG NỔI BẬT ========== -->
+        <section class="featured-apps-section">
+            <div class="featured-header">
+                <div class="featured-title">
+                    <i class="fas fa-crown"></i>
+                    <span>Ứng dụng nổi bật</span>
+                </div>
+                <button class="refresh-featured" id="refreshFeatured">
+                    <i class="fas fa-redo"></i>
+                    <span>Đổi ứng dụng</span>
                 </button>
-                <img src="https://i.imgur.com/1qBtbYR.png" 
-                     alt="XSPace Store" class="featured-image">
+            </div>
+
+            <div class="featured-apps-container">
+                <!-- Navigation buttons -->
+                <button class="featured-nav featured-prev" id="featuredPrev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="featured-nav featured-next" id="featuredNext">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <!-- Featured Apps Slider -->
+                <div class="featured-slider" id="featuredSlider">
+                    <!-- Skeleton loading sẽ được thêm bằng JavaScript -->
+                    <div class="featured-skeleton" id="featuredSkeleton">
+                        <div class="featured-skeleton-card">
+                            <div class="skeleton-logo-container"></div>
+                            <div class="skeleton-content">
+                                <div class="skeleton-title"></div>
+                                <div class="skeleton-description"></div>
+                                <div class="skeleton-description short"></div>
+                                <div class="skeleton-meta"></div>
+                                <div class="skeleton-button"></div>
+                            </div>
+                        </div>
+                        <div class="featured-skeleton-card">
+                            <div class="skeleton-logo-container"></div>
+                            <div class="skeleton-content">
+                                <div class="skeleton-title"></div>
+                                <div class="skeleton-description"></div>
+                                <div class="skeleton-description short"></div>
+                                <div class="skeleton-meta"></div>
+                                <div class="skeleton-button"></div>
+                            </div>
+                        </div>
+                        <div class="featured-skeleton-card">
+                            <div class="skeleton-logo-container"></div>
+                            <div class="skeleton-content">
+                                <div class="skeleton-title"></div>
+                                <div class="skeleton-description"></div>
+                                <div class="skeleton-description short"></div>
+                                <div class="skeleton-meta"></div>
+                                <div class="skeleton-button"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Featured apps sẽ được thêm vào đây bằng JavaScript -->
+                </div>
+
+                <!-- Scroll indicators -->
+                <div class="scroll-indicators" id="scrollIndicators">
+                    <div class="indicator active" data-index="0"></div>
+                    <div class="indicator" data-index="1"></div>
+                    <div class="indicator" data-index="2"></div>
+                </div>
             </div>
         </section>
 
@@ -261,6 +315,7 @@
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
+    <script src="js/featured.js"></script>
     <script src="js/firebase-analytics.js"></script>
     
     <!-- JavaScript cho chế độ sáng/tối -->
@@ -386,6 +441,11 @@
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            // Khởi tạo Featured Apps Manager
+            if (typeof FeaturedAppsManager !== 'undefined') {
+                window.featuredAppsManager = new FeaturedAppsManager();
             }
         });
         
