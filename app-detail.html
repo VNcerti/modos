@@ -266,16 +266,19 @@
             transform: translateY(-1px);
         }
 
-        /* VIP Crown Icon */
-        .vip-crown-icon {
-           color: #f59e0b;
-    font-size: 14px;
-    margin-left: -3px;
-    margin-bottom: 1.5px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
+        /* VIP Permissions Badge */
+        .vip-permission-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--warning);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 6px;
+        }
 
         /* App Detail */
         .app-detail {
@@ -781,7 +784,25 @@
             margin-top: 10px;
             font-size: 11px;
             color: var(--text-secondary);
-            display: none; /* Ẩn toàn bộ phần này */
+        }
+
+        .vip-permissions-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .vip-permission-item {
+            background: var(--warning);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 3px;
         }
 
         /* Responsive Design */
@@ -981,6 +1002,11 @@
             
             .nav-label {
                 font-size: 8px;
+            }
+            
+            .vip-permission-badge {
+                font-size: 9px;
+                padding: 2px 6px;
             }
             
             .custom-alert {
@@ -1261,6 +1287,29 @@
             
             const packages = appVipPermissions.split(',').map(p => p.trim());
             return packages.map(p => VIP_PACKAGE_LABELS[p]?.name || p);
+        }
+
+        // Tạo HTML hiển thị VIP permissions
+        function createVipPermissionsHTML(appVipPermissions) {
+            if (!appVipPermissions || appVipPermissions === 'all') {
+                return '';
+            }
+            
+            const packages = appVipPermissions.split(',').map(p => p.trim());
+            let html = '<div class="vip-permissions-info">';
+            html += '<div class="vip-permissions-list">';
+            
+            packages.forEach(pkg => {
+                const packageInfo = VIP_PACKAGE_LABELS[pkg];
+                if (packageInfo) {
+                    html += `<span class="vip-permission-item" style="background: ${packageInfo.color};">`;
+                    html += `<i class="${packageInfo.icon}"></i> ${packageInfo.name}`;
+                    html += '</span>';
+                }
+            });
+            
+            html += '</div></div>';
+            return html;
         }
 
         // ==================== UTILITY FUNCTIONS ====================
@@ -1644,13 +1693,11 @@
             const freeButton = createDownloadButton(app, false, user);
             const vipButton = createDownloadButton(app, true, user);
             
-            // Kiểm tra nếu app chỉ có link VIP (không có link miễn phí)
-            const isVipOnly = app.viplink1 && !app.downloadlink;
-            
-            // Tạo icon vương miện nếu là app chỉ có VIP
-            let vipCrownIcon = '';
-            if (isVipOnly) {
-                vipCrownIcon = '<i class="fas fa-crown vip-crown-icon"></i>';
+            // Tạo VIP permissions badge nếu không phải "all"
+            let vipPermissionsBadge = '';
+            if (app.vipPermissions && app.vipPermissions !== 'all') {
+                const packages = getVipPermissionsReadable(app.vipPermissions);
+                vipPermissionsBadge = `<span class="vip-permission-badge"><i class="fas fa-shield-alt"></i> ${packages.join(', ')}</span>`;
             }
             
             // Create HTML
@@ -1663,7 +1710,7 @@
                     <div class="app-info">
                         <h1 class="app-title">
                             ${app.name}
-                            ${vipCrownIcon}
+                            ${vipPermissionsBadge}
                         </h1>
                         <div class="app-developer">${app.developer || 'Nhà phát triển'}</div>
                         <div class="app-meta">
@@ -1690,6 +1737,7 @@
                         <i class="fas fa-info-circle"></i>
                         ${app.viplink1 ? 'Premium: No Ads – Full Features – Unlimited Access' : 'Bản VIP đang được cập nhật'}
                     </div>
+                    ${createVipPermissionsHTML(app.vipPermissions)}
                 </div>
 
                 <div class="description-section">
