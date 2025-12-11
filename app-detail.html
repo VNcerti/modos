@@ -763,12 +763,16 @@
         }
 
         .debug-toggle {
-            color: #1e293b;
+            color: #f9fafc;
             cursor: pointer;
             font-size: 11px;
             margin-top: 5px;
             display: inline-block;
             text-decoration: underline;
+        }
+
+        [data-theme="dark"] .debug-toggle {
+            color: #0e172a;
         }
 
         /* VIP Permissions Info */
@@ -1293,9 +1297,6 @@
             
             const packages = appVipPermissions.split(',').map(p => p.trim());
             let html = '<div class="vip-permissions-info">';
-            html += '<div style="font-weight: 600; margin-bottom: 5px; color: var(--warning);">';
-            html += '<i class="fas fa-shield-alt"></i> Gói được phép tải:';
-            html += '</div>';
             html += '<div class="vip-permissions-list">';
             
             packages.forEach(pkg => {
