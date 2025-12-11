@@ -31,6 +31,7 @@
             --border: #e2e8f0;
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
             --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
             --nav-height: 50px;
         }
@@ -48,6 +49,7 @@
             --border: #334155;
             --success: #10b981;
             --danger: #ef4444;
+            --warning: #f59e0b;
             --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
         }
 
@@ -125,6 +127,159 @@
             background: var(--primary-light);
         }
 
+        /* Custom Alert Styles */
+        .custom-alert-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .custom-alert {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: alertSlideIn 0.3s ease-out;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        @keyframes alertSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .custom-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .alert-icon.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .alert-icon.warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .alert-icon.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .alert-icon.info {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary);
+        }
+
+        .alert-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .alert-message {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .alert-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .alert-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .alert-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .alert-btn.primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .alert-btn.secondary {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .alert-btn.secondary:hover {
+            background: var(--border);
+        }
+
+        .alert-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .alert-btn.warning:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        /* VIP Permissions Badge */
+        .vip-permission-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--warning);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 6px;
+        }
+
         /* App Detail */
         .app-detail {
             padding: 30px 0;
@@ -155,6 +310,10 @@
             font-weight: 700;
             margin-bottom: 6px;
             color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .app-developer {
@@ -193,6 +352,7 @@
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .app-tag {
@@ -591,29 +751,56 @@
         }
 
         /* Debug Info */
-     .debug-info {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 11px;
-    color: var(--text-muted);
-    display: none;
-}
+        .debug-info {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+            display: none;
+        }
 
-.debug-toggle {
-    color: #f9fafc;
-    cursor: pointer;
-    font-size: 11px;
-    margin-top: 5px;
-    display: inline-block;
-}
+        .debug-toggle {
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 11px;
+            margin-top: 5px;
+            display: inline-block;
+            text-decoration: underline;
+        }
 
-/* Chế độ tối cho debug-toggle */
-[data-theme="dark"] .debug-toggle {
-    color: #1e293b;
-}
+        /* VIP Permissions Info */
+        .vip-permissions-info {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .vip-permissions-list {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .vip-permission-item {
+            background: var(--warning);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -654,6 +841,11 @@
                 width: 32px;
                 height: 32px;
                 font-size: 14px;
+            }
+            
+            .custom-alert {
+                padding: 20px;
+                margin: 0 15px;
             }
         }
 
@@ -807,10 +999,53 @@
             .nav-label {
                 font-size: 8px;
             }
+            
+            .vip-permission-badge {
+                font-size: 9px;
+                padding: 2px 6px;
+            }
+            
+            .custom-alert {
+                padding: 15px;
+                margin: 0 10px;
+            }
+            
+            .alert-title {
+                font-size: 16px;
+            }
+            
+            .alert-message {
+                font-size: 12px;
+            }
+            
+            .alert-btn {
+                padding: 8px 16px;
+                font-size: 11px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Custom Alert Overlay -->
+    <div class="custom-alert-overlay" id="customAlertOverlay">
+        <div class="custom-alert" id="customAlert">
+            <div class="custom-alert-header">
+                <div class="alert-icon info" id="alertIcon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h3 class="alert-title" id="alertTitle">Thông báo</h3>
+            </div>
+            <div class="alert-message" id="alertMessage">
+                Nội dung thông báo sẽ hiển thị ở đây...
+            </div>
+            <div class="alert-buttons" id="alertButtons">
+                <button class="alert-btn primary" id="alertPrimaryBtn">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="container">
@@ -850,7 +1085,7 @@
                 <div id="debugContent"></div>
             </div>
             <div class="debug-toggle" onclick="toggleDebug()">
-                <i class="fas fa-bug"></i> info
+                <i class="fas fa-bug"></i> Hiển thị thông tin debug
             </div>
         </div>
     </main>
@@ -947,6 +1182,135 @@
         const MAX_RETRIES = 3;
         let currentAppData = null;
 
+        // ==================== CUSTOM ALERT SYSTEM ====================
+        
+        // Custom Alert System
+        function showCustomAlert(type, title, message, buttons) {
+            const alertOverlay = document.getElementById('customAlertOverlay');
+            const alertIcon = document.getElementById('alertIcon');
+            const alertTitle = document.getElementById('alertTitle');
+            const alertMessage = document.getElementById('alertMessage');
+            const alertButtons = document.getElementById('alertButtons');
+            
+            // Set icon based on type
+            alertIcon.className = 'alert-icon ' + type;
+            const iconMap = {
+                'success': 'fas fa-check-circle',
+                'warning': 'fas fa-exclamation-triangle',
+                'error': 'fas fa-times-circle',
+                'info': 'fas fa-info-circle'
+            };
+            alertIcon.innerHTML = `<i class="${iconMap[type] || 'fas fa-info-circle'}"></i>`;
+            
+            // Set title and message
+            alertTitle.textContent = title;
+            alertMessage.innerHTML = message;
+            
+            // Clear existing buttons
+            alertButtons.innerHTML = '';
+            
+            // Add buttons
+            if (buttons && buttons.length > 0) {
+                buttons.forEach(button => {
+                    const btn = document.createElement('button');
+                    btn.className = `alert-btn ${button.type || 'primary'}`;
+                    btn.textContent = button.text;
+                    if (button.icon) {
+                        btn.innerHTML = `<i class="${button.icon}"></i> ${button.text}`;
+                    }
+                    if (button.onClick) {
+                        btn.onclick = () => {
+                            button.onClick();
+                            alertOverlay.style.display = 'none';
+                        };
+                    } else {
+                        btn.onclick = () => {
+                            alertOverlay.style.display = 'none';
+                        };
+                    }
+                    alertButtons.appendChild(btn);
+                });
+            } else {
+                // Default OK button
+                const okBtn = document.createElement('button');
+                okBtn.className = 'alert-btn primary';
+                okBtn.innerHTML = '<i class="fas fa-check"></i> OK';
+                okBtn.onclick = () => {
+                    alertOverlay.style.display = 'none';
+                };
+                alertButtons.appendChild(okBtn);
+            }
+            
+            // Show alert
+            alertOverlay.style.display = 'flex';
+        }
+
+        // ==================== VIP PERMISSIONS SYSTEM ====================
+        
+        // VIP Package Labels
+        const VIP_PACKAGE_LABELS = {
+            'trial': { name: 'Trial', icon: 'fas fa-star', color: '#10b981' },
+            'basic': { name: 'Basic', icon: 'fas fa-crown', color: '#3b82f6' },
+            'plus': { name: 'Plus', icon: 'fas fa-crown', color: '#8b5cf6' },
+            'premium': { name: 'Premium', icon: 'fas fa-crown', color: '#f59e0b' },
+            'all': { name: 'Tất cả gói', icon: 'fas fa-layer-group', color: '#6366f1' }
+        };
+
+        // Kiểm tra user có đủ điều kiện tải app VIP không
+        function canUserDownloadVIP(appVipPermissions, userPackage) {
+            // Nếu app không có vipPermissions hoặc là 'all', cho phép tải
+            if (!appVipPermissions || appVipPermissions === 'all') {
+                return true;
+            }
+            
+            // Nếu user không có package (free user), không được tải
+            if (!userPackage || userPackage === 'free') {
+                return false;
+            }
+            
+            // Chuyển appVipPermissions thành array
+            const allowedPackages = appVipPermissions.split(',').map(p => p.trim());
+            
+            // Kiểm tra user package có trong danh sách allowed packages không
+            return allowedPackages.includes(userPackage);
+        }
+
+        // Lấy danh sách VIP permissions dạng readable
+        function getVipPermissionsReadable(appVipPermissions) {
+            if (!appVipPermissions || appVipPermissions === 'all') {
+                return ['Tất cả các gói'];
+            }
+            
+            const packages = appVipPermissions.split(',').map(p => p.trim());
+            return packages.map(p => VIP_PACKAGE_LABELS[p]?.name || p);
+        }
+
+        // Tạo HTML hiển thị VIP permissions
+        function createVipPermissionsHTML(appVipPermissions) {
+            if (!appVipPermissions || appVipPermissions === 'all') {
+                return '';
+            }
+            
+            const packages = appVipPermissions.split(',').map(p => p.trim());
+            let html = '<div class="vip-permissions-info">';
+            html += '<div style="font-weight: 600; margin-bottom: 5px; color: var(--warning);">';
+            html += '<i class="fas fa-shield-alt"></i> Gói được phép tải:';
+            html += '</div>';
+            html += '<div class="vip-permissions-list">';
+            
+            packages.forEach(pkg => {
+                const packageInfo = VIP_PACKAGE_LABELS[pkg];
+                if (packageInfo) {
+                    html += `<span class="vip-permission-item" style="background: ${packageInfo.color};">`;
+                    html += `<i class="${packageInfo.icon}"></i> ${packageInfo.name}`;
+                    html += '</span>';
+                }
+            });
+            
+            html += '</div></div>';
+            return html;
+        }
+
         // ==================== UTILITY FUNCTIONS ====================
         
         // XOÁ CACHE khi vào trang chi tiết
@@ -1012,7 +1376,7 @@
             
             if (debugInfo.style.display === 'none' || debugInfo.style.display === '') {
                 debugInfo.style.display = 'block';
-                toggle.innerHTML = '<i class="fas fa-bug"></i> ẩn';
+                toggle.innerHTML = '<i class="fas fa-bug"></i> Ẩn thông tin debug';
                 updateDebugInfo();
             } else {
                 debugInfo.style.display = 'none';
@@ -1030,6 +1394,7 @@
                 <p><strong>App ID:</strong> ${appId}</p>
                 <p><strong>Retry count:</strong> ${retryCount}/${MAX_RETRIES}</p>
                 <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>VIP Permissions:</strong> ${currentAppData.vipPermissions || 'all'}</p>
                 <p><strong>Screenshot1:</strong> ${currentAppData.screenshot1 || 'N/A'}</p>
                 <p><strong>Screenshot2:</strong> ${currentAppData.screenshot2 || 'N/A'}</p>
                 <p><strong>Screenshot3:</strong> ${currentAppData.screenshot3 || 'N/A'}</p>
@@ -1095,6 +1460,7 @@
             app.viplink1 = app.viplink1 || '';
             app.downloadlink = app.downloadlink || '';
             app.categories = app.categories || 'other';
+            app.vipPermissions = app.vipPermissions || 'all'; // Mặc định là all
             
             // Xử lý screenshot
             const possibleKeys = {
@@ -1146,6 +1512,7 @@
             console.log('- Screenshot 1:', app.screenshot1, 'Valid:', isValidImageUrl(app.screenshot1));
             console.log('- Screenshot 2:', app.screenshot2, 'Valid:', isValidImageUrl(app.screenshot2));
             console.log('- Screenshot 3:', app.screenshot3, 'Valid:', isValidImageUrl(app.screenshot3));
+            console.log('👑 VIP Permissions:', app.vipPermissions);
             
             return app;
         }
@@ -1274,6 +1641,7 @@
             currentAppData = app; // Lưu cho debug
             
             console.log('🎨 Displaying app detail:', app.name);
+            console.log('👑 App VIP Permissions:', app.vipPermissions);
             
             // Category labels với các mục mới
             const categoryLabels = {
@@ -1324,6 +1692,13 @@
             const freeButton = createDownloadButton(app, false, user);
             const vipButton = createDownloadButton(app, true, user);
             
+            // Tạo VIP permissions badge nếu không phải "all"
+            let vipPermissionsBadge = '';
+            if (app.vipPermissions && app.vipPermissions !== 'all') {
+                const packages = getVipPermissionsReadable(app.vipPermissions);
+                vipPermissionsBadge = `<span class="vip-permission-badge"><i class="fas fa-shield-alt"></i> ${packages.join(', ')}</span>`;
+            }
+            
             // Create HTML
             const html = `
                 <div class="app-header">
@@ -1332,7 +1707,10 @@
                          class="app-icon-large"
                          onerror="this.src='https://via.placeholder.com/135/2563eb/FFFFFF?text=App'">
                     <div class="app-info">
-                        <h1 class="app-title">${app.name}</h1>
+                        <h1 class="app-title">
+                            ${app.name}
+                            ${vipPermissionsBadge}
+                        </h1>
                         <div class="app-developer">${app.developer || 'Nhà phát triển'}</div>
                         <div class="app-meta">
                             <div class="meta-item">
@@ -1358,6 +1736,7 @@
                         <i class="fas fa-info-circle"></i>
                         ${app.viplink1 ? 'Premium: No Ads – Full Features – Unlimited Access' : 'Bản VIP đang được cập nhật'}
                     </div>
+                    ${createVipPermissionsHTML(app.vipPermissions)}
                 </div>
 
                 <div class="description-section">
@@ -1387,7 +1766,7 @@
             setTimeout(initScreenshotScroll, 100);
         }
         
-        // Tạo nút download
+        // Tạo nút download với logic kiểm tra VIP permissions
         function createDownloadButton(app, isVIP, user) {
             const link = isVIP ? app.viplink1 : app.downloadlink;
             const isValidLink = link && isValidImageUrl(link.replace('image', 'http'));
@@ -1410,13 +1789,31 @@
                 `;
             }
             
-            if (isVIP && !isUserPremium()) {
-                return `
-                    <button class="download-btn download-btn-premium" onclick="requirePremium()">
-                        <i class="fas fa-crown"></i>
-                        Tải VIP #1 (Premium)
-                    </button>
-                `;
+            if (isVIP) {
+                // Kiểm tra xem user có đủ điều kiện tải app VIP không
+                const userPackage = user.packageType || 'free';
+                const canDownload = canUserDownloadVIP(app.vipPermissions, userPackage);
+                
+                if (!canDownload) {
+                    // User không đủ điều kiện tải app VIP
+                    const requiredPackages = getVipPermissionsReadable(app.vipPermissions);
+                    return `
+                        <button class="download-btn download-btn-premium" onclick="showUpgradeRequiredAlert('${requiredPackages.join(', ')}')">
+                            <i class="fas fa-crown"></i>
+                            Tải VIP #1
+                        </button>
+                    `;
+                }
+                
+                // User đủ điều kiện, kiểm tra xem có phải premium không
+                if (!isUserPremium()) {
+                    return `
+                        <button class="download-btn download-btn-premium" onclick="requirePremium()">
+                            <i class="fas fa-crown"></i>
+                            Tải VIP #1 (Premium)
+                        </button>
+                    `;
+                }
             }
             
             return `
@@ -1552,30 +1949,103 @@
         
         function downloadApp(url, appName, isVIP = false) {
             if (!url || url === '#' || url === '' || url === 'null' || url === 'undefined') {
-                alert('⚠️ Link tải đang được cập nhật. Vui lòng thử lại sau.');
+                showCustomAlert('warning', 'Thông báo', 
+                    '⚠️ Link tải đang được cập nhật. Vui lòng thử lại sau.', 
+                    [{ text: 'OK', type: 'primary', icon: 'fas fa-check' }]);
                 return;
             }
             
             const type = isVIP ? 'VIP' : 'miễn phí';
-            if (confirm(`Bạn muốn tải xuống ứng dụng ${appName} (${type})?\n\nChọn "OK" để tiếp tục.`)) {
-                window.open(url, '_blank');
-                setTimeout(() => {
-                    alert(`✅ Đã bắt đầu tải xuống ${type}!`);
-                }, 500);
-            }
+            showCustomAlert('info', 'Xác nhận tải', 
+                `Bạn muốn tải xuống ứng dụng <strong>${appName}</strong> (${type})?<br><br>Chọn "Tải xuống" để tiếp tục.`, 
+                [
+                    { 
+                        text: 'Hủy', 
+                        type: 'secondary', 
+                        icon: 'fas fa-times',
+                        onClick: () => {}
+                    },
+                    { 
+                        text: 'Tải xuống', 
+                        type: 'primary', 
+                        icon: 'fas fa-download',
+                        onClick: () => {
+                            window.open(url, '_blank');
+                            setTimeout(() => {
+                                showCustomAlert('success', 'Thành công!', 
+                                    `✅ Đã bắt đầu tải xuống ${type}!`, 
+                                    [{ text: 'OK', type: 'primary', icon: 'fas fa-check' }]);
+                            }, 500);
+                        }
+                    }
+                ]);
         }
         
         function requireLogin(isVIP = false) {
             const type = isVIP ? 'VIP' : 'miễn phí';
-            if (confirm(`Bạn cần đăng nhập để tải ứng dụng ${type}.\n\nChuyển đến trang đăng nhập?`)) {
-                window.location.href = 'account.html';
-            }
+            showCustomAlert('warning', 'Yêu cầu đăng nhập', 
+                `Bạn cần đăng nhập để tải ứng dụng ${type}.<br><br>Chuyển đến trang đăng nhập?`, 
+                [
+                    { 
+                        text: 'Hủy', 
+                        type: 'secondary', 
+                        icon: 'fas fa-times',
+                        onClick: () => {}
+                    },
+                    { 
+                        text: 'Đăng nhập', 
+                        type: 'primary', 
+                        icon: 'fas fa-sign-in-alt',
+                        onClick: () => {
+                            window.location.href = 'account.html';
+                        }
+                    }
+                ]);
         }
         
         function requirePremium() {
-            if (confirm('Tài khoản của bạn chưa được cấp phép VIP.\n\nNâng cấp tài khoản Premium ngay?')) {
-                window.location.href = 'payment.html';
-            }
+            showCustomAlert('warning', 'Yêu cầu nâng cấp', 
+                'Tài khoản của bạn chưa được cấp phép VIP.<br><br>Nâng cấp tài khoản Premium ngay?', 
+                [
+                    { 
+                        text: 'Hủy', 
+                        type: 'secondary', 
+                        icon: 'fas fa-times',
+                        onClick: () => {}
+                    },
+                    { 
+                        text: 'Nâng cấp', 
+                        type: 'warning', 
+                        icon: 'fas fa-crown',
+                        onClick: () => {
+                            window.location.href = 'payment.html';
+                        }
+                    }
+                ]);
+        }
+        
+        // Hàm mới: Hiển thị alert yêu cầu nâng cấp gói cao hơn
+        function showUpgradeRequiredAlert(requiredPackages) {
+            showCustomAlert('warning', 'Không đủ điều kiện', 
+                `Tài khoản của bạn hiện không đủ điều kiện tải ứng dụng này.<br><br>
+                <strong>Yêu cầu gói:</strong> ${requiredPackages}<br><br>
+                Vui lòng nâng cấp gói cao hơn để tiếp tục.`, 
+                [
+                    { 
+                        text: 'Hủy', 
+                        type: 'secondary', 
+                        icon: 'fas fa-times',
+                        onClick: () => {}
+                    },
+                    { 
+                        text: 'Nâng cấp ngay', 
+                        type: 'warning', 
+                        icon: 'fas fa-crown',
+                        onClick: () => {
+                            window.location.href = 'payment.html';
+                        }
+                    }
+                ]);
         }
         
         function contactSupport() {
@@ -1608,6 +2078,21 @@
                     }, 1500);
                 }
             });
+            
+            // Close custom alert when clicking outside
+            const alertOverlay = document.getElementById('customAlertOverlay');
+            alertOverlay.addEventListener('click', function(e) {
+                if (e.target === alertOverlay) {
+                    alertOverlay.style.display = 'none';
+                }
+            });
+            
+            // Close custom alert with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && alertOverlay.style.display === 'flex') {
+                    alertOverlay.style.display = 'none';
+                }
+            });
         });
         
         // Force clear cache khi page được load
@@ -1616,4 +2101,4 @@
         });
     </script>
 </body>
-</html> 
+</html>
