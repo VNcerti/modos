@@ -268,14 +268,14 @@
 
         /* VIP Crown Icon */
         .vip-crown-icon {
-           color: #f59e0b;
-    font-size: 14px;
-    margin-left: -3px;
-    margin-bottom: 1.5px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
+            color: #f59e0b;
+            font-size: 14px;
+            margin-left: -3px;
+            margin-bottom: 1.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
 
         /* App Detail */
         .app-detail {
@@ -1465,6 +1465,8 @@
             console.log('- Screenshot 2:', app.screenshot2, 'Valid:', isValidImageUrl(app.screenshot2));
             console.log('- Screenshot 3:', app.screenshot3, 'Valid:', isValidImageUrl(app.screenshot3));
             console.log('👑 VIP Permissions:', app.vipPermissions);
+            console.log('🔗 Download Link:', app.downloadlink);
+            console.log('👑 VIP Link:', app.viplink1);
             
             return app;
         }
@@ -1588,12 +1590,43 @@
             }
         }
         
+        // Kiểm tra xem app có link tải miễn phí hợp lệ không
+        function hasValidFreeDownload(downloadlink) {
+            if (!downloadlink || typeof downloadlink !== 'string') {
+                return false;
+            }
+            
+            const trimmedLink = downloadlink.trim();
+            
+            // Kiểm tra các giá trị không hợp lệ
+            if (trimmedLink === '' || 
+                trimmedLink === 'null' || 
+                trimmedLink === 'undefined' ||
+                trimmedLink === '#' ||
+                trimmedLink.toLowerCase() === 'null' ||
+                trimmedLink.toLowerCase() === 'undefined' ||
+                trimmedLink === 'N/A' ||
+                trimmedLink === 'n/a') {
+                return false;
+            }
+            
+            // Kiểm tra nếu là URL hợp lệ
+            const isUrl = trimmedLink.startsWith('http://') || 
+                         trimmedLink.startsWith('https://') || 
+                         trimmedLink.startsWith('//');
+            
+            return isUrl;
+        }
+        
         // Hiển thị chi tiết app
         function displayAppDetail(app) {
             currentAppData = app; // Lưu cho debug
             
             console.log('🎨 Displaying app detail:', app.name);
             console.log('👑 App VIP Permissions:', app.vipPermissions);
+            console.log('🔗 Download Link (raw):', app.downloadlink);
+            console.log('🔗 Has Valid Free Download:', hasValidFreeDownload(app.downloadlink));
+            console.log('👑 VIP Link:', app.viplink1);
             
             // Category labels với các mục mới
             const categoryLabels = {
@@ -1640,12 +1673,33 @@
             const loginPrompt = document.getElementById('loginPrompt');
             loginPrompt.style.display = user ? 'none' : 'block';
             
-            // Create buttons
-            const freeButton = createDownloadButton(app, false, user);
-            const vipButton = createDownloadButton(app, true, user);
+            // Kiểm tra xem app có link tải miễn phí hợp lệ không
+            const hasFreeDownload = hasValidFreeDownload(app.downloadlink);
+            
+            // Tạo nút download dựa trên việc có link tải miễn phí hay không
+            let downloadButtonsHTML = '';
+            let downloadInfoText = '';
+            
+            if (hasFreeDownload) {
+                // Có link miễn phí, hiển thị cả 2 nút
+                const freeButton = createDownloadButton(app, false, user);
+                const vipButton = createDownloadButton(app, true, user);
+                
+                downloadButtonsHTML = `
+                    ${freeButton}
+                    ${vipButton}
+                `;
+                downloadInfoText = app.viplink1 ? 'Premium: No Ads – Full Features – Unlimited Access' : 'Bản VIP đang được cập nhật';
+            } else {
+                // Không có link miễn phí, chỉ hiển thị nút VIP
+                const vipButton = createDownloadButton(app, true, user);
+                
+                downloadButtonsHTML = vipButton;
+                downloadInfoText = app.viplink1 ? 'Ứng dụng chỉ có bản Premium' : 'Bản VIP đang được cập nhật';
+            }
             
             // Kiểm tra nếu app chỉ có link VIP (không có link miễn phí)
-            const isVipOnly = app.viplink1 && !app.downloadlink;
+            const isVipOnly = app.viplink1 && !hasFreeDownload;
             
             // Tạo icon vương miện nếu là app chỉ có VIP
             let vipCrownIcon = '';
@@ -1683,12 +1737,11 @@
                 <div class="download-section">
                     <h2 class="download-title">Tải ứng dụng</h2>
                     <div class="download-options">
-                        ${freeButton}
-                        ${vipButton}
+                        ${downloadButtonsHTML}
                     </div>
                     <div class="download-info">
                         <i class="fas fa-info-circle"></i>
-                        ${app.viplink1 ? 'Premium: No Ads – Full Features – Unlimited Access' : 'Bản VIP đang được cập nhật'}
+                        ${downloadInfoText}
                     </div>
                 </div>
 
@@ -1724,25 +1777,26 @@
             const link = isVIP ? app.viplink1 : app.downloadlink;
             const isValidLink = link && isValidImageUrl(link.replace('image', 'http'));
             
-            if (!isValidLink) {
-                return `
-                    <button class="download-btn ${isVIP ? 'download-btn-premium' : ''}" disabled style="background: var(--text-muted);">
-                        <i class="fas ${isVIP ? 'fa-crown' : 'fa-download'}"></i>
-                        ${isVIP ? 'VIP #1' : 'Miễn phí'} (Đang cập nhật)
-                    </button>
-                `;
-            }
-            
-            if (!user) {
-                return `
-                    <button class="download-btn ${isVIP ? 'download-btn-premium' : ''}" onclick="requireLogin(${isVIP})">
-                        <i class="fas ${isVIP ? 'fa-crown' : 'fa-download'}"></i>
-                        ${isVIP ? 'Tải VIP #1' : 'Tải miễn phí'}
-                    </button>
-                `;
-            }
-            
             if (isVIP) {
+                // Xử lý nút VIP
+                if (!isValidLink) {
+                    return `
+                        <button class="download-btn download-btn-premium" disabled style="background: var(--text-muted);">
+                            <i class="fas fa-crown"></i>
+                            Tải VIP #1 (Đang cập nhật)
+                        </button>
+                    `;
+                }
+                
+                if (!user) {
+                    return `
+                        <button class="download-btn download-btn-premium" onclick="requireLogin(true)">
+                            <i class="fas fa-crown"></i>
+                            Tải VIP #1
+                        </button>
+                    `;
+                }
+                
                 // Kiểm tra xem user có đủ điều kiện tải app VIP không
                 const userPackage = user.packageType || 'free';
                 const canDownload = canUserDownloadVIP(app.vipPermissions, userPackage);
@@ -1763,18 +1817,40 @@
                     return `
                         <button class="download-btn download-btn-premium" onclick="requirePremium()">
                             <i class="fas fa-crown"></i>
-                            Tải VIP #1 (Premium)
+                            Tải VIP #1
                         </button>
                     `;
                 }
+                
+                return `
+                    <button class="download-btn download-btn-premium" onclick="downloadApp('${link}', '${app.name}', true)">
+                        <i class="fas fa-crown"></i>
+                        Tải VIP #1
+                    </button>
+                `;
+            } else {
+                // Xử lý nút miễn phí
+                if (!isValidLink) {
+                    // KHÔNG HIỂN THỊ NÚT MIỄN PHÍ NẾU KHÔNG CÓ LINK
+                    return '';
+                }
+                
+                if (!user) {
+                    return `
+                        <button class="download-btn" onclick="requireLogin(false)">
+                            <i class="fas fa-download"></i>
+                            Tải miễn phí
+                        </button>
+                    `;
+                }
+                
+                return `
+                    <button class="download-btn" onclick="downloadApp('${link}', '${app.name}', false)">
+                        <i class="fas fa-download"></i>
+                        Tải miễn phí
+                    </button>
+                `;
             }
-            
-            return `
-                <button class="download-btn ${isVIP ? 'download-btn-premium' : ''}" onclick="downloadApp('${link}', '${app.name}', ${isVIP})">
-                    <i class="fas ${isVIP ? 'fa-crown' : 'fa-download'}"></i>
-                    ${isVIP ? 'Tải VIP #1' : 'Tải miễn phí'}
-                </button>
-            `;
         }
         
         // Init screenshot scroll
