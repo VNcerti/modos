@@ -781,7 +781,33 @@
             margin-top: 10px;
             font-size: 11px;
             color: var(--text-secondary);
-            display: none; /* Ẩn toàn bộ phần này */
+            display: none;
+        }
+
+        /* Share Button */
+        .share-btn-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .share-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .share-btn:hover {
+            background: var(--border);
+            color: var(--text-primary);
         }
 
         /* Responsive Design */
@@ -1058,6 +1084,14 @@
                 <!-- Nội dung sẽ được thêm bằng JavaScript -->
             </div>
             
+            <!-- Share Button -->
+            <div class="share-btn-container" style="display: none;" id="shareBtnContainer">
+                <button class="share-btn" onclick="shareApp()">
+                    <i class="fas fa-share-alt"></i>
+                    Chia sẻ
+                </button>
+            </div>
+            
             <!-- Debug Info (ẩn mặc định) -->
             <div id="debugInfo" class="debug-info">
                 <div id="debugContent"></div>
@@ -1107,7 +1141,82 @@
     </nav>
 
     <script>
+        // ==================== URL PARSING FUNCTIONS ====================
+        
+        // Hàm xử lý URL parameter để hỗ trợ cả 2 định dạng
+        function parseUrlId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const rawId = urlParams.get('id');
+            
+            console.log('🔗 Raw ID from URL:', rawId);
+            
+            if (!rawId) {
+                return null;
+            }
+            
+            // Kiểm tra nếu là định dạng cũ (chỉ số)
+            if (/^\d+$/.test(rawId)) {
+                console.log('📌 Định dạng cũ (chỉ số):', rawId);
+                return {
+                    id: rawId,
+                    name: null,
+                    fullId: rawId
+                };
+            }
+            
+            // Kiểm tra nếu là định dạng mới (số-tên)
+            const match = rawId.match(/^(\d+)-(.+)$/);
+            if (match) {
+                const id = match[1];
+                const name = match[2].replace(/-/g, ' ');
+                console.log('📌 Định dạng mới (số-tên):', { id, name });
+                return {
+                    id: id,
+                    name: name,
+                    fullId: rawId
+                };
+            }
+            
+            // Trường hợp không hợp lệ
+            console.log('❌ Định dạng không hợp lệ:', rawId);
+            return {
+                id: rawId,
+                name: null,
+                fullId: rawId
+            };
+        }
+        
+        // Hàm tạo URL mới với định dạng số-tên
+        function createSeoUrl(appId, appName) {
+            if (!appName) {
+                return `app-detail.html?id=${appId}`;
+            }
+            
+            // Chuyển tên app thành URL-friendly
+            const seoName = appName
+                .toLowerCase()
+                .replace(/[^\w\s]/g, '') // Xoá ký tự đặc biệt
+                .replace(/\s+/g, '-')    // Thay space bằng dấu -
+                .replace(/-+/g, '-')     // Xoá nhiều dấu - liên tiếp
+                .trim();
+            
+            return `app-detail.html?id=${appId}-${seoName}`;
+        }
+        
+        // Hàm cập nhật URL trong thanh địa chỉ (không reload)
+        function updateBrowserUrl(appId, appName) {
+            const newUrl = createSeoUrl(appId, appName);
+            const currentUrl = window.location.href;
+            
+            // Chỉ cập nhật nếu URL khác với hiện tại
+            if (!currentUrl.includes(newUrl)) {
+                history.replaceState(null, '', newUrl);
+                console.log('🔄 Đã cập nhật URL:', newUrl);
+            }
+        }
+        
         // ==================== THEME MANAGEMENT ====================
+        
         // Tự động áp dụng theme từ localStorage
         function applyThemeFromStorage() {
             const savedTheme = localStorage.getItem('theme');
@@ -1117,18 +1226,15 @@
                 htmlElement.setAttribute('data-theme', 'dark');
             } else {
                 htmlElement.setAttribute('data-theme', 'light');
-                // Đảm bảo mặc định là light nếu chưa có
                 if (!savedTheme) {
                     localStorage.setItem('theme', 'light');
                 }
             }
             
-            // Cập nhật meta theme-color cho viền trên cùng
             updateMetaThemeColor(savedTheme === 'dark');
         }
         
         function updateMetaThemeColor(isDark) {
-            // Cập nhật màu theme cho thanh địa chỉ và UI trình duyệt
             const themeColor = isDark ? '#0f172a' : '#ffffff';
             
             let metaThemeColor = document.querySelector('meta[name="theme-color"]');
@@ -1139,7 +1245,6 @@
             }
             metaThemeColor.content = themeColor;
             
-            // Cập nhật màu cho Safari
             let metaAppleThemeColor = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
             if (!metaAppleThemeColor) {
                 metaAppleThemeColor = document.createElement('meta');
@@ -1151,9 +1256,10 @@
         
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxNrOYyYgU5vCFPl81moXlDnvBt1XFzYwc2wdjrxS5MFAa4i_Gc8xrevpq-6E-GGok-/exec';
         
-        // Lấy appId từ URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        const appId = urlParams.get('id');
+        // Lấy thông tin ID từ URL
+        const urlInfo = parseUrlId();
+        const appId = urlInfo ? urlInfo.id : null;
+        const appNameFromUrl = urlInfo ? urlInfo.name : null;
         
         // Biến để theo dõi retry
         let retryCount = 0;
@@ -1170,7 +1276,6 @@
             const alertMessage = document.getElementById('alertMessage');
             const alertButtons = document.getElementById('alertButtons');
             
-            // Set icon based on type
             alertIcon.className = 'alert-icon ' + type;
             const iconMap = {
                 'success': 'fas fa-check-circle',
@@ -1180,14 +1285,11 @@
             };
             alertIcon.innerHTML = `<i class="${iconMap[type] || 'fas fa-info-circle'}"></i>`;
             
-            // Set title and message
             alertTitle.textContent = title;
             alertMessage.innerHTML = message;
             
-            // Clear existing buttons
             alertButtons.innerHTML = '';
             
-            // Add buttons
             if (buttons && buttons.length > 0) {
                 buttons.forEach(button => {
                     const btn = document.createElement('button');
@@ -1209,7 +1311,6 @@
                     alertButtons.appendChild(btn);
                 });
             } else {
-                // Default OK button
                 const okBtn = document.createElement('button');
                 okBtn.className = 'alert-btn primary';
                 okBtn.innerHTML = '<i class="fas fa-check"></i> OK';
@@ -1219,13 +1320,11 @@
                 alertButtons.appendChild(okBtn);
             }
             
-            // Show alert
             alertOverlay.style.display = 'flex';
         }
 
         // ==================== VIP PERMISSIONS SYSTEM ====================
         
-        // VIP Package Labels
         const VIP_PACKAGE_LABELS = {
             'trial': { name: 'Trial', icon: 'fas fa-star', color: '#10b981' },
             'basic': { name: 'Basic', icon: 'fas fa-crown', color: '#3b82f6' },
@@ -1234,26 +1333,19 @@
             'all': { name: 'Tất cả gói', icon: 'fas fa-layer-group', color: '#6366f1' }
         };
 
-        // Kiểm tra user có đủ điều kiện tải app VIP không
         function canUserDownloadVIP(appVipPermissions, userPackage) {
-            // Nếu app không có vipPermissions hoặc là 'all', cho phép tải
             if (!appVipPermissions || appVipPermissions === 'all') {
                 return true;
             }
             
-            // Nếu user không có package (free user), không được tải
             if (!userPackage || userPackage === 'free') {
                 return false;
             }
             
-            // Chuyển appVipPermissions thành array
             const allowedPackages = appVipPermissions.split(',').map(p => p.trim());
-            
-            // Kiểm tra user package có trong danh sách allowed packages không
             return allowedPackages.includes(userPackage);
         }
 
-        // Lấy danh sách VIP permissions dạng readable
         function getVipPermissionsReadable(appVipPermissions) {
             if (!appVipPermissions || appVipPermissions === 'all') {
                 return ['Tất cả các gói'];
@@ -1265,7 +1357,6 @@
 
         // ==================== UTILITY FUNCTIONS ====================
         
-        // XOÁ CACHE khi vào trang chi tiết
         function clearCache() {
             try {
                 localStorage.removeItem('xspace_apps_cache');
@@ -1276,7 +1367,6 @@
             }
         }
         
-        // Hiển thị loading
         function showLoading() {
             document.getElementById('appContent').innerHTML = `
                 <div class="loading">
@@ -1286,7 +1376,6 @@
             `;
         }
         
-        // Hiển thị lỗi với nút retry
         function showError(message, showRetry = true) {
             let retryButton = '';
             if (showRetry && retryCount < MAX_RETRIES) {
@@ -1314,14 +1403,12 @@
             `;
         }
         
-        // Retry load app
         function retryLoadApp() {
             retryCount++;
             console.log(`🔄 Thử lại lần ${retryCount}/${MAX_RETRIES}...`);
             loadAppDetail();
         }
         
-        // Toggle debug info
         function toggleDebug() {
             const debugInfo = document.getElementById('debugInfo');
             const toggle = document.querySelector('.debug-toggle');
@@ -1336,7 +1423,6 @@
             }
         }
         
-        // Update debug info
         function updateDebugInfo() {
             const debugContent = document.getElementById('debugContent');
             if (!debugContent || !currentAppData) return;
@@ -1344,12 +1430,11 @@
             debugContent.innerHTML = `
                 <h4>Thông tin debug:</h4>
                 <p><strong>App ID:</strong> ${appId}</p>
+                <p><strong>Tên từ URL:</strong> ${appNameFromUrl || 'Không có'}</p>
                 <p><strong>Retry count:</strong> ${retryCount}/${MAX_RETRIES}</p>
                 <p><strong>Timestamp:</strong> ${new Date().toLocaleString()}</p>
                 <p><strong>VIP Permissions:</strong> ${currentAppData.vipPermissions || 'all'}</p>
-                <p><strong>Screenshot1:</strong> ${currentAppData.screenshot1 || 'N/A'}</p>
-                <p><strong>Screenshot2:</strong> ${currentAppData.screenshot2 || 'N/A'}</p>
-                <p><strong>Screenshot3:</strong> ${currentAppData.screenshot3 || 'N/A'}</p>
+                <p><strong>Current URL:</strong> ${window.location.href}</p>
                 <button class="retry-btn" onclick="forceReload()" style="margin-top: 10px;">
                     <i class="fas fa-sync-alt"></i>
                     Tải lại dữ liệu
@@ -1357,7 +1442,6 @@
             `;
         }
         
-        // Force reload
         function forceReload() {
             clearCache();
             retryCount = 0;
@@ -1366,7 +1450,6 @@
         
         // ==================== DATA PROCESSING ====================
         
-        // Kiểm tra URL ảnh hợp lệ
         function isValidImageUrl(url) {
             if (!url || typeof url !== 'string') {
                 return false;
@@ -1374,7 +1457,6 @@
             
             const trimmedUrl = url.trim();
             
-            // Kiểm tra các giá trị không hợp lệ
             if (trimmedUrl === '' || 
                 trimmedUrl === 'null' || 
                 trimmedUrl === 'undefined' ||
@@ -1386,7 +1468,6 @@
                 return false;
             }
             
-            // Kiểm tra nếu là URL hợp lệ
             const isUrl = trimmedUrl.startsWith('http://') || 
                          trimmedUrl.startsWith('https://') || 
                          trimmedUrl.startsWith('//') ||
@@ -1404,24 +1485,20 @@
             return isUrl;
         }
         
-        // Xử lý dữ liệu app
         function processAppData(app) {
             console.log('🔍 Processing app data...');
             
-            // Đảm bảo tất cả các trường cần thiết tồn tại
             app.viplink1 = app.viplink1 || '';
             app.downloadlink = app.downloadlink || '';
             app.categories = app.categories || 'other';
-            app.vipPermissions = app.vipPermissions || 'all'; // Mặc định là all
+            app.vipPermissions = app.vipPermissions || 'all';
             
-            // Xử lý screenshot
             const possibleKeys = {
                 'screenshot1': ['screenshot1', 'Screenshot1', 'screenshot_1', 'image1', 'Image1'],
                 'screenshot2': ['screenshot2', 'Screenshot2', 'screenshot_2', 'image2', 'Image2'],
                 'screenshot3': ['screenshot3', 'Screenshot3', 'screenshot_3', 'image3', 'Image3']
             };
             
-            // Tìm screenshot1
             let foundScreenshot1 = '';
             for (const key of possibleKeys.screenshot1) {
                 if (app[key] && typeof app[key] === 'string' && app[key].trim() !== '') {
@@ -1430,7 +1507,6 @@
                 }
             }
             
-            // Tìm screenshot2
             let foundScreenshot2 = '';
             for (const key of possibleKeys.screenshot2) {
                 if (app[key] && typeof app[key] === 'string' && app[key].trim() !== '') {
@@ -1439,7 +1515,6 @@
                 }
             }
             
-            // Tìm screenshot3
             let foundScreenshot3 = '';
             for (const key of possibleKeys.screenshot3) {
                 if (app[key] && typeof app[key] === 'string' && app[key].trim() !== '') {
@@ -1448,32 +1523,21 @@
                 }
             }
             
-            // Cách 2: Nếu không tìm thấy, thử lấy từ index của mảng
             if (!foundScreenshot1 && Array.isArray(app)) {
                 if (app.length > 10) foundScreenshot1 = app[10] || '';
                 if (app.length > 11) foundScreenshot2 = app[11] || '';
                 if (app.length > 12) foundScreenshot3 = app[12] || '';
             }
             
-            // Gán giá trị cuối cùng
             app.screenshot1 = foundScreenshot1;
             app.screenshot2 = foundScreenshot2;
             app.screenshot3 = foundScreenshot3;
-            
-            console.log('📸 Screenshot results:');
-            console.log('- Screenshot 1:', app.screenshot1, 'Valid:', isValidImageUrl(app.screenshot1));
-            console.log('- Screenshot 2:', app.screenshot2, 'Valid:', isValidImageUrl(app.screenshot2));
-            console.log('- Screenshot 3:', app.screenshot3, 'Valid:', isValidImageUrl(app.screenshot3));
-            console.log('👑 VIP Permissions:', app.vipPermissions);
-            console.log('🔗 Download Link:', app.downloadlink);
-            console.log('👑 VIP Link:', app.viplink1);
             
             return app;
         }
         
         // ==================== DISPLAY FUNCTIONS ====================
         
-        // Tạo HTML cho mô tả
         function createDescriptionHTML(description) {
             if (!description) {
                 return '<div class="app-description-check">Ứng dụng chưa có mô tả chi tiết.</div>';
@@ -1498,16 +1562,13 @@
             return html;
         }
         
-        // Tạo HTML cho screenshots
         function createScreenshotsHTML(app) {
             console.log('🖼️ Creating screenshots HTML...');
             
-            // Lấy screenshot đã được xử lý
             const screenshot1 = app.screenshot1 || '';
             const screenshot2 = app.screenshot2 || '';
             const screenshot3 = app.screenshot3 || '';
             
-            // Thu thập ảnh hợp lệ
             const validImages = [];
             
             [screenshot1, screenshot2, screenshot3].forEach((url, index) => {
@@ -1525,7 +1586,6 @@
             
             console.log(`📊 Total valid screenshots: ${validImages.length}`);
             
-            // Nếu không có ảnh hợp lệ
             if (validImages.length === 0) {
                 return `
                     <div class="no-screenshots-message">
@@ -1542,13 +1602,11 @@
                 `;
             }
             
-            // Tạo HTML cho container ảnh
             let html = `
                 <div class="screenshots-container">
                     <div class="screenshots-wrapper" id="screenshotsWrapper">
             `;
             
-            // Thêm ảnh
             validImages.forEach((img, index) => {
                 html += `
                     <div class="screenshot-item">
@@ -1564,7 +1622,6 @@
             html += `
                     </div>
                     
-                    <!-- Navigation -->
                     ${validImages.length > 1 ? `
                         <div class="screenshot-nav prev" onclick="scrollScreenshots(-220)">
                             <i class="fas fa-chevron-left"></i>
@@ -1582,7 +1639,6 @@
             return html;
         }
         
-        // Scroll screenshots
         function scrollScreenshots(amount) {
             const wrapper = document.getElementById('screenshotsWrapper');
             if (wrapper) {
@@ -1590,7 +1646,6 @@
             }
         }
         
-        // Kiểm tra xem app có link tải miễn phí hợp lệ không
         function hasValidFreeDownload(downloadlink) {
             if (!downloadlink || typeof downloadlink !== 'string') {
                 return false;
@@ -1598,7 +1653,6 @@
             
             const trimmedLink = downloadlink.trim();
             
-            // Kiểm tra các giá trị không hợp lệ
             if (trimmedLink === '' || 
                 trimmedLink === 'null' || 
                 trimmedLink === 'undefined' ||
@@ -1610,7 +1664,6 @@
                 return false;
             }
             
-            // Kiểm tra nếu là URL hợp lệ
             const isUrl = trimmedLink.startsWith('http://') || 
                          trimmedLink.startsWith('https://') || 
                          trimmedLink.startsWith('//');
@@ -1618,17 +1671,18 @@
             return isUrl;
         }
         
-        // Hiển thị chi tiết app
         function displayAppDetail(app) {
-            currentAppData = app; // Lưu cho debug
+            currentAppData = app;
             
             console.log('🎨 Displaying app detail:', app.name);
             console.log('👑 App VIP Permissions:', app.vipPermissions);
-            console.log('🔗 Download Link (raw):', app.downloadlink);
-            console.log('🔗 Has Valid Free Download:', hasValidFreeDownload(app.downloadlink));
-            console.log('👑 VIP Link:', app.viplink1);
             
-            // Category labels với các mục mới
+            // Cập nhật URL trình duyệt với định dạng mới
+            updateBrowserUrl(app.id, app.name);
+            
+            // Hiển thị nút chia sẻ
+            document.getElementById('shareBtnContainer').style.display = 'flex';
+            
             const categoryLabels = {
                 'game': 'Trò chơi',
                 'social': 'Mạng xã hội',
@@ -1652,7 +1706,6 @@
                 `<span class="app-tag">${categoryLabels[cat] || cat}</span>`
             ).join('');
             
-            // Format date
             let formattedDate = 'Chưa cập nhật';
             if (app.updatedate) {
                 try {
@@ -1665,23 +1718,18 @@
                 }
             }
             
-            // Set title
             document.title = `${app.name} - XSpace Store`;
             
-            // Check user login
             const user = getCurrentUser();
             const loginPrompt = document.getElementById('loginPrompt');
             loginPrompt.style.display = user ? 'none' : 'block';
             
-            // Kiểm tra xem app có link tải miễn phí hợp lệ không
             const hasFreeDownload = hasValidFreeDownload(app.downloadlink);
             
-            // Tạo nút download dựa trên việc có link tải miễn phí hay không
             let downloadButtonsHTML = '';
             let downloadInfoText = '';
             
             if (hasFreeDownload) {
-                // Có link miễn phí, hiển thị cả 2 nút
                 const freeButton = createDownloadButton(app, false, user);
                 const vipButton = createDownloadButton(app, true, user);
                 
@@ -1691,23 +1739,18 @@
                 `;
                 downloadInfoText = app.viplink1 ? 'Premium: No Ads – Full Features – Unlimited Access' : 'Bản VIP đang được cập nhật';
             } else {
-                // Không có link miễn phí, chỉ hiển thị nút VIP
                 const vipButton = createDownloadButton(app, true, user);
                 
                 downloadButtonsHTML = vipButton;
                 downloadInfoText = app.viplink1 ? 'Ứng dụng chỉ có bản Premium' : 'Bản VIP đang được cập nhật';
             }
             
-            // Kiểm tra nếu app chỉ có link VIP (không có link miễn phí)
             const isVipOnly = app.viplink1 && !hasFreeDownload;
-            
-            // Tạo icon vương miện nếu là app chỉ có VIP
             let vipCrownIcon = '';
             if (isVipOnly) {
                 vipCrownIcon = '<i class="fas fa-crown vip-crown-icon"></i>';
             }
             
-            // Create HTML
             const html = `
                 <div class="app-header">
                     <img src="${app.image || 'https://via.placeholder.com/135/2563eb/FFFFFF?text=App'}" 
@@ -1765,20 +1808,16 @@
                 </div>
             `;
             
-            // Hiển thị HTML
             document.getElementById('appContent').innerHTML = html;
             
-            // Init screenshot scroll
             setTimeout(initScreenshotScroll, 100);
         }
         
-        // Tạo nút download với logic kiểm tra VIP permissions
         function createDownloadButton(app, isVIP, user) {
             const link = isVIP ? app.viplink1 : app.downloadlink;
             const isValidLink = link && isValidImageUrl(link.replace('image', 'http'));
             
             if (isVIP) {
-                // Xử lý nút VIP
                 if (!isValidLink) {
                     return `
                         <button class="download-btn download-btn-premium" disabled style="background: var(--text-muted);">
@@ -1797,12 +1836,10 @@
                     `;
                 }
                 
-                // Kiểm tra xem user có đủ điều kiện tải app VIP không
                 const userPackage = user.packageType || 'free';
                 const canDownload = canUserDownloadVIP(app.vipPermissions, userPackage);
                 
                 if (!canDownload) {
-                    // User không đủ điều kiện tải app VIP
                     const requiredPackages = getVipPermissionsReadable(app.vipPermissions);
                     return `
                         <button class="download-btn download-btn-premium" onclick="showUpgradeRequiredAlert('${requiredPackages.join(', ')}')">
@@ -1812,7 +1849,6 @@
                     `;
                 }
                 
-                // User đủ điều kiện, kiểm tra xem có phải premium không
                 if (!isUserPremium()) {
                     return `
                         <button class="download-btn download-btn-premium" onclick="requirePremium()">
@@ -1829,9 +1865,7 @@
                     </button>
                 `;
             } else {
-                // Xử lý nút miễn phí
                 if (!isValidLink) {
-                    // KHÔNG HIỂN THỊ NÚT MIỄN PHÍ NẾU KHÔNG CÓ LINK
                     return '';
                 }
                 
@@ -1853,7 +1887,6 @@
             }
         }
         
-        // Init screenshot scroll
         function initScreenshotScroll() {
             const wrapper = document.getElementById('screenshotsWrapper');
             const prevBtn = document.querySelector('.screenshot-nav.prev');
@@ -1897,13 +1930,12 @@
             }
             
             console.log(`🚀 Loading app detail for ID: ${appId}`);
+            console.log(`📌 Tên từ URL: ${appNameFromUrl || 'Không có'}`);
             
-            // Xoá cache để đảm bảo tải dữ liệu mới
             clearCache();
             showLoading();
             
             try {
-                // Tải dữ liệu trực tiếp từ server với cache busting
                 const timestamp = Date.now();
                 const url = `${GOOGLE_SCRIPT_URL}?action=getApps&t=${timestamp}&nocache=true`;
                 
@@ -1919,17 +1951,15 @@
                 console.log('📦 Server response:', result);
                 
                 if (result.success && result.data) {
-                    // Tìm app theo ID
                     const app = result.data.find(a => {
                         return a.id == appId || a.id === appId || a.id.toString() === appId.toString();
                     });
                     
                     if (app) {
                         console.log('✅ Found app:', app.name);
-                        // Xử lý dữ liệu trước khi hiển thị
                         const processedApp = processAppData(app);
                         displayAppDetail(processedApp);
-                        retryCount = 0; // Reset retry count on success
+                        retryCount = 0;
                     } else {
                         console.error('❌ App not found with ID:', appId);
                         showError(`Không tìm thấy ứng dụng với ID: ${appId}`, true);
@@ -1946,6 +1976,46 @@
                     showError(`Không thể tải thông tin ứng dụng sau ${MAX_RETRIES} lần thử. Vui lòng thử lại sau.`, false);
                 }
             }
+        }
+        
+        // ==================== SHARE FUNCTION ====================
+        
+        function shareApp() {
+            if (!currentAppData) return;
+            
+            const shareUrl = createSeoUrl(currentAppData.id, currentAppData.name);
+            const fullUrl = window.location.origin + '/' + shareUrl;
+            const shareText = `Xem ứng dụng ${currentAppData.name} trên XSpace Store`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: currentAppData.name,
+                    text: shareText,
+                    url: fullUrl
+                })
+                .then(() => console.log('✅ Chia sẻ thành công'))
+                .catch((error) => {
+                    console.log('❌ Lỗi chia sẻ:', error);
+                    copyToClipboard(fullUrl);
+                });
+            } else {
+                copyToClipboard(fullUrl);
+            }
+        }
+        
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    showCustomAlert('success', 'Đã sao chép!', 
+                        'Đường dẫn đã được sao chép vào clipboard. Bạn có thể chia sẻ với bạn bè.', 
+                        [{ text: 'OK', type: 'primary', icon: 'fas fa-check' }]);
+                })
+                .catch(err => {
+                    console.error('❌ Lỗi sao chép:', err);
+                    showCustomAlert('error', 'Lỗi', 
+                        'Không thể sao chép đường dẫn. Vui lòng thử lại.', 
+                        [{ text: 'OK', type: 'primary', icon: 'fas fa-check' }]);
+                });
         }
         
         // ==================== USER FUNCTIONS ====================
@@ -2053,7 +2123,6 @@
                 ]);
         }
         
-        // Hàm mới: Hiển thị alert yêu cầu nâng cấp gói cao hơn
         function showUpgradeRequiredAlert(requiredPackages) {
             showCustomAlert('warning', 'Không đủ điều kiện', 
                 `Tài khoản của bạn hiện không đủ điều kiện tải ứng dụng này.<br><br>
@@ -2085,15 +2154,11 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📱 App detail page initialized');
-            console.log('🔗 App ID from URL:', appId);
+            console.log('🔗 URL Info:', urlInfo);
             
-            // Áp dụng theme từ localStorage ngay khi DOM loaded
             applyThemeFromStorage();
-            
-            // Load app detail
             loadAppDetail();
             
-            // Thêm event listener cho các button download
             document.addEventListener('click', function(e) {
                 const downloadBtn = e.target.closest('.download-btn');
                 if (downloadBtn && !downloadBtn.disabled) {
@@ -2108,7 +2173,6 @@
                 }
             });
             
-            // Close custom alert when clicking outside
             const alertOverlay = document.getElementById('customAlertOverlay');
             alertOverlay.addEventListener('click', function(e) {
                 if (e.target === alertOverlay) {
@@ -2116,7 +2180,6 @@
                 }
             });
             
-            // Close custom alert with Escape key
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape' && alertOverlay.style.display === 'flex') {
                     alertOverlay.style.display = 'none';
@@ -2124,7 +2187,6 @@
             });
         });
         
-        // Force clear cache khi page được load
         window.addEventListener('load', function() {
             clearCache();
         });
