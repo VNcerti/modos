@@ -1,7 +1,5 @@
 <?php
 // udid-processor.php
-// File này xử lý UDID từ thiết bị iOS và chuyển hướng về trang account.html
-
 header('Content-Type: text/plain; charset=utf-8');
 
 // Lấy email từ tham số URL
@@ -17,14 +15,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $xml = simplexml_load_string($xmlData);
         
         if ($xml) {
-            // Lấy UDID từ XML
-            $udid = (string)$xml->dict->key[0]; // UDID là phần tử đầu tiên
+            // Lấy UDID từ XML (UDID là phần tử đầu tiên trong mảng)
+            $udid = '';
+            if (isset($xml->dict->key)) {
+                $keys = $xml->dict->key;
+                foreach ($keys as $key) {
+                    if ((string)$key === 'UDID') {
+                        // Lấy value tương ứng với key UDID
+                        $next = $key->xpath('following-sibling::*[1]');
+                        if ($next) {
+                            $udid = (string)$next[0];
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Nếu không tìm thấy UDID bằng cách trên, thử cách khác
+            if (empty($udid)) {
+                // Thử parse theo cách khác
+                $data = (array)$xml->dict;
+                if (isset($data['key']) && is_array($data['key'])) {
+                    foreach ($data['key'] as $index => $key) {
+                        if ($key == 'UDID' && isset($data['string'][$index])) {
+                            $udid = $data['string'][$index];
+                            break;
+                        }
+                    }
+                }
+            }
             
             if ($udid && strlen($udid) > 10) {
                 // Tạo URL chuyển hướng về account.html với thông tin UDID
                 $redirectUrl = "https://modos.site/account.html?udid_verified=success&udid=" . urlencode($udid) . "&email=" . urlencode($email);
                 
-                // Ghi log để debug (tùy chọn)
+                // Ghi log để debug
                 $logData = date('Y-m-d H:i:s') . " - Email: $email - UDID: $udid\n";
                 file_put_contents('udid_log.txt', $logData, FILE_APPEND);
                 
@@ -50,7 +75,6 @@ exit();
 </head>
 <body>
     <script>
-        // Nếu JavaScript được hỗ trợ, tự động chuyển hướng
         setTimeout(function() {
             window.location.href = "https://modos.site/account.html?udid_verified=error";
         }, 3000);
