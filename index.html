@@ -248,7 +248,7 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation - ĐÃ CHỈNH SỬA -->
     <nav class="bottom-nav">
         <div class="container">
             <div class="nav-items">
@@ -258,11 +258,12 @@
                     </div>
                     <div class="nav-label">Trang chủ</div>
                 </a>
-                <a href="#" class="nav-item" data-view="today">
+                <!-- Mục Trò chơi được chuyển sang vị trí thứ 2 -->
+                <a href="#" class="nav-item" data-view="games">
                     <div class="nav-icon">
-                        <i class="fas fa-calendar-day"></i>
+                        <i class="fas fa-gamepad"></i>
                     </div>
-                    <div class="nav-label">Hôm nay</div>
+                    <div class="nav-label">Trò chơi</div>
                 </a>
                 <a href="#" class="nav-item" data-view="search" id="searchNavItem">
                     <div class="nav-icon">
@@ -270,13 +271,14 @@
                     </div>
                     <div class="nav-label">Tìm kiếm</div>
                 </a>
-                <a href="#" class="nav-item" data-view="games">
+                <!-- Mục Thông tin mới ở vị trí thứ 4 -->
+                <a href="info.html" class="nav-item">
                     <div class="nav-icon">
-                        <i class="fas fa-gamepad"></i>
+                        <i class="fas fa-info-circle"></i>
                     </div>
-                    <div class="nav-label">Trò chơi</div>
+                    <div class="nav-label">Thông tin</div>
                 </a>
-                <!-- ĐÃ ĐỔI "YÊU CẦU" THÀNH "TÀI KHOẢN" -->
+                <!-- Mục Tài khoản giữ nguyên ở vị trí thứ 5 -->
                 <a href="account.html" class="nav-item">
                     <div class="nav-icon">
                         <i class="fas fa-user"></i>
@@ -416,6 +418,77 @@
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
             }
+            
+            // Thêm hiệu ứng hover cho các mục navbar
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                // Hiệu ứng khi hover
+                item.addEventListener('mouseenter', () => {
+                    const icon = item.querySelector('.nav-icon');
+                    const label = item.querySelector('.nav-label');
+                    
+                    // Hiệu ứng icon
+                    icon.style.transform = 'translateY(-4px) scale(1.1)';
+                    icon.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    // Hiệu ứng label
+                    label.style.transform = 'translateY(2px)';
+                    label.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    // Hiệu ứng màu sắc
+                    if (!item.classList.contains('active')) {
+                        item.style.color = 'var(--primary)';
+                    }
+                });
+                
+                // Hiệu ứng khi rời chuột
+                item.addEventListener('mouseleave', () => {
+                    const icon = item.querySelector('.nav-icon');
+                    const label = item.querySelector('.nav-label');
+                    
+                    // Khôi phục icon
+                    icon.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Khôi phục label
+                    label.style.transform = 'translateY(0)';
+                    
+                    // Khôi phục màu sắc
+                    if (!item.classList.contains('active')) {
+                        item.style.color = '';
+                    }
+                });
+                
+                // Hiệu ứng khi click
+                item.addEventListener('click', (e) => {
+                    if (!item.href || item.href.includes('#')) {
+                        e.preventDefault();
+                    }
+                    
+                    // Xóa active khỏi tất cả các mục
+                    navItems.forEach(navItem => {
+                        navItem.classList.remove('active');
+                        const navIcon = navItem.querySelector('.nav-icon');
+                        navIcon.style.transform = 'translateY(0) scale(1)';
+                        navIcon.style.transition = 'transform 0.2s ease-out';
+                    });
+                    
+                    // Thêm active vào mục được click
+                    item.classList.add('active');
+                    
+                    // Hiệu ứng click cho icon
+                    const icon = item.querySelector('.nav-icon');
+                    icon.style.transform = 'translateY(-4px) scale(1.1)';
+                    
+                    // Hiệu ứng bounce nhẹ
+                    setTimeout(() => {
+                        icon.style.transform = 'translateY(-2px) scale(1.05)';
+                    }, 150);
+                    
+                    setTimeout(() => {
+                        icon.style.transform = 'translateY(-4px) scale(1.1)';
+                    }, 300);
+                });
+            });
         });
         
         // Xử lý nút Telegram
