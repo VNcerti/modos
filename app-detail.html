@@ -61,8 +61,8 @@
             background: var(--background);
             color: var(--text-primary);
             line-height: 1.5;
-            padding-bottom: var(--nav-height);
             min-height: 100vh;
+            padding-bottom: var(--nav-height);
         }
 
         .container {
@@ -743,51 +743,6 @@
             font-size: 13px;
         }
 
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--background);
-            border-top: 1px solid var(--border);
-            padding: 6px 0;
-            z-index: 1000;
-        }
-
-        .nav-items {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-            flex: 1;
-            padding: 4px 0;
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-icon {
-            font-size: 16px;
-            margin-bottom: 2px;
-        }
-
-        .nav-label {
-            font-size: 9px;
-            font-weight: 500;
-        }
-
         /* Retry Button */
         .retry-btn {
             background: var(--primary);
@@ -873,6 +828,105 @@
             color: var(--text-primary);
         }
 
+        /* Bottom Navigation - GIỐNG NHƯ INDEX.HTML */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--background);
+            border-top: 1px solid var(--border);
+            padding: 6px 0;
+            z-index: 1000;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1;
+            padding: 4px 0;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            animation: pulse-dot 2s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% {
+                opacity: 0.5;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.2);
+            }
+        }
+
+        .nav-icon {
+            font-size: 16px;
+            margin-bottom: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .nav-item.active .nav-icon {
+            color: var(--primary);
+            filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3));
+        }
+
+        .nav-label {
+            font-size: 9px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Hiệu ứng hover cho nav item */
+        .nav-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .nav-item:hover .nav-icon {
+            transform: translateY(-4px) scale(1.1);
+        }
+
+        .nav-item:hover .nav-label {
+            transform: translateY(1px);
+            color: var(--primary);
+        }
+
+        /* Hiệu ứng click */
+        .nav-item:active .nav-icon {
+            transform: translateY(-2px) scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -923,6 +977,15 @@
             .custom-alert {
                 padding: 20px;
                 margin: 0 15px;
+            }
+            
+            .nav-label {
+                font-size: 8px;
+            }
+            
+            .nav-item.active::after {
+                width: 3px;
+                height: 3px;
             }
         }
 
@@ -1084,10 +1147,6 @@
                 font-size: 13px;
             }
             
-            .nav-label {
-                font-size: 8px;
-            }
-            
             .custom-alert {
                 padding: 15px;
                 margin: 0 10px;
@@ -1104,6 +1163,10 @@
             .alert-btn {
                 padding: 8px 16px;
                 font-size: 11px;
+            }
+            
+            .nav-label {
+                font-size: 7px;
             }
         }
     </style>
@@ -1181,39 +1244,39 @@
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- Bottom Navigation - GIỐNG NHƯ INDEX.HTML -->
     <nav class="bottom-nav">
         <div class="container">
             <div class="nav-items">
-                <a href="index.html" class="nav-item">
+                <a href="index.html" class="nav-item" data-view="home">
                     <div class="nav-icon">
                         <i class="fas fa-home"></i>
                     </div>
                     <div class="nav-label">Trang chủ</div>
                 </a>
-                <a href="#" class="nav-item">
-                    <div class="nav-icon">
-                        <i class="fas fa-calendar-day"></i>
-                    </div>
-                    <div class="nav-label">Hôm nay</div>
-                </a>
-                <a href="#" class="nav-item" id="searchNavItem">
-                    <div class="nav-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <div class="nav-label">Tìm kiếm</div>
-                </a>
-                <a href="#" class="nav-item">
+                <a href="index.html#gamesSection" class="nav-item" data-view="games">
                     <div class="nav-icon">
                         <i class="fas fa-gamepad"></i>
                     </div>
                     <div class="nav-label">Trò chơi</div>
                 </a>
-                <a href="https://t.me/m/inBUSKQ1N2E1" class="nav-item" target="_blank">
+                <a href="index.html" class="nav-item" data-view="search" id="searchNavItem">
                     <div class="nav-icon">
-                        <i class="fas fa-headset"></i>
+                        <i class="fas fa-search"></i>
                     </div>
-                    <div class="nav-label">Yêu cầu</div>
+                    <div class="nav-label">Tìm kiếm</div>
+                </a>
+                <a href="info.html" class="nav-item">
+                    <div class="nav-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="nav-label">Thông tin</div>
+                </a>
+                <a href="account.html" class="nav-item">
+                    <div class="nav-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="nav-label">Tài khoản</div>
                 </a>
             </div>
         </div>
@@ -2259,6 +2322,78 @@
             console.log('🔗 URL Info:', urlInfo);
             
             applyThemeFromStorage();
+            
+            // Thêm hiệu ứng hover cho các mục navbar
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                // Hiệu ứng khi hover
+                item.addEventListener('mouseenter', () => {
+                    const icon = item.querySelector('.nav-icon');
+                    const label = item.querySelector('.nav-label');
+                    
+                    // Hiệu ứng icon
+                    icon.style.transform = 'translateY(-4px) scale(1.1)';
+                    icon.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    // Hiệu ứng label
+                    label.style.transform = 'translateY(2px)';
+                    label.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
+                    // Hiệu ứng màu sắc
+                    if (!item.classList.contains('active')) {
+                        item.style.color = 'var(--primary)';
+                    }
+                });
+                
+                // Hiệu ứng khi rời chuột
+                item.addEventListener('mouseleave', () => {
+                    const icon = item.querySelector('.nav-icon');
+                    const label = item.querySelector('.nav-label');
+                    
+                    // Khôi phục icon
+                    icon.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Khôi phục label
+                    label.style.transform = 'translateY(0)';
+                    
+                    // Khôi phục màu sắc
+                    if (!item.classList.contains('active')) {
+                        item.style.color = '';
+                    }
+                });
+                
+                // Hiệu ứng khi click
+                item.addEventListener('click', (e) => {
+                    if (!item.href || item.href.includes('#')) {
+                        e.preventDefault();
+                    }
+                    
+                    // Xóa active khỏi tất cả các mục
+                    navItems.forEach(navItem => {
+                        navItem.classList.remove('active');
+                        const navIcon = navItem.querySelector('.nav-icon');
+                        navIcon.style.transform = 'translateY(0) scale(1)';
+                        navIcon.style.transition = 'transform 0.2s ease-out';
+                    });
+                    
+                    // Thêm active vào mục được click
+                    item.classList.add('active');
+                    
+                    // Hiệu ứng click cho icon
+                    const icon = item.querySelector('.nav-icon');
+                    icon.style.transform = 'translateY(-4px) scale(1.1)';
+                    
+                    // Hiệu ứng bounce nhẹ
+                    setTimeout(() => {
+                        icon.style.transform = 'translateY(-2px) scale(1.05)';
+                    }, 150);
+                    
+                    setTimeout(() => {
+                        icon.style.transform = 'translateY(-4px) scale(1.1)';
+                    }, 300);
+                });
+            });
+            
             loadAppDetail();
             
             document.addEventListener('click', function(e) {
