@@ -873,7 +873,7 @@ body {
     overflow-y: auto;
 }
 
-/* Bottom Navigation */
+/* Bottom Navigation - ĐÃ CHỈNH SỬA ĐỂ CẢI THIỆN ANIMATION */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -899,28 +899,77 @@ body {
     align-items: center;
     text-decoration: none;
     color: var(--text-secondary);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex: 1;
     padding: 4px 0;
+    border-radius: 8px;
+    position: relative;
 }
 
 .nav-item.active {
     color: var(--primary);
 }
 
-.nav-item:hover {
-    transform: translateY(-2px);
+.nav-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: var(--primary);
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% {
+        opacity: 0.5;
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.2);
+    }
 }
 
 .nav-icon {
     font-size: 16px;
     margin-bottom: 2px;
-    transition: transform 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.nav-item.active .nav-icon {
+    color: var(--primary);
+    filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3));
 }
 
 .nav-label {
     font-size: 9px;
     font-weight: 500;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hiệu ứng hover cho nav item */
+.nav-item:hover {
+    transform: translateY(-3px);
+}
+
+.nav-item:hover .nav-icon {
+    transform: translateY(-4px) scale(1.1);
+}
+
+.nav-item:hover .nav-label {
+    transform: translateY(1px);
+    color: var(--primary);
+}
+
+/* Hiệu ứng click */
+.nav-item:active .nav-icon {
+    transform: translateY(-2px) scale(0.95);
+    transition: transform 0.1s ease;
 }
 
 /* Loading */
@@ -1205,5 +1254,10 @@ body {
 
     .nav-label {
         font-size: 8px;
+    }
+    
+    .nav-item.active::after {
+        width: 3px;
+        height: 3px;
     }
 }
