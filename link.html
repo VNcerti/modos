@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tạo Link Rút Gọn | IOSCert</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --radius: 10px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            padding: 15px;
+            color: var(--dark);
+        }
+
+        .admin-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .admin-header {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-left: 4px solid var(--primary);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .logo i {
+            background: var(--primary);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .admin-title {
+            font-size: 20px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .admin-subtitle {
+            color: var(--gray);
+            font-size: 14px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                grid-template-columns: 1.5fr 1fr;
+            }
+        }
+
+        /* Form Panel */
+        .form-panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f3f4f6;
+            color: var(--dark);
+            font-size: 18px;
+        }
+
+        .panel-title i {
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Tasks Section */
+        .tasks-section {
+            background: #f9fafb;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .tasks-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 16px;
+        }
+
+        .task-counter {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .task-item {
+            background: white;
+            border-radius: 8px;
+            padding: 18px;
+            border-left: 3px solid var(--primary);
+            position: relative;
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .task-number {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Button Group */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+            display: none;
+            border-top: 4px solid var(--success);
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .result-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin: 0 auto 12px;
+        }
+
+        .result-title {
+            font-size: 18px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .result-description {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .link-display {
+            background: #f0f9ff;
+            border: 1px dashed var(--primary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            word-break: break-all;
+            font-weight: 500;
+            color: var(--primary);
+            font-size: 14px;
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Template Section */
+        .template-section {
+            background: #fef3c7;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .template-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 16px;
+        }
+
+        .template-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .template-task {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-left: 3px solid var(--success);
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 3px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border-left: 3px solid var(--warning);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Instructions */
+        .instructions {
+            background: #f0f9ff;
+            border-radius: var(--radius);
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .instructions h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .instructions ul {
+            padding-left: 18px;
+            color: var(--gray);
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .admin-header {
+                padding: 20px 15px;
+            }
+            
+            .form-panel, .stats-panel {
+                padding: 20px 15px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="logo">
+                <i class="fas fa-link"></i>
+                <span>IOSCert Link</span>
+            </div>
+            <h1 class="admin-title">Tạo Link Rút Gọn Nhanh</h1>
+            <p class="admin-subtitle">Nhập link đích, sử dụng template hoặc tạo nhiệm vụ mới</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Form Panel -->
+            <div class="form-panel">
+                <div class="panel-title">
+                    <i class="fas fa-plus-circle"></i>
+                    <h2>Tạo Link Mới</h2>
+                </div>
+
+                <!-- Alert Messages -->
+                <div class="alert" id="alert"></div>
+
+                <!-- Destination Link -->
+                <div class="form-group">
+                    <label class="form-label" for="destinationLink">
+                        <i class="fas fa-destination"></i> Liên kết đích *
+                    </label>
+                    <input type="url" id="destinationLink" class="form-control" 
+                           placeholder="https://example.com/san-pham" required>
+                    <small style="color: var(--gray); margin-top: 4px; display: block;">
+                        Link mà người dùng sẽ được chuyển đến sau khi hoàn thành nhiệm vụ
+                    </small>
+                </div>
+
+                <!-- Template Section -->
+                <div class="template-section" id="templateSection">
+                    <div class="template-header">
+                        <h3 class="template-title">Template nhiệm vụ đã lưu</h3>
+                        <button class="btn btn-warning btn-sm" id="editTemplateBtn">
+                            <i class="fas fa-edit"></i> Chỉnh sửa
+                        </button>
+                    </div>
+                    <div class="template-tasks" id="templateTasks">
+                        <!-- Template tasks will be shown here -->
+                    </div>
+                    <small style="color: var(--gray); display: block; margin-top: 10px;">
+                        <i class="fas fa-info-circle"></i> Sử dụng template đã lưu hoặc tạo nhiệm vụ mới bên dưới
+                    </small>
+                </div>
+
+                <!-- Tasks Section -->
+                <div class="tasks-section">
+                    <div class="tasks-header">
+                        <h3 class="tasks-title">Các nhiệm vụ cần hoàn thành</h3>
+                        <span class="task-counter" id="taskCounter">1 nhiệm vụ</span>
+                    </div>
+
+                    <div class="tasks-list" id="tasksList">
+                        <!-- Tasks will be added here -->
+                    </div>
+
+                    <button class="btn btn-secondary" id="addTaskBtn">
+                        <i class="fas fa-plus"></i> Thêm nhiệm vụ
+                    </button>
+                </div>
+
+                <!-- Loading -->
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Đang tạo link rút gọn...</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="btn-group">
+                    <button class="btn btn-success" id="saveTemplateBtn">
+                        <i class="fas fa-save"></i> Lưu template
+                    </button>
+                    <button class="btn btn-primary" id="createBtn">
+                        <i class="fas fa-rocket"></i> Tạo link
+                    </button>
+                </div>
+
+                <!-- Result -->
+                <div class="result-panel" id="resultPanel">
+                    <div class="result-header">
+                        <div class="result-icon">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <h3 class="result-title">Thành công!</h3>
+                        <p class="result-description">Link rút gọn đã sẵn sàng để chia sẻ</p>
+                    </div>
+
+                    <div class="link-display" id="shortLinkDisplay"></div>
+
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <button class="btn btn-primary btn-sm" id="copyBtn">
+                            <i class="far fa-copy"></i> Sao chép
+                        </button>
+                        <a href="#" class="btn btn-success btn-sm" id="testBtn" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Kiểm tra
+                        </a>
+                        <button class="btn btn-secondary btn-sm" id="newLinkBtn">
+                            <i class="fas fa-plus"></i> Tạo mới
+                        </button>
+                    </div>
+
+                    <div class="instructions">
+                        <h4><i class="fas fa-info-circle"></i> Hướng dẫn:</h4>
+                        <ul>
+                            <li>Chia sẻ link trên với người dùng</li>
+                            <li>Người dùng cần hoàn thành tất cả nhiệm vụ</li>
+                            <li>Link được lưu trữ vĩnh viễn trên Firebase</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Panel -->
+            <div class="stats-panel">
+                <div class="panel-title">
+                    <i class="fas fa-chart-bar"></i>
+                    <h2>Thống kê</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalLinks">0</div>
+                        <div class="stat-label">Tổng link</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalTasks">0</div>
+                        <div class="stat-label">Tổng nhiệm vụ</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalClicks">0</div>
+                        <div class="stat-label">Lượt click</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h4 style="color: var(--dark); margin-bottom: 10px; font-size: 14px;">Template hiện có:</h4>
+                    <div id="currentTemplate" style="color: var(--gray); font-size: 13px;">
+                        Chưa có template. Hãy tạo và lưu template để sử dụng lại.
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #f3f4f6;">
+                    <h4 style="color: var(--dark); margin-bottom: 10px; font-size: 14px;">Lưu ý:</h4>
+                    <ul style="color: var(--gray); font-size: 12px; padding-left: 18px;">
+                        <li>Template giúp tạo link nhanh hơn</li>
+                        <li>Có thể chỉnh sửa template bất kỳ lúc nào</li>
+                        <li>Chỉ cần nhập link đích để tạo link mới</li>
+                        <li>Mọi thao tác được lưu tự động</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Template -->
+    <template id="taskTemplate">
+        <div class="task-item" data-task-id="">
+            <div class="task-header">
+                <div class="task-number">Nhiệm vụ #<span class="task-index">1</span></div>
+                <button class="btn btn-danger remove-task-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mô tả nhiệm vụ *</label>
+                <input type="text" class="form-control task-description" 
+                       placeholder="Ví dụ: Tham gia kênh Telegram" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Liên kết nhiệm vụ *</label>
+                <input type="url" class="form-control task-link" 
+                       placeholder="https://t.me/kenh_cua_ban" required>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-gMe98KTu8BhVsuM559jYiXSrw_k52Eo",
+            authDomain: "rutgonlink-9dc01.firebaseapp.com",
+            projectId: "rutgonlink-9dc01",
+            storageBucket: "rutgonlink-9dc01.firebasestorage.app",
+            messagingSenderId: "865748191550",
+            appId: "1:865748191550:web:1f417a4fed04e56602c46f",
+            measurementId: "G-QNXC1326QN"
+        };
+
+        // Khởi tạo Firebase
+        let app, db;
+        try {
+            app = firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log("Firebase initialized successfully");
+        } catch (error) {
+            console.error("Firebase initialization error:", error);
+        }
+
+        // DOM Elements
+        const tasksList = document.getElementById('tasksList');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const createBtn = document.getElementById('createBtn');
+        const saveTemplateBtn = document.getElementById('saveTemplateBtn');
+        const editTemplateBtn = document.getElementById('editTemplateBtn');
+        const destinationLink = document.getElementById('destinationLink');
+        const resultPanel = document.getElementById('resultPanel');
+        const templateSection = document.getElementById('templateSection');
+        const templateTasks = document.getElementById('templateTasks');
+        const currentTemplate = document.getElementById('currentTemplate');
+        const shortLinkDisplay = document.getElementById('shortLinkDisplay');
+        const copyBtn = document.getElementById('copyBtn');
+        const testBtn = document.getElementById('testBtn');
+        const newLinkBtn = document.getElementById('newLinkBtn');
+        const alertBox = document.getElementById('alert');
+        const loading = document.getElementById('loading');
+        const taskCounter = document.getElementById('taskCounter');
+        const totalLinksElement = document.getElementById('totalLinks');
+        const totalTasksElement = document.getElementById('totalTasks');
+        const totalClicksElement = document.getElementById('totalClicks');
+
+        // Task Template
+        const taskTemplate = document.getElementById('taskTemplate');
+
+        // Variables
+        let taskCount = 0;
+        let currentShortLink = '';
+        let savedTemplate = null;
+        let isEditingTemplate = false;
+
+        // Khởi tạo
+        function init() {
+            // Kiểm tra nếu có ID trong URL thì chuyển sang trang view
+            const urlParams = new URLSearchParams(window.location.search);
+            const linkId = urlParams.get('id');
+            
+            if (linkId) {
+                window.location.href = `view.html?id=${linkId}`;
+                return;
+            }
+            
+            // Load saved template from localStorage
+            loadTemplate();
+            
+            // Thêm task mặc định
+            addTask();
+            
+            // Tải thống kê
+            loadStatistics();
+            
+            // Thiết lập event listeners
+            setupEventListeners();
+        }
+
+        // Thiết lập event listeners
+        function setupEventListeners() {
+            addTaskBtn.addEventListener('click', addTask);
+            createBtn.addEventListener('click', createShortLink);
+            saveTemplateBtn.addEventListener('click', saveTemplate);
+            editTemplateBtn.addEventListener('click', editTemplate);
+            copyBtn.addEventListener('click', copyShortLink);
+            newLinkBtn.addEventListener('click', resetForm);
+        }
+
+        // Thêm task mới
+        function addTask() {
+            taskCount++;
+            const taskClone = taskTemplate.content.cloneNode(true);
+            const taskElement = taskClone.querySelector('.task-item');
+            const taskIndexElement = taskClone.querySelector('.task-index');
+            const removeBtn = taskClone.querySelector('.remove-task-btn');
+            
+            taskElement.dataset.taskId = taskCount;
+            taskIndexElement.textContent = taskCount;
+            
+            // Thêm chức năng xóa task
+            removeBtn.addEventListener('click', function() {
+                if (tasksList.children.length > 1) {
+                    taskElement.remove();
+                    updateTaskNumbers();
+                    updateTaskCounter();
+                } else {
+                    showAlert('Cần ít nhất một nhiệm vụ!', 'warning');
+                }
+            });
+            
+            tasksList.appendChild(taskClone);
+            updateTaskCounter();
+        }
+
+        // Cập nhật số thứ tự task
+        function updateTaskNumbers() {
+            const taskItems = tasksList.querySelectorAll('.task-item');
+            taskCount = taskItems.length;
+            
+            taskItems.forEach((item, index) => {
+                item.querySelector('.task-index').textContent = index + 1;
+                item.dataset.taskId = index + 1;
+            });
+        }
+
+        // Cập nhật bộ đếm task
+        function updateTaskCounter() {
+            const count = tasksList.children.length;
+            taskCounter.textContent = `${count} nhiệm vụ`;
+        }
+
+        // Load template từ localStorage
+        function loadTemplate() {
+            const saved = localStorage.getItem('linkTemplate');
+            if (saved) {
+                savedTemplate = JSON.parse(saved);
+                displayTemplate();
+                templateSection.style.display = 'block';
+                updateCurrentTemplate();
+            }
+        }
+
+        // Hiển thị template
+        function displayTemplate() {
+            if (!savedTemplate) return;
+            
+            templateTasks.innerHTML = '';
+            savedTemplate.tasks.forEach((task, index) => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'template-task';
+                taskDiv.innerHTML = `
+                    <strong>${index + 1}. ${task.description}</strong>
+                    <div style="color: var(--gray); font-size: 12px; margin-top: 4px;">${task.link}</div>
+                `;
+                templateTasks.appendChild(taskDiv);
+            });
+        }
+
+        // Cập nhật thông tin template hiện tại
+        function updateCurrentTemplate() {
+            if (!savedTemplate) {
+                currentTemplate.textContent = 'Chưa có template. Hãy tạo và lưu template để sử dụng lại.';
+                return;
+            }
+            
+            const count = savedTemplate.tasks.length;
+            currentTemplate.innerHTML = `
+                <strong>${count} nhiệm vụ:</strong><br>
+                ${savedTemplate.tasks.slice(0, 2).map((t, i) => `${i+1}. ${t.description}`).join('<br>')}
+                ${count > 2 ? `<br>... và ${count - 2} nhiệm vụ khác` : ''}
+            `;
+        }
+
+        // Lưu template
+        function saveTemplate() {
+            const tasks = getTasksFromForm();
+            
+            if (tasks.length === 0) {
+                showAlert('Vui lòng thêm ít nhất một nhiệm vụ để lưu template!', 'warning');
+                return;
+            }
+            
+            savedTemplate = {
+                tasks: tasks,
+                savedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('linkTemplate', JSON.stringify(savedTemplate));
+            displayTemplate();
+            templateSection.style.display = 'block';
+            updateCurrentTemplate();
+            
+            showAlert('Template đã được lưu thành công!', 'success');
+        }
+
+        // Chỉnh sửa template
+        function editTemplate() {
+            if (!savedTemplate) return;
+            
+            isEditingTemplate = true;
+            
+            // Xóa tất cả tasks hiện tại
+            tasksList.innerHTML = '';
+            taskCount = 0;
+            
+            // Thêm tasks từ template
+            savedTemplate.tasks.forEach(task => {
+                addTaskWithData(task.description, task.link);
+            });
+            
+            // Cập nhật UI
+            updateTaskCounter();
+            templateSection.style.display = 'none';
+            
+            showAlert('Đang chỉnh sửa template. Hãy thay đổi nếu cần, sau đó lưu lại.', 'warning');
+        }
+
+        // Thêm task với dữ liệu
+        function addTaskWithData(description, link) {
+            taskCount++;
+            const taskClone = taskTemplate.content.cloneNode(true);
+            const taskElement = taskClone.querySelector('.task-item');
+            const taskIndexElement = taskClone.querySelector('.task-index');
+            const descriptionInput = taskClone.querySelector('.task-description');
+            const linkInput = taskClone.querySelector('.task-link');
+            const removeBtn = taskClone.querySelector('.remove-task-btn');
+            
+            taskElement.dataset.taskId = taskCount;
+            taskIndexElement.textContent = taskCount;
+            descriptionInput.value = description;
+            linkInput.value = link;
+            
+            // Thêm chức năng xóa task
+            removeBtn.addEventListener('click', function() {
+                if (tasksList.children.length > 1) {
+                    taskElement.remove();
+                    updateTaskNumbers();
+                    updateTaskCounter();
+                } else {
+                    showAlert('Cần ít nhất một nhiệm vụ!', 'warning');
+                }
+            });
+            
+            tasksList.appendChild(taskClone);
+        }
+
+        // Lấy tasks từ form
+        function getTasksFromForm() {
+            const tasks = [];
+            const taskItems = tasksList.querySelectorAll('.task-item');
+            
+            for (const item of taskItems) {
+                const description = item.querySelector('.task-description').value.trim();
+                const link = item.querySelector('.task-link').value.trim();
+                
+                if (description && link) {
+                    tasks.push({
+                        description: description,
+                        link: link,
+                        completed: false
+                    });
+                }
+            }
+            
+            return tasks;
+        }
+
+        // Tạo link rút gọn
+        async function createShortLink() {
+            // Validate destination link
+            const destination = destinationLink.value.trim();
+            if (!destination) {
+                showAlert('Vui lòng nhập liên kết đích!', 'danger');
+                destinationLink.focus();
+                return;
+            }
+            
+            // Validate URL format
+            try {
+                new URL(destination);
+            } catch (e) {
+                showAlert('Liên kết đích không hợp lệ!', 'danger');
+                destinationLink.focus();
+                return;
+            }
+            
+            // Lấy tất cả tasks
+            const tasks = getTasksFromForm();
+            
+            if (tasks.length === 0) {
+                showAlert('Vui lòng thêm ít nhất một nhiệm vụ!', 'danger');
+                return;
+            }
+            
+            // Tạo ID ngẫu nhiên
+            const linkId = generateRandomId(8);
+            
+            // Hiển thị loading
+            loading.style.display = 'block';
+            createBtn.disabled = true;
+            
+            try {
+                // Lưu vào Firestore
+                await db.collection('shortenedLinks').doc(linkId).set({
+                    destination: destination,
+                    tasks: tasks,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    clickCount: 0,
+                    lastAccessed: null,
+                    status: 'active'
+                });
+                
+                console.log("Link saved to Firestore with ID:", linkId);
+                
+                // Tạo link rút gọn
+                currentShortLink = `${window.location.origin}/view.html?id=${linkId}`;
+                
+                // Cập nhật UI
+                shortLinkDisplay.textContent = currentShortLink;
+                resultPanel.style.display = 'block';
+                testBtn.href = currentShortLink;
+                
+                // Hiển thị thông báo thành công
+                showAlert('Link rút gọn đã được tạo thành công!', 'success');
+                
+                // Cuộn đến kết quả
+                resultPanel.scrollIntoView({ behavior: 'smooth' });
+                
+                // Cập nhật thống kê
+                loadStatistics();
+                
+            } catch (error) {
+                console.error('Error creating short link:', error);
+                showAlert(`Lỗi khi tạo link: ${error.message}`, 'danger');
+            } finally {
+                // Ẩn loading
+                loading.style.display = 'none';
+                createBtn.disabled = false;
+            }
+        }
+
+        // Reset form
+        function resetForm() {
+            resultPanel.style.display = 'none';
+            destinationLink.value = '';
+            
+            // Nếu có template, hiển thị template
+            if (savedTemplate && !isEditingTemplate) {
+                templateSection.style.display = 'block';
+            }
+            
+            // Nếu đang chỉnh sửa template, tiếp tục chỉnh sửa
+            if (!isEditingTemplate) {
+                // Xóa tất cả tasks hiện tại
+                tasksList.innerHTML = '';
+                taskCount = 0;
+                
+                // Nếu có template, load template
+                if (savedTemplate) {
+                    savedTemplate.tasks.forEach(task => {
+                        addTaskWithData(task.description, task.link);
+                    });
+                } else {
+                    // Thêm task mặc định
+                    addTask();
+                }
+                
+                updateTaskCounter();
+            }
+        }
+
+        // Sao chép link
+        function copyShortLink() {
+            navigator.clipboard.writeText(currentShortLink).then(() => {
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Đã sao chép!';
+                copyBtn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.classList.remove('btn-success');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy text:', err);
+                showAlert('Không thể sao chép liên kết!', 'danger');
+            });
+        }
+
+        // Tải thống kê
+        async function loadStatistics() {
+            try {
+                const linksSnapshot = await db.collection('shortenedLinks').get();
+                let totalLinks = 0;
+                let totalTasks = 0;
+                let totalClicks = 0;
+                
+                linksSnapshot.forEach(doc => {
+                    totalLinks++;
+                    const data = doc.data();
+                    totalTasks += (data.tasks || []).length;
+                    totalClicks += (data.clickCount || 0);
+                });
+                
+                totalLinksElement.textContent = totalLinks;
+                totalTasksElement.textContent = totalTasks;
+                totalClicksElement.textContent = totalClicks;
+                
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+            }
+        }
+
+        // Hiển thị alert
+        function showAlert(message, type) {
+            alertBox.textContent = message;
+            alertBox.className = `alert alert-${type}`;
+            alertBox.style.display = 'block';
+            
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 4000);
+        }
+
+        // Tạo ID ngẫu nhiên
+        function generateRandomId(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Khởi tạo khi DOM loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
