@@ -13,12 +13,15 @@
             --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-success: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --gradient-warning: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --gradient-vip: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+            --gradient-premium: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             --dark: #1a202c;
             --darker: #0d1117;
             --light: #f7fafc;
             --success: #48bb78;
             --warning: #ed8936;
             --danger: #f56565;
+            --vip: #d69e2e;
             --radius: 12px;
             --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
@@ -75,7 +78,7 @@
         /* Header */
         .user-header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding: 20px 15px;
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(8px);
@@ -119,6 +122,91 @@
             opacity: 0.8;
             line-height: 1.5;
             padding: 0 5px;
+            margin-bottom: 5px;
+        }
+
+        /* VIP Section */
+        .vip-section {
+            background: rgba(214, 158, 46, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(214, 158, 46, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        .vip-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-vip);
+        }
+
+        .vip-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .vip-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-vip);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .vip-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #f6d365;
+            flex: 1;
+        }
+
+        .vip-content {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .vip-content strong {
+            color: #f6d365;
+            font-weight: 600;
+        }
+
+        .vip-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--gradient-vip);
+            color: #1a202c;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .vip-link:hover,
+        .vip-link:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(214, 158, 46, 0.3);
         }
 
         /* Progress Section */
@@ -549,6 +637,18 @@
             margin-top: 30px;
         }
 
+        /* Animation */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             body {
@@ -557,7 +657,7 @@
             
             .user-header {
                 padding: 18px 12px;
-                margin-bottom: 20px;
+                margin-bottom: 16px;
             }
             
             .logo {
@@ -570,6 +670,30 @@
             
             .subtitle {
                 font-size: 0.85rem;
+            }
+            
+            .vip-section {
+                padding: 14px;
+                margin-bottom: 16px;
+            }
+            
+            .vip-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+            }
+            
+            .vip-title {
+                font-size: 1rem;
+            }
+            
+            .vip-content {
+                font-size: 0.82rem;
+            }
+            
+            .vip-link {
+                padding: 9px 16px;
+                font-size: 0.82rem;
             }
             
             .progress-section {
@@ -640,7 +764,7 @@
             
             .user-header {
                 padding: 16px 10px;
-                margin-bottom: 16px;
+                margin-bottom: 14px;
             }
             
             .logo {
@@ -655,6 +779,37 @@
             
             .subtitle {
                 font-size: 0.8rem;
+            }
+            
+            .vip-section {
+                padding: 12px;
+                margin-bottom: 14px;
+            }
+            
+            .vip-header {
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+            
+            .vip-icon {
+                width: 26px;
+                height: 26px;
+                font-size: 0.85rem;
+            }
+            
+            .vip-title {
+                font-size: 0.95rem;
+            }
+            
+            .vip-content {
+                font-size: 0.78rem;
+                margin-bottom: 12px;
+            }
+            
+            .vip-link {
+                padding: 8px 14px;
+                font-size: 0.78rem;
+                gap: 6px;
             }
             
             .progress-title {
@@ -730,33 +885,6 @@
             }
         }
 
-        /* Landscape Mode */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .user-header {
-                padding: 12px 10px;
-                margin-bottom: 12px;
-            }
-            
-            .logo {
-                font-size: 1.4rem;
-                margin-bottom: 5px;
-            }
-            
-            .main-title {
-                font-size: 1.1rem;
-            }
-            
-            .progress-section {
-                padding: 12px;
-                margin-bottom: 12px;
-            }
-            
-            .task-card {
-                padding: 12px;
-                margin-bottom: 8px;
-            }
-        }
-
         /* iPhone SE and small devices */
         @media (max-width: 375px) and (max-height: 667px) {
             .logo {
@@ -765,6 +893,10 @@
             
             .main-title {
                 font-size: 1.2rem;
+            }
+            
+            .vip-content {
+                font-size: 0.75rem;
             }
             
             .progress-title i {
@@ -810,6 +942,22 @@
             <h1 class="main-title">Mở Khóa Truy Cập</h1>
             <p class="subtitle" id="welcomeText">Hoàn thành tất cả nhiệm vụ để truy cập liên kết đích</p>
         </header>
+
+        <!-- VIP Upgrade Section -->
+        <div class="vip-section" id="vipSection">
+            <div class="vip-header">
+                <div class="vip-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h3 class="vip-title">Nâng Cấp VIP</h3>
+            </div>
+            <div class="vip-content">
+                <strong>Không muốn tốn thời gian vượt link?</strong> Nâng cấp VIP để sử dụng nhiều ứng dụng độc quyền mà không cần xem quảng cáo. Trải nghiệm tốt hơn, tiết kiệm thời gian hơn!
+            </div>
+            <a href="https://modos.site/payment" target="_blank" class="vip-link">
+                <i class="fas fa-rocket"></i> Nâng Cấp VIP Ngay
+            </a>
+        </div>
 
         <!-- Loading -->
         <div class="loading" id="loading">
@@ -941,6 +1089,7 @@
         // DOM Elements
         const userHeader = document.getElementById('userHeader');
         const welcomeText = document.getElementById('welcomeText');
+        const vipSection = document.getElementById('vipSection');
         const loading = document.getElementById('loading');
         const notFound = document.getElementById('notFound');
         const notFoundText = document.getElementById('notFoundText');
@@ -991,12 +1140,12 @@
 
         // Create Background Particles
         function createParticles() {
-            for (let i = 0; i < 15; i++) { // Ít hơn cho mobile
+            for (let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
                 // Random size
-                const size = Math.random() * 60 + 30; // Nhỏ hơn
+                const size = Math.random() * 60 + 30;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 
@@ -1011,7 +1160,7 @@
                 particle.style.animationDelay = `${delay}s`;
                 
                 // Random opacity
-                particle.style.opacity = Math.random() * 0.06 + 0.03; // Mờ hơn
+                particle.style.opacity = Math.random() * 0.06 + 0.03;
                 
                 bgAnimation.appendChild(particle);
             }
@@ -1086,6 +1235,7 @@
                 // Show main content
                 loading.style.display = 'none';
                 mainContent.style.display = 'block';
+                vipSection.style.display = 'block';
                 
                 // Check if all tasks are completed
                 if (completedTasks.length === currentTasks.length && currentTasks.length > 0) {
@@ -1263,6 +1413,7 @@
         function showNotFound(message) {
             loading.style.display = 'none';
             notFound.style.display = 'block';
+            vipSection.style.display = 'none';
             
             if (message) {
                 notFoundText.innerHTML = message;
