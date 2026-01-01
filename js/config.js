@@ -1,18 +1,1 @@
-// Configuration variables
-const CONFIG = {
-    GOOGLE_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxNrOYyYgU5vCFPl81moXlDnvBt1XFzYwc2wdjrxS5MFAa4i_Gc8xrevpq-6E-GGok-/exec',
-    CACHE_KEY: 'xspace_apps_cache',
-    CACHE_TIMESTAMP_KEY: 'xspace_cache_timestamp',
-    CACHE_DURATION: 30 * 60 * 1000, // 30 phút
-    CATEGORY_LABELS: {
-        'game': 'Trò chơi',
-        'social': 'Mạng xã hội',
-        'entertainment': 'Giải trí',
-        'photo': 'Ảnh & Video',
-        'clone': 'Nhân bản',
-        'premium': 'Mở khoá Premium',
-        'education': 'Giáo dục',
-        'health': 'Sức khỏe',
-        'utility': 'Tiện ích'
-    }
-};
+const _0x4b2172=_0x5db0;function _0x5db0(_0x212ddc,_0x33219f){_0x212ddc=_0x212ddc-0x7f;const _0x373039=_0x3730();let _0x5db025=_0x373039[_0x212ddc];return _0x5db025;}(function(_0x181c25,_0x54fb99){const _0x2fd818=_0x5db0,_0xba718a=_0x181c25();while(!![]){try{const _0x48ec54=-parseInt(_0x2fd818(0x8b))/0x1*(-parseInt(_0x2fd818(0x86))/0x2)+-parseInt(_0x2fd818(0x8d))/0x3+-parseInt(_0x2fd818(0x84))/0x4+-parseInt(_0x2fd818(0x8a))/0x5+parseInt(_0x2fd818(0x91))/0x6+parseInt(_0x2fd818(0x80))/0x7+-parseInt(_0x2fd818(0x8e))/0x8;if(_0x48ec54===_0x54fb99)break;else _0xba718a['push'](_0xba718a['shift']());}catch(_0x5b1b46){_0xba718a['push'](_0xba718a['shift']());}}}(_0x3730,0x21d54));const CONFIG={'GOOGLE_SCRIPT_URL':_0x4b2172(0x8f),'CACHE_KEY':_0x4b2172(0x85),'CACHE_TIMESTAMP_KEY':_0x4b2172(0x81),'CACHE_DURATION':0x1e*0x3c*0x3e8,'CATEGORY_LABELS':{'game':_0x4b2172(0x90),'social':_0x4b2172(0x82),'entertainment':_0x4b2172(0x88),'photo':_0x4b2172(0x7f),'clone':_0x4b2172(0x87),'premium':_0x4b2172(0x89),'education':_0x4b2172(0x8c),'health':'Sức\x20khỏe','utility':_0x4b2172(0x83)}};function _0x3730(){const _0x5037e8=['177162JMOyvj','521784SCuhXI','https://script.google.com/macros/s/AKfycbzhdM7YIyPSHTJ2QlBA3npdR_tnIzR6qbS2dhbBxsJhkIvIFMd0HYtt6D10A46EOuBB/exec','Trò\x20chơi','1441932TsvWSV','Ảnh\x20&\x20Video','326669MjPPIl','xspace_cache_timestamp','Mạng\x20xã\x20hội','Tiện\x20ích','9556JLpMYN','xspace_apps_cache','24nMeVKh','Nhân\x20bản','Giải\x20trí','Mở\x20khoá\x20Premium','1133875xQBgaQ','17086aaPlSm','Giáo\x20dục'];_0x3730=function(){return _0x5037e8;};return _0x3730();}
