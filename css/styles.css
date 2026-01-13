@@ -873,6 +873,67 @@ body {
     overflow-y: auto;
 }
 
+/* Footer mới - ở cuối trang với kích thước nhỏ */
+.page-footer {
+    background: transparent;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 25px 0 40px;
+    font-size: 11px;
+    line-height: 1.6;
+    margin-top: 40px;
+    border-top: 1px solid var(--border);
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.copyright {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    opacity: 0.7;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 10px;
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 10px;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.footer-link:hover {
+    color: var(--primary);
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.footer-link i {
+    font-size: 9px;
+}
+
+.footer-divider {
+    color: var(--text-muted);
+    opacity: 0.3;
+    font-size: 10px;
+}
+
 /* Bottom Navigation - ĐÃ CHỈNH SỬA ĐỂ CẢI THIỆN ANIMATION */
 .bottom-nav {
     position: fixed;
@@ -1165,6 +1226,11 @@ body {
     .app-name {
         font-size: 14px;
     }
+    
+    /* Footer responsive */
+    .footer-links {
+        gap: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -1259,5 +1325,34 @@ body {
     .nav-item.active::after {
         width: 3px;
         height: 3px;
+    }
+    
+    /* Footer responsive */
+    .footer-links {
+        gap: 12px;
+    }
+    
+    .footer-link {
+        font-size: 9px;
+    }
+    
+    .copyright {
+        font-size: 9px;
+    }
+    
+    .page-footer {
+        padding: 20px 0 35px;
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 380px) {
+    .footer-links {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .footer-divider {
+        display: none;
     }
 }
