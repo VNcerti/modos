@@ -24,6 +24,9 @@
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --nav-height: 50px;
+    --radius-full: 9999px;
+    --transition-fast: 0.2s ease;
+    --spacing-xs: 8px;
 }
 
 [data-theme="dark"] {
@@ -231,7 +234,7 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* ===== FEATURED APPS CAROUSEL MỚI ===== */
+/* ===== FEATURED APPS CAROUSEL ===== */
 
 .featured-section {
     margin: 16px 0;
@@ -258,7 +261,7 @@ body {
     display: none;
 }
 
-/* NEW FEATURED CARD DESIGN - AppStore Style */
+/* FEATURED CARD DESIGN - AppStore Style */
 .featured-card {
     flex: 0 0 auto;
     width: 320px;
@@ -305,7 +308,7 @@ body {
     z-index: 2;
 }
 
-/* Content Layer - ĐÃ SỬA ĐỂ LOGO VÀ TEXT NẰM NGANG HÀNG */
+/* Content Layer */
 .featured-content {
     position: absolute;
     bottom: 0;
@@ -314,7 +317,7 @@ body {
     padding: 16px 20px;
     z-index: 3;
     display: flex;
-    align-items: center; /* Thay đổi từ align-items: flex-start */
+    align-items: center;
     gap: 14px;
 }
 
@@ -340,12 +343,11 @@ body {
     object-fit: cover;
 }
 
-/* Text Content - ĐÃ SỬA ĐỂ CĂN CHỈNH VỚI LOGO */
+/* Text Content */
 .featured-text-content {
     flex: 1;
     color: white;
     min-width: 0;
-    /* Xóa margin-top: -8px */
 }
 
 .featured-name {
@@ -375,7 +377,6 @@ body {
     gap: 4px;
     font-size: 11px;
     opacity: 0.9;
-    /* Xóa margin-top: 4px */
 }
 
 .featured-rating i {
@@ -516,81 +517,169 @@ body {
     opacity: 1;
 }
 
-/* Categories */
+/* ===== UPDATED CATEGORIES SECTION ===== */
 .categories-section {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    padding: 0 4px;
+    position: relative;
 }
 
 .section-title {
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 700;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     color: var(--text-primary);
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 0 4px;
 }
 
 .view-all {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--primary);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.view-all:hover {
+    background: var(--primary-light);
 }
 
 .categories-scroll {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 2px 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+    padding: 8px 4px 2px 4px; /* ĐÃ GIẢM PADDING DƯỚI ĐỂ DỊCH LÊN */
+    scrollbar-width: none; /* ẨN THANH TRƯỢT */
+    -ms-overflow-style: none; /* ẨN THANH TRƯỢT CHO IE */
+    -webkit-overflow-scrolling: touch;
 }
 
 .categories-scroll::-webkit-scrollbar {
-    display: none;
+    display: none; /* ẨN THANH TRƯỢT CHO WEBKIT */
 }
 
+/* New Category Card Design - Chip Style */
 .category-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 50px;
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 8px;
-    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
     flex-shrink: 0;
-    width: 70px;
+    user-select: none;
 }
 
-.category-card:hover,
-.category-card.active {
+.category-card:hover {
     border-color: var(--primary);
-    transform: translateY(-1px);
-    box-shadow: var(--card-shadow);
+    color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
 }
 
 .category-card.active {
-    background: var(--primary);
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    border-color: #2563eb;
     color: white;
-}
-
-.category-icon {
-    font-size: 16px;
-    margin-bottom: 4px;
-    color: var(--primary);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+    transform: translateY(-2px);
 }
 
 .category-card.active .category-icon {
     color: white;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.category-icon {
+    font-size: 14px;
+    color: var(--primary);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-light);
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+    transform: scale(1.1);
+}
+
+.category-card.active:hover .category-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .category-name {
-    font-weight: 600;
-    font-size: 10px;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: -0.01em;
 }
 
-/* Apps Grid */
+/* Animation for active state */
+@keyframes pulseActive {
+    0% {
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+    }
+    50% {
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+    }
+    100% {
+        box-shadow: 0 4px 16px rgba(37, 99, 235, 0.2);
+    }
+}
+
+.category-card.active {
+    animation: pulseActive 2s infinite;
+}
+
+/* ===== CATEGORIES HINT - ĐÃ CẬP NHẬT VỊ TRÍ ===== */
+.categories-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-top: 5px; /* GIẢM MARGIN ĐỂ DỊCH LÊN TRÊN */
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    padding: 2px 0; /* GIẢM PADDING */
+}
+
+.categories-hint i {
+    font-size: 10px;
+    animation: slideRight 1.5s infinite ease-in-out;
+}
+
+@keyframes slideRight {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(4px);
+    }
+}
+
+/* Hiệu ứng khi hover lên categories-scroll */
+.categories-scroll:hover ~ .categories-hint {
+    opacity: 0.3;
+}
+
+/* Apps Section */
 .apps-section {
     margin-bottom: 16px;
 }
@@ -873,7 +962,7 @@ body {
     overflow-y: auto;
 }
 
-/* Footer mới - ở cuối trang với kích thước nhỏ */
+/* Footer */
 .page-footer {
     background: transparent;
     color: var(--text-muted);
@@ -934,7 +1023,7 @@ body {
     font-size: 10px;
 }
 
-/* Bottom Navigation - ĐÃ CHỈNH SỬA ĐỂ CẢI THIỆN ANIMATION */
+/* Bottom Navigation */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -1140,7 +1229,7 @@ body {
     }
 }
 
-/* Debug Info - CHỈNH SỬA CHO CHẾ ĐỘ TỐI */
+/* Debug Info */
 .debug-info {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -1164,6 +1253,8 @@ body {
 [data-theme="dark"] .debug-toggle {
     color: #1e293b;
 }
+
+/* ===== RESPONSIVE DESIGN ===== */
 
 /* Responsive for Featured Carousel */
 @media (max-width: 768px) {
@@ -1225,6 +1316,48 @@ body {
     
     .app-name {
         font-size: 14px;
+    }
+    
+    /* Categories responsive */
+    .categories-section {
+        margin-bottom: 16px;
+    }
+    
+    .section-title {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+    
+    .category-card {
+        padding: 8px 14px;
+        gap: 6px;
+        font-size: 12px;
+    }
+    
+    .category-icon {
+        width: 22px;
+        height: 22px;
+        font-size: 13px;
+    }
+    
+    .category-name {
+        font-size: 12px;
+    }
+    
+    .view-all {
+        font-size: 12px;
+        padding: 4px 10px;
+    }
+    
+    /* Categories hint responsive */
+    .categories-hint {
+        font-size: 10px;
+        gap: 5px;
+        margin-top: 5px; /* GIẢM THÊM CHO MOBILE */
+    }
+    
+    .categories-hint i {
+        font-size: 9px;
     }
     
     /* Footer responsive */
@@ -1313,11 +1446,44 @@ body {
         font-size: 10px;
     }
     
-    .category-card {
-        width: 65px;
-        padding: 8px 6px;
+    /* Categories responsive */
+    .categories-scroll {
+        gap: 6px;
+        padding: 6px 2px 0px 2px; /* GIẢM PADDING DƯỚI VỀ 0 */
     }
-
+    
+    .category-card {
+        padding: 7px 12px;
+        gap: 5px;
+        font-size: 11px;
+    }
+    
+    .category-icon {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
+    
+    .category-name {
+        font-size: 11px;
+    }
+    
+    .section-title {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    /* Categories hint responsive */
+    .categories-hint {
+        font-size: 9px;
+        gap: 4px;
+        margin-top: 5px; /* GIẢM VỀ 0 CHO MOBILE NHỎ */
+    }
+    
+    .categories-hint i {
+        font-size: 8px;
+    }
+    
     .nav-label {
         font-size: 8px;
     }
@@ -1346,13 +1512,61 @@ body {
     }
 }
 
-@media (max-width: 380px) {
+/* For very small screens */
+@media (max-width: 360px) {
+    .category-card {
+        padding: 6px 10px;
+        font-size: 10px;
+    }
+    
+    .category-name {
+        font-size: 10px;
+    }
+    
+    .categories-hint {
+        font-size: 8px;
+    }
+    
     .footer-links {
         flex-direction: column;
         gap: 8px;
     }
     
     .footer-divider {
+        display: none;
+    }
+}
+
+/* For desktop - larger screens */
+@media (min-width: 1024px) {
+    .categories-scroll {
+        gap: 10px;
+        padding: 10px 4px 5px 4px; /* GIẢM PADDING DƯỚI */
+    }
+    
+    .category-card {
+        padding: 11px 18px;
+        gap: 9px;
+        font-size: 14px;
+    }
+    
+    .category-icon {
+        width: 26px;
+        height: 26px;
+        font-size: 15px;
+    }
+    
+    .category-name {
+        font-size: 14px;
+    }
+    
+    .category-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.15);
+    }
+    
+    /* Ẩn categories hint trên desktop */
+    .categories-hint {
         display: none;
     }
 }
