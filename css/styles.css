@@ -7,6 +7,7 @@
                 color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                 border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
                 box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    -webkit-tap-highlight-color: transparent;
 }
 
 :root {
@@ -23,10 +24,12 @@
     --success: #10b981;
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
     --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --nav-height: 50px;
+    --nav-height: 65px;
     --radius-full: 9999px;
     --transition-fast: 0.2s ease;
     --spacing-xs: 8px;
+    --safe-area-inset-top: env(safe-area-inset-top, 15px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 15px);
 }
 
 [data-theme="dark"] {
@@ -47,31 +50,57 @@
 
 html {
     background-color: var(--background);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 body {
     background: var(--background);
     color: var(--text-primary);
     line-height: 1.4;
-    padding-bottom: var(--nav-height);
     font-size: 13px;
     min-height: 100vh;
+    padding-top: calc(50px + var(--safe-area-inset-top));
+    padding-bottom: var(--nav-height);
+    overflow-x: hidden;
+    max-width: 100%;
+    touch-action: pan-y pinch-zoom;
+}
+
+/* Prevent zoom on mobile */
+input, select, textarea {
+    font-size: 16px !important;
+    max-width: 100%;
+}
+
+/* Main Content */
+.main-content {
+    padding-top: 0;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 12px;
+    width: 100%;
 }
 
-/* Header */
+/* ===== HEADER - ĐƠN GIẢN & AN TOÀN NHẤT ===== */
 .header {
     background: var(--background);
     border-bottom: 1px solid var(--border);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
-    backdrop-filter: blur(10px);
+    padding-top: var(--safe-area-inset-top);
+    height: 50px;
+    width: 100%;
+    /* KHÔNG có backdrop-filter - AN TOÀN 100% */
 }
 
 .header-content {
@@ -79,6 +108,8 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 8px 0;
+    height: 100%;
+    width: 100%;
 }
 
 .logo {
@@ -89,6 +120,7 @@ body {
     font-weight: 700;
     color: var(--primary);
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .logo-icon {
@@ -101,38 +133,32 @@ body {
     justify-content: center;
     color: white;
     font-size: 12px;
+    flex-shrink: 0;
 }
 
+/* SEARCH BAR - ẨN HOÀN TOÀN */
 .search-bar {
-    display: flex;
-    align-items: center;
-    background: var(--surface);
-    border-radius: 10px;
-    padding: 6px 12px;
-    flex: 1;
-    max-width: 200px;
-    margin: 0 12px;
-    gap: 6px;
-    border: 1px solid var(--border);
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
 }
 
 .search-bar input {
-    border: none;
-    background: transparent;
-    outline: none;
-    width: 100%;
-    font-size: 12px;
-    color: var(--text-primary);
+    display: none !important;
 }
 
 .search-bar i {
-    font-size: 12px;
-    color: var(--text-muted);
+    display: none !important;
 }
 
 .user-actions {
     display: flex;
     gap: 8px;
+    flex-shrink: 0;
 }
 
 .icon-btn {
@@ -149,6 +175,7 @@ body {
     transition: all 0.2s ease;
     font-size: 14px;
     text-decoration: none;
+    flex-shrink: 0;
 }
 
 .icon-btn:hover {
@@ -187,13 +214,16 @@ body {
     transform: rotate(0deg) scale(1);
 }
 
-/* Hero Section */
+/* Hero Section - ĐÃ THÊM PADDING TOP ĐỂ KHÔNG BỊ CHE */
 .hero {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    padding: 24px 0;
+    padding: 30px 0 24px 0;
     margin-bottom: 16px;
     border-radius: 0 0 16px 16px;
+    margin-top: -10px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-content {
@@ -937,6 +967,7 @@ body {
     background: var(--surface);
     color: var(--text-primary);
     outline: none;
+    max-width: 100%;
 }
 
 .search-modal-input:focus {
@@ -1023,7 +1054,7 @@ body {
     font-size: 10px;
 }
 
-/* Bottom Navigation */
+/* ===== BOTTOM NAVIGATION - ĐÃ CHỈNH SỬA ===== */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -1031,8 +1062,10 @@ body {
     right: 0;
     background: var(--background);
     border-top: 1px solid var(--border);
-    padding: 6px 0;
+    padding: 8px 0 var(--safe-area-inset-bottom);
     z-index: 1000;
+    height: var(--nav-height);
+    width: 100%;
 }
 
 .nav-items {
@@ -1041,6 +1074,8 @@ body {
     align-items: center;
     max-width: 500px;
     margin: 0 auto;
+    height: 100%;
+    width: 100%;
 }
 
 .nav-item {
@@ -1049,11 +1084,13 @@ body {
     align-items: center;
     text-decoration: none;
     color: var(--text-secondary);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.2s ease;
     flex: 1;
-    padding: 4px 0;
+    padding: 6px 0;
     border-radius: 8px;
     position: relative;
+    height: 100%;
+    justify-content: center;
 }
 
 .nav-item.active {
@@ -1063,63 +1100,35 @@ body {
 .nav-item.active::after {
     content: '';
     position: absolute;
-    bottom: -2px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
     width: 4px;
     height: 4px;
     background-color: var(--primary);
     border-radius: 50%;
-    animation: pulse-dot 2s infinite;
-}
-
-@keyframes pulse-dot {
-    0%, 100% {
-        opacity: 0.5;
-        transform: translateX(-50%) scale(1);
-    }
-    50% {
-        opacity: 1;
-        transform: translateX(-50%) scale(1.2);
-    }
 }
 
 .nav-icon {
-    font-size: 16px;
-    margin-bottom: 2px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 20px;
+    margin-bottom: 4px;
+    transition: color 0.2s ease;
     position: relative;
 }
 
 .nav-item.active .nav-icon {
     color: var(--primary);
-    filter: drop-shadow(0 2px 4px rgba(37, 99, 235, 0.3));
 }
 
 .nav-label {
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: color 0.2s ease;
 }
 
-/* Hiệu ứng hover cho nav item */
+/* Hiệu ứng hover đơn giản cho nav item */
 .nav-item:hover {
-    transform: translateY(-3px);
-}
-
-.nav-item:hover .nav-icon {
-    transform: translateY(-4px) scale(1.1);
-}
-
-.nav-item:hover .nav-label {
-    transform: translateY(1px);
     color: var(--primary);
-}
-
-/* Hiệu ứng click */
-.nav-item:active .nav-icon {
-    transform: translateY(-2px) scale(0.95);
-    transition: transform 0.1s ease;
 }
 
 /* Loading */
@@ -1294,11 +1303,6 @@ body {
         grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     }
     
-    .search-bar {
-        margin: 0 8px;
-        max-width: 180px;
-    }
-    
     .hero h1 {
         font-size: 16px;
     }
@@ -1364,6 +1368,19 @@ body {
     .footer-links {
         gap: 15px;
     }
+    
+    /* Bottom nav responsive */
+    .nav-icon {
+        font-size: 18px;
+    }
+    
+    .nav-label {
+        font-size: 10px;
+    }
+    
+    .bottom-nav {
+        padding: 6px 0 var(--safe-area-inset-bottom);
+    }
 }
 
 @media (max-width: 480px) {
@@ -1415,14 +1432,8 @@ body {
         height: 34px;
     }
     
-    .search-bar {
-        margin: 0 6px;
-        padding: 5px 10px;
-        max-width: 150px;
-    }
-    
     .hero {
-        padding: 20px 0;
+        padding: 25px 0 20px 0;
     }
     
     .hero h1 {
@@ -1484,13 +1495,23 @@ body {
         font-size: 8px;
     }
     
+    /* Bottom nav responsive */
+    .nav-icon {
+        font-size: 16px;
+    }
+    
     .nav-label {
-        font-size: 8px;
+        font-size: 9px;
     }
     
     .nav-item.active::after {
         width: 3px;
         height: 3px;
+        bottom: 2px;
+    }
+    
+    .bottom-nav {
+        padding: 4px 0 var(--safe-area-inset-bottom);
     }
     
     /* Footer responsive */
@@ -1524,6 +1545,15 @@ body {
     }
     
     .categories-hint {
+        font-size: 8px;
+    }
+    
+    /* Bottom nav responsive */
+    .nav-icon {
+        font-size: 15px;
+    }
+    
+    .nav-label {
         font-size: 8px;
     }
     
@@ -1568,5 +1598,14 @@ body {
     /* Ẩn categories hint trên desktop */
     .categories-hint {
         display: none;
+    }
+    
+    /* Bottom nav desktop */
+    .nav-icon {
+        font-size: 22px;
+    }
+    
+    .nav-label {
+        font-size: 12px;
     }
 }
