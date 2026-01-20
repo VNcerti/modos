@@ -1134,7 +1134,7 @@ body {
 /* Loading */
 .loading {
     text-align: center;
-    padding: 30px 16px;
+    padding: 10px 10px;
     color: var(--text-secondary);
     font-size: 12px;
 }
