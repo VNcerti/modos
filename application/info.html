@@ -210,62 +210,6 @@
             text-size-adjust: 100%;
         }
         
-        /* ===== CHẶN LONG PRESS TRÊN NAV ITEMS CHO WKWEBVIEW iOS ===== */
-        /* Ngăn chặn menu context (mở link) khi nhấn giữ */
-        .nav-item, .nav-icon, .nav-label {
-            -webkit-touch-callout: none !important;
-            -webkit-user-select: none !important;
-            user-select: none !important;
-            -webkit-tap-highlight-color: transparent !important;
-        }
-        
-        /* Tắt highlight khi chạm trên iOS */
-        .nav-item {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        /* Vô hiệu hóa menu context cho tất cả nav items */
-        .nav-items a {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        
-        /* Chặn menu context trên toàn bộ bottom nav */
-        .bottom-nav {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-        
-        /* Vô hiệu hóa hành vi kéo và thả trên nav */
-        .nav-item {
-            touch-action: manipulation;
-        }
-        
-        /* Đảm bảo không có text selection trên nav */
-        .nav-item * {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
-        /* CSS để chặn context menu trên iOS WKWebView */
-        .no-context-menu {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -khtml-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-        
         /* Responsive */
         @media (max-width: 768px) {
             .info-grid {
@@ -515,7 +459,7 @@
     </footer>
 
     <!-- Bottom Navigation - GIỐNG Y HỆT 100% index.html nhưng active mục Thông tin -->
-    <nav class="bottom-nav no-context-menu">
+    <nav class="bottom-nav">
         <div class="container">
             <div class="nav-items">
                 <a href="index.html" class="nav-item" data-view="home">
@@ -666,195 +610,11 @@
             }
         }
         
-        // ===== CHẶN LONG PRESS (CONTEXT MENU) TRÊN NAV ITEMS =====
-        class LongPressBlocker {
-            constructor() {
-                this.navItems = document.querySelectorAll('.nav-item');
-                this.init();
-            }
-            
-            init() {
-                console.log('🛡️ Initializing long press blocker for nav items');
-                
-                // Áp dụng cho tất cả nav items
-                this.navItems.forEach(item => {
-                    // Ngăn context menu
-                    item.addEventListener('contextmenu', (e) => {
-                        e.preventDefault();
-                        return false;
-                    });
-                    
-                    // Ngăn touch hold trên iOS
-                    item.addEventListener('touchstart', (e) => {
-                        // Không làm gì cả, chỉ để ngăn hành vi mặc định
-                    }, { passive: true });
-                    
-                    item.addEventListener('touchend', (e) => {
-                        // Ngăn mở context menu
-                        if (e.timeStamp - e.currentTarget.touchStartTime > 500) {
-                            e.preventDefault();
-                        }
-                    });
-                    
-                    item.addEventListener('touchmove', (e) => {
-                        // Ngăn khi người dùng di chuyển ngón tay
-                        e.currentTarget.touchMoved = true;
-                    });
-                    
-                    // Thêm touch start time tracking
-                    item.addEventListener('touchstart', (e) => {
-                        e.currentTarget.touchStartTime = e.timeStamp;
-                        e.currentTarget.touchMoved = false;
-                    });
-                    
-                    // JavaScript fallback để chặn text selection
-                    item.addEventListener('selectstart', (e) => {
-                        e.preventDefault();
-                        return false;
-                    });
-                });
-                
-                // Thêm global context menu blocker
-                document.addEventListener('contextmenu', (e) => {
-                    // Chỉ chặn trên nav items
-                    if (e.target.closest('.nav-item') || e.target.closest('.bottom-nav')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                }, false);
-                
-                // Ngăn text selection trên toàn bộ bottom nav
-                const bottomNav = document.querySelector('.bottom-nav');
-                if (bottomNav) {
-                    bottomNav.addEventListener('selectstart', (e) => {
-                        e.preventDefault();
-                        return false;
-                    });
-                    
-                    bottomNav.style.userSelect = 'none';
-                    bottomNav.style.webkitUserSelect = 'none';
-                }
-            }
-        }
-        
-        // ===== WKWEBVIEW iOS SPECIFIC FIXES =====
-        class WKWebViewFixer {
-            constructor() {
-                this.isWKWebView = this.detectWKWebView();
-                this.init();
-            }
-            
-            detectWKWebView() {
-                const ua = navigator.userAgent;
-                const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-                const isWebKit = /WebKit/.test(ua);
-                const isChrome = /CriOS/.test(ua);
-                
-                // WKWebView iOS detection
-                return isIOS && isWebKit && !isChrome && window.webkit && window.webkit.messageHandlers;
-            }
-            
-            init() {
-                if (!this.isWKWebView) return;
-                
-                console.log('📱 WKWebView iOS detected, applying fixes');
-                
-                // Áp dụng CSS fixes
-                this.applyCSSFixes();
-                
-                // Áp dụng JavaScript fixes
-                this.applyJSFixes();
-                
-                // Ngăn bounce/scrolling issues
-                this.preventBounce();
-            }
-            
-            applyCSSFixes() {
-                // Thêm CSS fixes cho WKWebView
-                const style = document.createElement('style');
-                style.textContent = `
-                    /* WKWebView specific fixes */
-                    .nav-item {
-                        -webkit-touch-callout: none !important;
-                        -webkit-user-select: none !important;
-                        user-select: none !important;
-                        cursor: pointer !important;
-                    }
-                    
-                    /* Tắt highlight trên iOS */
-                    .nav-item:active {
-                        background-color: transparent !important;
-                    }
-                    
-                    /* Ngăn text selection hoàn toàn */
-                    .bottom-nav, .nav-items, .nav-item, .nav-icon, .nav-label {
-                        -webkit-user-select: none !important;
-                        -moz-user-select: none !important;
-                        -ms-user-select: none !important;
-                        user-select: none !important;
-                    }
-                    
-                    /* Tắt tap highlight */
-                    * {
-                        -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
-                        -webkit-tap-highlight-color: transparent !important;
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-            
-            applyJSFixes() {
-                // Ngăn mọi hành vi không mong muốn trên nav items
-                document.addEventListener('touchstart', (e) => {
-                    const navItem = e.target.closest('.nav-item');
-                    if (navItem) {
-                        // Ngăn mọi hành vi mặc định
-                        e.preventDefault();
-                        
-                        // Thêm class active tạm thời
-                        navItem.classList.add('active-touch');
-                        
-                        // Xóa class sau 150ms
-                        setTimeout(() => {
-                            navItem.classList.remove('active-touch');
-                        }, 150);
-                    }
-                }, { passive: false });
-                
-                // Ngăn context menu hoàn toàn
-                document.addEventListener('contextmenu', (e) => {
-                    if (e.target.closest('.nav-item') || e.target.closest('.bottom-nav')) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        return false;
-                    }
-                });
-                
-                // Ngăn text selection
-                document.addEventListener('selectstart', (e) => {
-                    if (e.target.closest('.nav-item') || e.target.closest('.bottom-nav')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                });
-            }
-            
-            preventBounce() {
-                // Ngăn bounce effect trên WKWebView
-                document.body.style.overflow = 'hidden';
-                document.body.style.position = 'fixed';
-                document.body.style.width = '100%';
-                document.body.style.height = '100%';
-            }
-        }
-        
         // Khởi tạo khi trang được tải
         document.addEventListener('DOMContentLoaded', () => {
             const themeManager = new ThemeManager();
-            const longPressBlocker = new LongPressBlocker();
-            const wkWebViewFixer = new WKWebViewFixer();
             
-            // Kiểm tra và áp dụng theme ngay lập tức để tránh flash
+            // Kiểm tra và áp dụng theme ngay lập thúc để tránh flash
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark') {
                 document.documentElement.setAttribute('data-theme', 'dark');
@@ -865,8 +625,8 @@
                 window.open(this.href, '_blank');
             });
             
-            console.log('✅ Info page fully initialized with long press blocker');
+            console.log('✅ Info page fully initialized');
         });
     </script>
 </body>
-</html>
+</html> 
