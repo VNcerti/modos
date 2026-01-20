@@ -966,8 +966,7 @@ body {
     background: var(--surface);
     color: var(--text-primary);
     outline: none;
-    margin-top: 60px;
-    margin-bottom: -30px;
+    margin-top: 30px;
 }
 
 .search-modal-input:focus {
@@ -981,7 +980,7 @@ body {
     color: var(--text-secondary);
     cursor: pointer;
     padding: 8px;
-    margin-top: 60px;
+    margin-top: 3px;
     margin-bottom: -36px;
     transition: color 0.2s ease;
 }
@@ -1460,6 +1459,7 @@ body {
     
     .app-card {
         height: 100px;
+        margin-top: 10px;
     }
     
     .app-logo {
