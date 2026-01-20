@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Kho ứng dụng iPA dành cho iPhone/iPad</title>
+    <link rel="icon" href="https://i.imgur.com/k0zikhA.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    
+    <style>
+        /* Ripple effect cho theme toggle */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        /* Pulse effect cho nút Telegram */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .telegram-btn:hover {
+            animation: pulse 0.5s ease-in-out;
+        }
+        
+        /* AUTO REFRESH SYSTEM STYLES (ẩn hoàn toàn) */
+        .auto-refresh-indicator {
+            display: none !important;
+        }
+        
+        /* Auto refresh notification (ẩn) */
+        .auto-refresh-notification {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .auto-refresh-notification.show {
+            opacity: 1;
+        }
+        
+        /* Prevent zoom on input focus */
+        input, select, textarea {
+            font-size: 16px !important;
+            touch-action: manipulation;
+        }
+        
+        /* Disable text size adjustment */
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
+        /* ===== STYLE RIÊNG CHO NÚT "NHẬN" Ở TRANG CHỦ ===== */
+        /* CHỈ áp dụng cho nút trong index.html, KHÔNG ảnh hưởng app-detail.html */
+        
+        .index-download-btn {
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 11px;
+            height: 30px;
+            letter-spacing: 0.5px;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Dark Mode - Nút "NHẬN" */
+        [data-theme="dark"] .index-download-btn {
+            background: rgba(0, 122, 255, calc(1.33 * 0.06));
+            color: #148eff;
+            --keyColor-rgb: 0, 122, 255;
+            --alpha-multiplier: 1.33;
+        }
+        
+        /* Light Mode - Nút "NHẬN" */
+        [data-theme="light"] .index-download-btn {
+            background: #EEEEEF;
+            color: #007AFF;
+        }
+        
+        /* Hover effects */
+        .index-download-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] .index-download-btn:hover {
+            background: rgba(0, 122, 255, calc(1.33 * 0.1));
+        }
+        
+        [data-theme="light"] .index-download-btn:hover {
+            background: #E0E0E0;
+        }
+        
+        .index-download-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* ===== CẬP NHẬT STYLE CHO TÊN VÀ ẢNH ỨNG DỤNG CÓ THỂ CLICK ===== */
+        .app-name.clickable {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .app-name.clickable:hover {
+            color: var(--primary);
+        }
+        
+        .app-logo.clickable {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .app-logo.clickable:hover {
+            transform: scale(1.05);
+        }
+        
+        /* ===== CHẶN LONG PRESS TRÊN NAV ITEMS CHO WKWEBVIEW iOS ===== */
+        /* Ngăn chặn menu context (mở link) khi nhấn giữ */
+        .nav-item, .nav-icon, .nav-label {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        
+        /* Tắt highlight khi chạm trên iOS */
+        .nav-item {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* Vô hiệu hóa menu context cho tất cả nav items */
+        .nav-items a {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* Chặn menu context trên toàn bộ bottom nav */
+        .bottom-nav {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        /* Vô hiệu hóa hành vi kéo và thả trên nav */
+        .nav-item {
+            touch-action: manipulation;
+        }
+        
+        /* Đảm bảo không có text selection trên nav */
+        .nav-item * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* CSS để chặn context menu trên iOS WKWebView */
+        .no-context-menu {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+    
+    <!-- Dark Theme mặc định -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('theme')) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    XSpace Store
+                </a>
+                <!-- GIỮ NGUYÊN SEARCH BAR NHƯNG SẼ ẨN BẰNG CSS -->
+                <div class="search-bar" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm ứng dụng...">
+                </div>
+                <div class="user-actions">
+                    <!-- Nút chuyển đổi chế độ sáng/tối -->
+                    <button class="icon-btn theme-toggle" id="themeToggle">
+                        <i class="fas fa-sun theme-icon sun-icon"></i>
+                        <i class="fas fa-moon theme-icon moon-icon"></i>
+                    </button>
+                    <!-- Nút Telegram -->
+                    <a href="https://t.me/xspace_ipa" target="_blank" class="icon-btn telegram-btn" id="telegramBtn">
+                        <i class="fas fa-bell"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Auto Refresh Notification -->
+    <div class="auto-refresh-notification" id="autoRefreshNotification">
+        <i class="fas fa-sync-alt"></i> Đã cập nhật dữ liệu mới
+    </div>
+
+    <!-- Main Content (có padding-top để không bị che bởi header cố định) -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Kho ứng dụng iPA</h1>
+                    <p>Tận hưởng thế giới ứng dụng và trò chơi được tuyển chọn kỹ lưỡng, an toàn bảo mật và hoàn toàn độc quyền. Tải về các bản iPA chất lượng, mở khóa trải nghiệm mà trước đây bạn chưa từng thấy trong App Store.</p>
+                    <a href="#" class="cta-button">
+                        <i class="fa-brands fa-apple"></i>
+                        Trải nghiệm ngay nào!
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <div class="container">
+            <!-- Featured Apps Carousel -->
+            <section class="featured-section">
+                <div class="section-title">
+                    <span>Ứng dụng nổi bật</span>
+                    <a href="#" class="view-all">Xem tất cả</a>
+                </div>
+                <div class="featured-carousel">
+                    <!-- Navigation Arrows -->
+                    <div class="nav-arrow prev">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="nav-arrow next">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+
+                    <!-- Carousel Container -->
+                    <div class="carousel-container" id="featuredCarousel">
+                        <!-- Featured Cards will be loaded by JavaScript -->
+                        <div class="featured-loading" id="featuredLoading">
+                            <div class="featured-skeleton"></div>
+                            <div class="featured-skeleton"></div>
+                            <div class="featured-skeleton"></div>
+                            <div class="featured-skeleton"></div>
+                            <div class="featured-skeleton"></div>
+                        </div>
+                    </div>
+
+                    <!-- Scroll Indicator -->
+                    <div class="scroll-indicator">
+                        <i class="fas fa-arrows-alt-h"></i>
+                        Kéo để xem thêm
+                    </div>
+
+                    <!-- Dots Navigation -->
+                    <div class="carousel-nav">
+                        <div class="carousel-dot active" data-index="0"></div>
+                        <div class="carousel-dot" data-index="1"></div>
+                        <div class="carousel-dot" data-index="2"></div>
+                        <div class="carousel-dot" data-index="3"></div>
+                        <div class="carousel-dot" data-index="4"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories - ĐÃ CẬP NHẬT -->
+            <section class="categories-section">
+                <div class="section-title">
+                    <span>Thể loại</span>
+                    <a href="#" class="view-all">Xem tất cả</a>
+                </div>
+                <div class="categories-scroll">
+                    <div class="category-card active" data-category="all">
+                        <div class="category-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="category-name">Tất cả</div>
+                    </div>
+                    <div class="category-card" data-category="game">
+                        <div class="category-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="category-name">Trò chơi</div>
+                    </div>
+                    <div class="category-card" data-category="social">
+                        <div class="category-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="category-name">Mạng xã hội</div>
+                    </div>
+                    <div class="category-card" data-category="entertainment">
+                        <div class="category-icon">
+                            <i class="fas fa-film"></i>
+                        </div>
+                        <div class="category-name">Giải trí</div>
+                    </div>
+                    <div class="category-card" data-category="photo">
+                        <div class="category-icon">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                        <div class="category-name">Ảnh & Video</div>
+                    </div>
+                    <div class="category-card" data-category="clone">
+                        <div class="category-icon">
+                            <i class="fas fa-copy"></i>
+                        </div>
+                        <div class="category-name">Nhân bản</div>
+                    </div>
+                    <div class="category-card" data-category="premium">
+                        <div class="category-icon">
+                            <i class="fas fa-unlock"></i>
+                        </div>
+                        <div class="category-name">Premium</div>
+                    </div>
+                    <div class="category-card" data-category="education">
+                        <div class="category-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="category-name">Giáo dục</div>
+                    </div>
+                    <div class="category-card" data-category="health">
+                        <div class="category-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <div class="category-name">Sức khỏe</div>
+                    </div>
+                    <div class="category-card" data-category="utility">
+                        <div class="category-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <div class="category-name">Tiện ích</div>
+                    </div>
+                </div>
+                <!-- Thêm dòng "Vuốt sang phải để xem thêm" - ĐÃ CẬP NHẬT VỊ TRÍ -->
+                <div class="categories-hint">
+                    <i class="fas fa-arrow-right"></i>
+                    <span>Vuốt sang phải để xem thêm</span>
+                </div>
+            </section>
+
+            <!-- Apps Section -->
+            <section class="apps-section">
+                <div class="section-title">
+                    <span id="sectionTitle">Ứng dụng mới</span>
+                    <a href="#" class="view-all">Xem thêm</a>
+                </div>
+                <div class="apps-grid" id="appsGrid">
+                    <!-- Skeleton loading sẽ được thêm bằng JavaScript -->
+                </div>
+            </section>
+
+            <!-- Popular Games -->
+            <section class="apps-section" id="gamesSection">
+                <div class="section-title">
+                    <span>Trò chơi phổ biến</span>
+                    <a href="#" class="view-all">Xem thêm</a>
+                </div>
+                <div class="apps-grid" id="gamesGrid">
+                    <!-- Games will be loaded here -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="copyright">
+                    Copyright ©2024 Vietnam Signing Authority . All rights reserved
+                </p>
+                
+                <div class="footer-links">
+                    <a href="privacy-policy.html" target="_blank" class="footer-link">
+                        <i class="fas fa-shield-alt"></i>
+                        Chính Sách Bảo Mật
+                    </a>
+                    
+                    <span class="footer-divider">•</span>
+                    
+                    <a href="terms-of-service.html" target="_blank" class="footer-link">
+                        <i class="fas fa-file-contract"></i>
+                        Điều Khoản Dịch Vụ
+                    </a>
+                    
+                    <span class="footer-divider">•</span>
+                    
+                    <a href="mailto:support@modos.site" class="footer-link">
+                        <i class="fas fa-headset"></i>
+                        Liên Hệ Hỗ Trợ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <button class="close-search" id="closeSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+                <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Tìm kiếm ứng dụng...">
+            </div>
+            <div class="search-results" id="searchResults">
+                <!-- Kết quả tìm kiếm sẽ hiển thị ở đây -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav no-context-menu">
+        <div class="container">
+            <div class="nav-items">
+                <a href="#" class="nav-item active" data-view="home">
+                    <div class="nav-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <div class="nav-label">Trang chủ</div>
+                </a>
+                <a href="#" class="nav-item" data-view="games">
+                    <div class="nav-icon">
+                        <i class="fas fa-gamepad"></i>
+                    </div>
+                    <div class="nav-label">Trò chơi</div>
+                </a>
+                <a href="#" class="nav-item" data-view="search" id="searchNavItem">
+                    <div class="nav-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="nav-label">Tìm kiếm</div>
+                </a>
+                <a href="info.html" class="nav-item">
+                    <div class="nav-icon">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div class="nav-label">Thông tin</div>
+                </a>
+                <a href="account.html" class="nav-item">
+                    <div class="nav-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="nav-label">Tài khoản</div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- AUTO REFRESH SYSTEM (ẩn hoàn toàn) -->
+    <div class="auto-refresh-indicator" id="autoRefreshIndicator">
+        <i class="fas fa-sync-alt"></i>
+        <span>Đang cập nhật...</span>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/firebase-analytics.js"></script>
+    
+    <!-- JavaScript cho chế độ sáng/tối và auto refresh -->
+    <script>
+        // Quản lý chế độ sáng/tối
+        class ThemeManager {
+            constructor() {
+                this.themeToggle = document.getElementById('themeToggle');
+                this.htmlElement = document.documentElement;
+                this.body = document.body;
+                this.init();
+            }
+            
+            init() {
+                // Kiểm tra theme đã lưu
+                const savedTheme = localStorage.getItem('theme');
+                
+                // Áp dụng theme đã lưu hoặc mặc định (light)
+                if (savedTheme === 'dark') {
+                    this.setTheme('dark');
+                } else {
+                    // Mặc định là light mode
+                    this.setTheme('light');
+                    localStorage.setItem('theme', 'light');
+                }
+                
+                // Thêm sự kiện click cho nút chuyển đổi
+                this.themeToggle.addEventListener('click', (e) => this.toggleTheme(e));
+            }
+            
+            setTheme(theme) {
+                const isDark = theme === 'dark';
+                this.htmlElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                
+                // Cập nhật icon
+                this.updateThemeIcon(isDark);
+                
+                // Cập nhật meta theme-color cho viền trên cùng
+                this.updateMetaThemeColor(isDark);
+            }
+            
+            toggleTheme(e) {
+                const currentTheme = this.htmlElement.getAttribute('data-theme');
+                const isDark = currentTheme === 'dark';
+                this.setTheme(isDark ? 'light' : 'dark');
+                
+                // Thêm hiệu ứng ripple
+                this.createRippleEffect(e);
+            }
+            
+            updateThemeIcon(isDark) {
+                const sunIcon = this.themeToggle.querySelector('.sun-icon');
+                const moonIcon = this.themeToggle.querySelector('.moon-icon');
+                
+                if (isDark) {
+                    sunIcon.style.opacity = '0';
+                    sunIcon.style.transform = 'rotate(90deg) scale(0.5)';
+                    moonIcon.style.opacity = '1';
+                    moonIcon.style.transform = 'rotate(0deg) scale(1)';
+                } else {
+                    sunIcon.style.opacity = '1';
+                    sunIcon.style.transform = 'rotate(0deg) scale(1)';
+                    moonIcon.style.opacity = '0';
+                    moonIcon.style.transform = 'rotate(-90deg) scale(0.5)';
+                }
+            }
+            
+            updateMetaThemeColor(isDark) {
+                // Cập nhật màu theme cho thanh địa chỉ và UI trình duyệt
+                const themeColor = isDark ? '#0f172a' : '#ffffff';
+                
+                let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+                if (!metaThemeColor) {
+                    metaThemeColor = document.createElement('meta');
+                    metaThemeColor.name = 'theme-color';
+                    document.head.appendChild(metaThemeColor);
+                }
+                metaThemeColor.content = themeColor;
+                
+                // Cập nhật màu cho Safari
+                let metaAppleThemeColor = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+                if (!metaAppleThemeColor) {
+                    metaAppleThemeColor = document.createElement('meta');
+                    metaAppleThemeColor.name = 'apple-mobile-web-app-status-bar-style';
+                    document.head.appendChild(metaAppleThemeColor);
+                }
+                metaAppleThemeColor.content = isDark ? 'black' : 'default';
+            }
+            
+            createRippleEffect(event) {
+                const button = event.currentTarget;
+                const circle = document.createElement('span');
+                const diameter = Math.max(button.clientWidth, button.clientHeight);
+                const radius = diameter / 2;
+                
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${event.clientX - button.getBoundingClientRect().left - radius}px`;
+                circle.style.top = `${event.clientY - button.getBoundingClientRect().top - radius}px`;
+                circle.classList.add('ripple');
+                
+                const ripple = button.getElementsByClassName('ripple')[0];
+                if (ripple) {
+                    ripple.remove();
+                }
+                
+                button.appendChild(circle);
+                
+                // Xóa ripple sau khi animation kết thúc
+                setTimeout(() => {
+                    if (circle.parentNode === button) {
+                        button.removeChild(circle);
+                    }
+                }, 600);
+            }
+        }
+        
+        // AUTO REFRESH SYSTEM - TỰ ĐỘNG TẢI DỮ LIỆU MỚI CHO TRANG
+        class AutoRefreshSystem {
+            constructor() {
+                this.refreshInterval = null;
+                this.lastRefreshTime = null;
+                this.isRefreshing = false;
+                this.refreshCount = 0;
+                this.notification = document.getElementById('autoRefreshNotification');
+                this.init();
+            }
+            
+            init() {
+                console.log('🔄 Initializing auto refresh system for index page');
+                
+                // Bắt đầu auto refresh ngay lập tức
+                this.startAutoRefresh();
+                
+                // Dừng auto refresh khi rời trang
+                window.addEventListener('beforeunload', () => {
+                    this.stopAutoRefresh();
+                });
+                
+                // Kiểm tra visibility change (khi tab được chuyển sang/từ)
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        console.log('📱 Tab hidden, pausing auto refresh');
+                    } else {
+                        console.log('📱 Tab visible, resuming auto refresh');
+                    }
+                });
+            }
+            
+            startAutoRefresh() {
+                // Dừng interval cũ nếu có
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                }
+                
+                // Thực hiện refresh ngay lập tức
+                this.performAutoRefresh();
+                
+                // Thiết lập interval tự động refresh mỗi 10 giây
+                this.refreshInterval = setInterval(() => {
+                    this.performAutoRefresh();
+                }, 10000); // 10 giây
+                
+                console.log('🔄 Auto refresh started for index page (every 10 seconds)');
+            }
+            
+            stopAutoRefresh() {
+                if (this.refreshInterval) {
+                    clearInterval(this.refreshInterval);
+                    this.refreshInterval = null;
+                    console.log('🛑 Auto refresh stopped for index page');
+                }
+            }
+            
+            async performAutoRefresh() {
+                // Tránh refresh chồng chéo
+                if (this.isRefreshing) {
+                    console.log('⏳ Auto refresh already in progress, skipping...');
+                    return;
+                }
+                
+                this.isRefreshing = true;
+                this.refreshCount++;
+                
+                try {
+                    console.log(`🔄 Auto refresh #${this.refreshCount} started...`);
+                    
+                    // Gọi API để lấy dữ liệu mới nhất
+                    const timestamp = Date.now();
+                    const url = `${CONFIG.GOOGLE_SCRIPT_URL}?action=getApps&t=${timestamp}&nocache=true`;
+                    
+                    console.log(`📡 Fetching new data from: ${url}`);
+                    
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.data) {
+                        const newApps = result.data;
+                        
+                        // Kiểm tra xem dữ liệu có thay đổi không
+                        const hasChanges = this.checkForChanges(newApps);
+                        
+                        if (hasChanges) {
+                            console.log('✅ New data available, updating page...');
+                            
+                            // Cập nhật cache
+                            AppUtils.saveToCache(newApps);
+                            
+                            // Cập nhật appManager nếu nó tồn tại
+                            if (window.appManager) {
+                                window.appManager.allApps = newApps;
+                                window.appManager.renderApps();
+                                window.appManager.loadFeaturedApps();
+                            }
+                            
+                            // Hiển thị thông báo (tùy chọn)
+                            this.showNotification('Đã cập nhật dữ liệu mới');
+                        } else {
+                            console.log('📊 Data unchanged, no update needed');
+                        }
+                        
+                        this.lastRefreshTime = new Date().toLocaleTimeString('vi-VN');
+                        console.log(`✅ Auto refresh #${this.refreshCount} completed at: ${this.lastRefreshTime}`);
+                    } else {
+                        throw new Error(result.message || 'Dữ liệu không hợp lệ từ server');
+                    }
+                } catch (error) {
+                    console.error('❌ Auto refresh error:', error);
+                } finally {
+                    this.isRefreshing = false;
+                }
+            }
+            
+            checkForChanges(newApps) {
+                // Lấy dữ liệu cũ từ cache
+                const oldApps = AppUtils.getFromCache() || [];
+                
+                // Kiểm tra số lượng app
+                if (newApps.length !== oldApps.length) {
+                    console.log(`📊 App count changed: ${oldApps.length} → ${newApps.length}`);
+                    return true;
+                }
+                
+                // Kiểm tra ID của app mới nhất
+                if (newApps.length > 0 && oldApps.length > 0) {
+                    const newLatestId = parseInt(newApps[0]?.id) || 0;
+                    const oldLatestId = parseInt(oldApps[0]?.id) || 0;
+                    
+                    if (newLatestId > oldLatestId) {
+                        console.log(`📊 New app detected: ID ${newLatestId} > ${oldLatestId}`);
+                        return true;
+                    }
+                }
+                
+                // Kiểm tra timestamp của cache
+                const cacheTimestamp = localStorage.getItem(CONFIG.CACHE_TIMESTAMP_KEY);
+                if (cacheTimestamp) {
+                    const cacheTime = parseInt(cacheTimestamp);
+                    const now = Date.now();
+                    const cacheAge = now - cacheTime;
+                    
+                    // Nếu cache cũ hơn 1 phút, luôn refresh
+                    if (cacheAge > 60000) { // 1 phút
+                        console.log(`📊 Cache is old: ${Math.round(cacheAge/1000)} seconds`);
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            showNotification(message) {
+                if (this.notification) {
+                    this.notification.innerHTML = `<i class="fas fa-sync-alt"></i> ${message}`;
+                    this.notification.classList.add('show');
+                    
+                    // Ẩn thông báo sau 3 giây
+                    setTimeout(() => {
+                        this.notification.classList.remove('show');
+                    }, 3000);
+                }
+            }
+            
+            getCurrentUser() {
+                try {
+                    const userStr = localStorage.getItem('currentUser');
+                    return userStr ? JSON.parse(userStr) : null;
+                } catch (e) {
+                    return null;
+                }
+            }
+        }
+        
+        // ===== CHẶN LONG PRESS (CONTEXT MENU) TRÊN NAV ITEMS =====
+        class LongPressBlocker {
+            constructor() {
+                this.navItems = document.querySelectorAll('.nav-item');
+                this.init();
+            }
+            
+            init() {
+                console.log('🛡️ Initializing long press blocker for nav items');
+                
+                // Áp dụng cho tất cả nav items
+                this.navItems.forEach(item => {
+                    // Ngăn context menu
+                    item.addEventListener('contextmenu', (e) => {
+                        e.preventDefault();
+                        return false;
+                    });
+                    
+                    // Ngăn touch hold trên iOS
+                    item.addEventListener('touchstart', (e) => {
+                        // Không làm gì cả, chỉ để ngăn hành vi mặc định
+                    }, { passive: true });
+                    
+                    item.addEventListener('touchend', (e) => {
+                        // Ngăn mở context menu
+                        if (e.timeStamp - e.currentTarget.touchStartTime > 500) {
+                            e.preventDefault();
+                        }
+                    });
+                    
+                    item.addEventListener('touchmove', (e) => {
+                        // Ngăn khi người dùng di chuyển ngón tay
+                        e.currentTarget.touchMoved = true;
+                    });
+                    
+                    // Thêm touch start time tracking
+                    item.addEventListener('touchstart', (e) => {
+                        e.currentTarget.touchStartTime = e.timeStamp;
+                        e.currentTarget.touchMoved = false;
+                    });
+                    
+                    // JavaScript fallback để chặn text selection
+                    item.addEventListener('selectstart', (e) => {
+                        e.preventDefault();
+                        return false;
+                    });
+                });
+                
+                // Thêm global context menu blocker
+                document.addEventListener('contextmenu', (e) => {
+                    // Chỉ chặn trên nav items
+                    if (e.target.closest('.nav-item') || e.target.closest('.bottom-nav')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                }, false);
+                
+                // Ngăn text selection trên toàn bộ bottom nav
+                const bottomNav = document.querySelector('.bottom-nav');
+                if (bottomNav) {
+                    bottomNav.addEventListener('selectstart', (e) => {
+                        e.preventDefault();
+                        return false;
+                    });
+                    
+                    bottomNav.style.userSelect = 'none';
+                    bottomNav.style.webkitUserSelect = 'none';
+                }
+            }
+        }
+        
+        // ===== WKWEBVIEW iOS SPECIFIC FIXES =====
+        class WKWebViewFixer {
+            constructor() {
+                this.isWKWebView = this.detectWKWebView();
+                this.init();
+            }
+            
+            detectWKWebView() {
+                const ua = navigator.userAgent;
+                const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+                const isWebKit = /WebKit/.test(ua);
+                const isChrome = /CriOS/.test(ua);
+                
+                // WKWebView iOS detection
+                return isIOS && isWebKit && !isChrome && window.webkit && window.webkit.messageHandlers;
+            }
+            
+            init() {
+                if (!this.isWKWebView) return;
+                
+                console.log('📱 WKWebView iOS detected, applying fixes');
+                
+                // Áp dụng CSS fixes
+                this.applyCSSFixes();
+                
+                // Áp dụng JavaScript fixes
+                this.applyJSFixes();
+                
+                // Ngăn bounce/scrolling issues
+                this.preventBounce();
+            }
+            
+            applyCSSFixes() {
+                // Thêm CSS fixes cho WKWebView
+                const style = document.createElement('style');
+                style.textContent = `
+                    /* WKWebView specific fixes */
+                    .nav-item {
+                        -webkit-touch-callout: none !important;
+                        -webkit-user-select: none !important;
+                        user-select: none !important;
+                        cursor: pointer !important;
+                    }
+                    
+                    /* Tắt highlight trên iOS */
+                    .nav-item:active {
+                        background-color: transparent !important;
+                    }
+                    
+                    /* Ngăn text selection hoàn toàn */
+                    .bottom-nav, .nav-items, .nav-item, .nav-icon, .nav-label {
+                        -webkit-user-select: none !important;
+                        -moz-user-select: none !important;
+                        -ms-user-select: none !important;
+                        user-select: none !important;
+                    }
+                    
+                    /* Tắt tap highlight */
+                    * {
+                        -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+                        -webkit-tap-highlight-color: transparent !important;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+            
+            applyJSFixes() {
+                // Ngăn mọi hành vi không mong muốn trên nav items
+                document.addEventListener('touchstart', (e) => {
+                    const navItem = e.target.closest('.nav-item');
+                    if (navItem) {
+                        // Ngăn mọi hành vi mặc định
+                        e.preventDefault();
+                        
+                        // Thêm class active tạm thời
+                        navItem.classList.add('active-touch');
+                        
+                        // Xóa class sau 150ms
+                        setTimeout(() => {
+                            navItem.classList.remove('active-touch');
+                        }, 150);
+                    }
+                }, { passive: false });
+                
+                // Ngăn context menu hoàn toàn
+                document.addEventListener('contextmenu', (e) => {
+                    if (e.target.closest('.nav-item') || e.target.closest('.bottom-nav')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return false;
+                    }
+                });
+                
+                // Ngăn text selection
+                document.addEventListener('selectstart', (e) => {
+                    if (e.target.closest('.nav-item') || e.target.closest('.bottom-nav')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+            
+            preventBounce() {
+                // Ngăn bounce effect trên WKWebView
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+            }
+        }
+        
+        // Khởi tạo khi trang được tải
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeManager = new ThemeManager();
+            const autoRefreshSystem = new AutoRefreshSystem();
+            const longPressBlocker = new LongPressBlocker();
+            const wkWebViewFixer = new WKWebViewFixer();
+            
+            // Kiểm tra và áp dụng theme ngay lập tức để tránh flash
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+            
+            // Xử lý nút Telegram
+            document.getElementById('telegramBtn').addEventListener('click', function(e) {
+                window.open(this.href, '_blank');
+            });
+            
+            // Xử lý nút search trong navbar
+            document.getElementById('searchNavItem').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.getElementById('searchModal').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('searchModalInput').focus();
+                }, 100);
+            });
+            
+            console.log('✅ Index page fully initialized with auto data refresh system and long press blocker');
+        });
+    </script>
+</body>
+</html>
