@@ -343,217 +343,9 @@
             box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
         }
 
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--modal-overlay);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--surface);
-            border-radius: 20px;
-            padding: 24px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transform: translateY(20px) scale(0.95);
-            opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                        opacity 0.3s ease;
-            border: 1px solid var(--border);
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-        }
-
-        .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-title i {
-            color: #FF6B6B;
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: var(--background);
-            color: var(--text-secondary);
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 16px;
-        }
-
-        .modal-close:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-
-        .modal-content {
-            margin-bottom: 24px;
-        }
-
-        .modal-description {
-            color: var(--text-secondary);
-            font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        .modal-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .modal-option {
-            display: flex;
-            align-items: center;
-            padding: 16px;
-            background: var(--background);
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .modal-option:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--card-shadow-hover);
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-
-        .modal-option.disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .modal-option.disabled:hover {
-            transform: none;
-            box-shadow: none;
-            border-color: var(--border);
-            background: var(--background);
-        }
-
-        .option-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: white;
-            margin-right: 12px;
-            flex-shrink: 0;
-        }
-
-        .option-icon.ipa {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        }
-
-        .option-icon.direct {
-            background: linear-gradient(135deg, #6B7280, #4B5563);
-        }
-
-        .option-content {
-            flex: 1;
-        }
-
-        .option-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: var(--text-primary);
-        }
-
-        .option-description {
-            font-size: 11px;
-            color: var(--text-secondary);
-            line-height: 1.4;
-        }
-
-        .option-status {
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: var(--warning);
-            color: white;
-            margin-left: 8px;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 12px 16px;
-            font-size: 13px;
-            color: var(--text-primary);
-            box-shadow: var(--card-shadow-hover);
-            z-index: 1001;
-            opacity: 0;
-            visibility: hidden;
-            transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            max-width: 90%;
-        }
-
-        .toast.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .toast-icon {
-            color: var(--warning);
-            font-size: 14px;
-        }
+        /* Modal Styles - ĐÃ XÓA HOÀN TOÀN TRONG CODE MỚI */
+        
+        /* Toast Notification - ĐÃ XÓA HOÀN TOÀN TRONG CODE MỚI */
 
         /* Bottom Navigation */
         .bottom-nav {
@@ -698,11 +490,6 @@
                 font-size: 12px;
                 padding: 0 8px;
             }
-            
-            .modal {
-                padding: 20px;
-                width: 95%;
-            }
         }
 
         @media (max-width: 480px) {
@@ -729,20 +516,6 @@
             .nav-item.active::after {
                 width: 3px;
                 height: 3px;
-            }
-            
-            .modal {
-                padding: 16px;
-            }
-            
-            .modal-option {
-                padding: 14px;
-            }
-            
-            .option-icon {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
             }
         }
     </style>
@@ -808,10 +581,10 @@
                         </li>
                     </ul>
                 </div>
-                <button class="info-link store-btn" id="installStoreBtn">
+                <a href="https://modos.site/download/" target="_blank" class="info-link store-btn">
                     <i class="fas fa-download"></i>
                     Cài đặt ngay
-                </button>
+                </a>
             </div>
 
             <!-- Card 2: Kênh thông báo -->
@@ -939,54 +712,6 @@
             </div>
         </section>
     </main>
-
-    <!-- Modal cài đặt kho ứng dụng -->
-    <div class="modal-overlay" id="installModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <i class="fas fa-box-open"></i>
-                    Cài đặt Kho ứng dụng
-                </h3>
-                <button class="modal-close" id="closeModal">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-content">
-                <p class="modal-description">Chọn phương thức cài đặt phù hợp với thiết bị của bạn. Phiên bản IPA yêu cầu ký ứng dụng trước khi cài đặt.</p>
-                
-                <div class="modal-options">
-                    <a href="https://github.com/VNcerti/modos/releases/download/1.0/X-Package_V1.0.ipa" class="modal-option" id="ipaOption">
-                        <div class="option-icon ipa">
-                            <i class="fas fa-file-archive"></i>
-                        </div>
-                        <div class="option-content">
-                            <div class="option-title">Cài đặt phiên bản IPA</div>
-                            <div class="option-description">Tải file IPA và ký ứng dụng trước khi cài đặt trên thiết bị iOS</div>
-                        </div>
-                        <i class="fas fa-external-link-alt"></i>
-                    </a>
-                    
-                    <div class="modal-option disabled" id="directOption">
-                        <div class="option-icon direct">
-                            <i class="fas fa-bolt"></i>
-                        </div>
-                        <div class="option-content">
-                            <div class="option-title">Cài đặt trực tiếp</div>
-                            <div class="option-description">Cài đặt trực tiếp ứng dụng mà không cần tải file IPA</div>
-                        </div>
-                        <span class="option-status">Sắp ra mắt</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast thông báo -->
-    <div class="toast" id="toast">
-        <i class="fas fa-info-circle toast-icon"></i>
-        <span class="toast-message">Đang bổ sung tính năng cài đặt trực tiếp...</span>
-    </div>
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
@@ -1140,76 +865,9 @@
             }
         }
         
-        // Quản lý modal cài đặt
-        class InstallModal {
-            constructor() {
-                this.modal = document.getElementById('installModal');
-                this.installBtn = document.getElementById('installStoreBtn');
-                this.closeBtn = document.getElementById('closeModal');
-                this.directOption = document.getElementById('directOption');
-                this.ipaOption = document.getElementById('ipaOption');
-                this.toast = document.getElementById('toast');
-                
-                this.init();
-            }
-            
-            init() {
-                // Mở modal khi click nút cài đặt
-                this.installBtn.addEventListener('click', () => this.openModal());
-                
-                // Đóng modal khi click nút đóng
-                this.closeBtn.addEventListener('click', () => this.closeModal());
-                
-                // Đóng modal khi click bên ngoài
-                this.modal.addEventListener('click', (e) => {
-                    if (e.target === this.modal) {
-                        this.closeModal();
-                    }
-                });
-                
-                // Xử lý click vào option cài đặt trực tiếp
-                this.directOption.addEventListener('click', () => this.showDirectInstallToast());
-                
-                // Xử lý click vào option IPA (mở link trong tab mới)
-                this.ipaOption.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    window.open(this.ipaOption.href, '_blank');
-                    this.closeModal();
-                });
-                
-                // Đóng modal khi nhấn phím ESC
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && this.modal.classList.contains('active')) {
-                        this.closeModal();
-                    }
-                });
-            }
-            
-            openModal() {
-                this.modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-            
-            closeModal() {
-                this.modal.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            
-            showDirectInstallToast() {
-                // Hiển thị toast thông báo
-                this.toast.classList.add('show');
-                
-                // Ẩn toast sau 3 giây
-                setTimeout(() => {
-                    this.toast.classList.remove('show');
-                }, 3000);
-            }
-        }
-        
         // Khởi tạo khi trang được tải
         document.addEventListener('DOMContentLoaded', () => {
             const themeManager = new ThemeManager();
-            const installModal = new InstallModal();
             
             // Kiểm tra và áp dụng theme ngay lập tức để tránh flash
             const savedTheme = localStorage.getItem('theme');
@@ -1240,20 +898,6 @@
                 
                 link.addEventListener('mouseleave', () => {
                     link.style.transform = 'translateY(0)';
-                });
-            });
-            
-            // Thêm hiệu ứng hover cho các option trong modal
-            const modalOptions = document.querySelectorAll('.modal-option');
-            modalOptions.forEach(option => {
-                option.addEventListener('mouseenter', () => {
-                    if (!option.classList.contains('disabled')) {
-                        option.style.transform = 'translateY(-2px)';
-                    }
-                });
-                
-                option.addEventListener('mouseleave', () => {
-                    option.style.transform = 'translateY(0)';
                 });
             });
             
@@ -1298,14 +942,16 @@
             });
             
             // Hiệu ứng cho nút cài đặt kho ứng dụng
-            const storeBtn = document.getElementById('installStoreBtn');
-            storeBtn.addEventListener('mouseenter', () => {
-                storeBtn.style.transform = 'translateY(-2px) scale(1.02)';
-            });
-            
-            storeBtn.addEventListener('mouseleave', () => {
-                storeBtn.style.transform = 'translateY(0) scale(1)';
-            });
+            const storeBtn = document.querySelector('.info-link.store-btn');
+            if (storeBtn) {
+                storeBtn.addEventListener('mouseenter', () => {
+                    storeBtn.style.transform = 'translateY(-2px) scale(1.02)';
+                });
+                
+                storeBtn.addEventListener('mouseleave', () => {
+                    storeBtn.style.transform = 'translateY(0) scale(1)';
+                });
+            }
         });
     </script>
 </body>
