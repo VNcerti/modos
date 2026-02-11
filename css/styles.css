@@ -14,26 +14,6 @@
     --primary-dark: #1d4ed8;
     --primary-light: #dbeafe;
     --secondary: #f59e0b;
-    --background: #ffffff;
-    --surface: #f8fafc;
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --text-muted: #94a3b8;
-    --border: #e2e8f0;
-    --success: #10b981;
-    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-    --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --nav-height: 50px;
-    --radius-full: 9999px;
-    --transition-fast: 0.2s ease;
-    --spacing-xs: 8px;
-}
-
-[data-theme="dark"] {
-    --primary: #3b82f6;
-    --primary-dark: #1d4ed8;
-    --primary-light: #1e293b;
-    --secondary: #f59e0b;
     --background: #0f172a;
     --surface: #1e293b;
     --text-primary: #f1f5f9;
@@ -43,6 +23,26 @@
     --success: #10b981;
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
     --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --nav-height: 50px;
+    --radius-full: 9999px;
+    --transition-fast: 0.2s ease;
+    --spacing-xs: 8px;
+}
+
+[data-theme="light"] {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #dbeafe;
+    --secondary: #f59e0b;
+    --background: #ffffff;
+    --surface: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-muted: #94a3b8;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --card-shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 html {
@@ -168,23 +168,23 @@ body {
 }
 
 .sun-icon {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-}
-
-.moon-icon {
-    opacity: 0;
-    transform: rotate(-90deg) scale(0.5);
-}
-
-[data-theme="dark"] .sun-icon {
     opacity: 0;
     transform: rotate(90deg) scale(0.5);
 }
 
-[data-theme="dark"] .moon-icon {
+.moon-icon {
     opacity: 1;
     transform: rotate(0deg) scale(1);
+}
+
+[data-theme="light"] .sun-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+[data-theme="light"] .moon-icon {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
 }
 
 /* Hero Section */
@@ -517,7 +517,7 @@ body {
     opacity: 1;
 }
 
-/* ===== UPDATED CATEGORIES SECTION ===== */
+/* ===== CATEGORIES SECTION ===== */
 .categories-section {
     margin-bottom: 20px;
     padding: 0 4px;
@@ -553,17 +553,17 @@ body {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 8px 4px 2px 4px; /* ĐÃ GIẢM PADDING DƯỚI ĐỂ DỊCH LÊN */
-    scrollbar-width: none; /* ẨN THANH TRƯỢT */
-    -ms-overflow-style: none; /* ẨN THANH TRƯỢT CHO IE */
+    padding: 8px 4px 2px 4px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
 }
 
 .categories-scroll::-webkit-scrollbar {
-    display: none; /* ẨN THANH TRƯỢT CHO WEBKIT */
+    display: none;
 }
 
-/* New Category Card Design - Chip Style */
+/* Category Card Design - Chip Style */
 .category-card {
     display: flex;
     align-items: center;
@@ -602,6 +602,7 @@ body {
     background: rgba(255, 255, 255, 0.2);
 }
 
+/* ===== CATEGORY ICON - UPDATED FOR DARK/LIGHT MODE ===== */
 .category-icon {
     font-size: 14px;
     color: var(--primary);
@@ -611,8 +612,17 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--primary-light);
     transition: all 0.3s ease;
+}
+
+/* Light mode - Màu xanh nhạt */
+[data-theme="light"] .category-icon {
+    background: #dbeafe;
+}
+
+/* Dark mode - Màu xanh đậm #1e2f4b */
+[data-theme="dark"] .category-icon {
+    background: #1e2f4b;
 }
 
 .category-card:hover .category-icon {
@@ -623,6 +633,7 @@ body {
     transform: scale(1.1) rotate(5deg);
 }
 
+/* GIỮ NGUYÊN CODE GỐC - KHÔNG THAY ĐỔI */
 .category-name {
     font-weight: 500;
     font-size: 13px;
@@ -646,7 +657,7 @@ body {
     animation: pulseActive 2s infinite;
 }
 
-/* ===== CATEGORIES HINT - ĐÃ CẬP NHẬT VỊ TRÍ ===== */
+/* Categories Hint */
 .categories-hint {
     display: flex;
     align-items: center;
@@ -654,10 +665,10 @@ body {
     gap: 6px;
     color: var(--text-muted);
     font-size: 11px;
-    margin-top: 5px; /* GIẢM MARGIN ĐỂ DỊCH LÊN TRÊN */
+    margin-top: 5px;
     opacity: 0.7;
     transition: opacity 0.3s ease;
-    padding: 2px 0; /* GIẢM PADDING */
+    padding: 2px 0;
 }
 
 .categories-hint i {
@@ -690,6 +701,7 @@ body {
     gap: 12px;
 }
 
+/* App Card - Make entire card clickable */
 .app-card {
     background: var(--surface);
     border-radius: 12px;
@@ -701,11 +713,17 @@ body {
     display: flex;
     gap: 12px;
     height: 110px;
+    cursor: pointer;
+    position: relative;
 }
 
 .app-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--card-shadow-hover);
+}
+
+.app-card:active {
+    transform: translateY(-1px);
 }
 
 .app-logo {
@@ -755,7 +773,6 @@ body {
     margin-bottom: 4px;
 }
 
-/* CHỈNH SỬA APP-TAG CHO CHẾ ĐỘ TỐI */
 .app-tag {
     background: var(--primary-light);
     color: var(--primary);
@@ -765,7 +782,6 @@ body {
     font-weight: 500;
 }
 
-/* Chỉ áp dụng màu #181f2e cho chế độ tối */
 [data-theme="dark"] .app-tag {
     background: #181f2e;
     color: var(--primary);
@@ -854,26 +870,49 @@ body {
     display: flex;
     justify-content: flex-end;
     margin-top: 4px;
+    position: relative;
+    z-index: 2;
 }
 
-.download-btn {
-    background: var(--primary);
-    color: white;
+/* ===== INDEX DOWNLOAD BUTTON - NHẬN BUTTON ===== */
+.index-download-btn {
     border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
+    padding: 6px 16px;
+    border-radius: 30px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-size: 11px;
+    height: 30px;
+    letter-spacing: 0.5px;
+    min-width: 60px;
     display: flex;
     align-items: center;
-    gap: 4px;
-    font-size: 11px;
+    justify-content: center;
+    background: #EEEEEF;
+    color: #007AFF;
+    margin-left: auto;
 }
 
-.download-btn:hover {
-    background: var(--primary-dark);
+[data-theme="dark"] .index-download-btn {
+    background: rgba(0, 122, 255, calc(1.33 * 0.06));
+    color: #148eff;
+    --keyColor-rgb: 0, 122, 255;
+    --alpha-multiplier: 1.33;
+}
+
+.index-download-btn i {
+    margin-right: 4px;
+    font-size: 10px;
+}
+
+.index-download-btn:hover {
     transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.15);
+}
+
+[data-theme="dark"] .index-download-btn:hover {
+    background: rgba(0, 122, 255, calc(1.33 * 0.12));
 }
 
 /* Search Modal */
@@ -1249,7 +1288,6 @@ body {
     display: inline-block;
 }
 
-/* Chế độ tối cho debug-toggle */
 [data-theme="dark"] .debug-toggle {
     color: #1e293b;
 }
@@ -1318,7 +1356,13 @@ body {
         font-size: 14px;
     }
     
-    /* Categories responsive */
+    .index-download-btn {
+        padding: 5px 14px;
+        font-size: 10px;
+        height: 28px;
+        min-width: 55px;
+    }
+    
     .categories-section {
         margin-bottom: 16px;
     }
@@ -1349,18 +1393,16 @@ body {
         padding: 4px 10px;
     }
     
-    /* Categories hint responsive */
     .categories-hint {
         font-size: 10px;
         gap: 5px;
-        margin-top: 5px; /* GIẢM THÊM CHO MOBILE */
+        margin-top: 5px;
     }
     
     .categories-hint i {
         font-size: 9px;
     }
     
-    /* Footer responsive */
     .footer-links {
         gap: 15px;
     }
@@ -1446,10 +1488,16 @@ body {
         font-size: 10px;
     }
     
-    /* Categories responsive */
+    .index-download-btn {
+        padding: 4px 12px;
+        font-size: 9px;
+        height: 26px;
+        min-width: 50px;
+    }
+    
     .categories-scroll {
         gap: 6px;
-        padding: 6px 2px 0px 2px; /* GIẢM PADDING DƯỚI VỀ 0 */
+        padding: 6px 2px 0px 2px;
     }
     
     .category-card {
@@ -1473,11 +1521,10 @@ body {
         margin-bottom: 10px;
     }
     
-    /* Categories hint responsive */
     .categories-hint {
         font-size: 9px;
         gap: 4px;
-        margin-top: 5px; /* GIẢM VỀ 0 CHO MOBILE NHỎ */
+        margin-top: 5px;
     }
     
     .categories-hint i {
@@ -1493,7 +1540,6 @@ body {
         height: 3px;
     }
     
-    /* Footer responsive */
     .footer-links {
         gap: 12px;
     }
@@ -1535,13 +1581,20 @@ body {
     .footer-divider {
         display: none;
     }
+    
+    .index-download-btn {
+        padding: 3px 10px;
+        font-size: 8px;
+        height: 24px;
+        min-width: 45px;
+    }
 }
 
 /* For desktop - larger screens */
 @media (min-width: 1024px) {
     .categories-scroll {
         gap: 10px;
-        padding: 10px 4px 5px 4px; /* GIẢM PADDING DƯỚI */
+        padding: 10px 4px 5px 4px;
     }
     
     .category-card {
@@ -1565,7 +1618,6 @@ body {
         box-shadow: 0 6px 20px rgba(37, 99, 235, 0.15);
     }
     
-    /* Ẩn categories hint trên desktop */
     .categories-hint {
         display: none;
     }
